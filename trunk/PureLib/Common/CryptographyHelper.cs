@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,6 +8,20 @@ namespace PureLib.Common {
     /// Provides encryption and decryption methods.
     /// </summary>
     public static class CryptographyHelper {
+        /// <summary>
+        /// Computes the hash value of a file.
+        /// </summary>
+        /// <typeparam name="T">T is a HashAlgorithm</typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static byte[] CreateFileHash<T>(this string path) where T : HashAlgorithm {
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+                using (HashAlgorithm hashAlgorithm = Utility.GetInstance<T>()) {
+                    return hashAlgorithm.ComputeHash(stream);
+                }
+            }
+        }
+
         /// <summary>
         /// Computes the hash value of a string.
         /// </summary>
