@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib", "PureLib\PureLib.csproj", "{2E188C01-D71A-48C6-BAC7-34956007885F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.Web", "PureLib.Web\PureLib.Web.csproj", "{289F9A16-D28F-435D-9275-AA94740E11D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{2E188C01-D71A-48C6-BAC7-34956007885F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{289F9A16-D28F-435D-9275-AA94740E11D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289F9A16-D28F-435D-9275-AA94740E11D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289F9A16-D28F-435D-9275-AA94740E11D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289F9A16-D28F-435D-9275-AA94740E11D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

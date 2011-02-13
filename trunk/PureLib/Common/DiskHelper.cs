@@ -2,7 +2,6 @@
 using System.Xml.Serialization;
 using System.Xml;
 using System.Text;
-using System.Web.Script.Serialization;
 
 namespace PureLib.Common {
     /// <summary>
