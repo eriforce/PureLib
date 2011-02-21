@@ -10,6 +10,17 @@ namespace PureLib.Common {
     /// </summary>
     public static class Utility {
         /// <summary>
+        /// Gets the duration of the code execution.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static TimeSpan GetExecutingDuration(Action action) {
+            DateTime start = DateTime.UtcNow;
+            action();
+            return DateTime.UtcNow - start;
+        }
+
+        /// <summary>
         /// Gets the number of weekdays in a period.
         /// </summary>
         /// <param name="start"></param>
