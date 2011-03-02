@@ -60,6 +60,15 @@ namespace PureLib.Common {
         }
 
         /// <summary>
+        /// Returns the time string in ISO8601 format.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public static string ToIso8601(this DateTime time) {
+            return time.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        }
+
+        /// <summary>
         /// Converts an array of 8-bit unsigned integers to its equivalent System.String representation encoded with base 64 digits.
         /// </summary>
         /// <param name="bytes"></param>
