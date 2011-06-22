@@ -16,6 +16,9 @@ namespace PureLib.Common {
         /// <param name="args"></param>
         /// <returns></returns>
         public static Dictionary<string, string> ParseCmdArguments(string[] args) {
+            if ((args == null) || (args.Length == 0))
+                return null;
+
             const string argumentNamePattern = @"^(/|\-{1,2})(?<name>\w+)$";
             Dictionary<string, string> argsDic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             string currentName = null;
