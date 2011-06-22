@@ -11,7 +11,33 @@ namespace PureLib.Common {
     /// </summary>
     public static class Utility {
         /// <summary>
-        /// Parses the startup arguments from command-line 
+        /// Parses the data size.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static long ParseDataSize(string sizeString) {
+            Dictionary<string, long> units = new Dictionary<string, long> { 
+                { "k", 1 << 10 },
+                { "m", 1 << 20 },
+                { "g", 1 << 30 },
+                { "t", 1 << 40 },
+                { "p", 1 << 50 } 
+            };
+            string sizeStringPattern = @"^(?<number>\d+)(?<unit>[{0}]?)b?$".FormatWith(string.Join(string.Empty, units.Keys));
+            Match m = Regex.Match(sizeString, sizeStringPattern, RegexOptions.IgnoreCase);
+            if (!m.Success)
+                throw new ApplicationException("Size string cannot be parsed.");
+
+            long result = long.Parse(m.Groups["number"].Value);
+            string unit = m.Groups["unit"].Value.ToLower();
+            if (!unit.IsNullOrEmpty()) {
+                result *= units[unit];
+            }
+            return result;
+        }
+        
+        /// <summary>
+        /// Parses the startup arguments from command-line.
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
