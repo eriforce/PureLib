@@ -12,15 +12,17 @@ namespace PureLib.Common {
     /// </summary>
     public static class EmailHelper {
         private static readonly char[] mailAddressSeparators = new char[] { ';', ',' };
+        private static MailMessage message;
+
         /// <summary>
         /// Represents the token string in HTML template.
         /// </summary>
         public const string htmlTemplateToken = "%%";
 
         /// <summary>
-        /// Gets the MailMessage.
+        /// Occurs when an asynchronous e-mail send operation completes.
         /// </summary>
-        public static MailMessage Message { get; private set; }
+        public static event SendCompletedEventHandler SendCompleted;
 
         /// <summary>
         /// Gets content from HTML template.
@@ -56,38 +58,45 @@ namespace PureLib.Common {
         /// <param name="body"></param>
         /// <param name="isBodyHtml"></param>
         /// <param name="sendAsync"></param>
-        /// <param name="onCompletedCallBack"></param>
         /// <param name="cc"></param>
         /// <param name="bcc"></param>
-        public static void SendMail(string host, int port, bool enableSsl, string userName, string password, string senderName, string from, string to, string subject, string body, bool isBodyHtml, bool sendAsync, SendCompletedEventHandler onCompletedCallBack, string cc = null, string bcc = null) {
-            SmtpClient client = new SmtpClient(host);
-            client.Port = port;
-            client.EnableSsl = enableSsl;
-            if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
-                client.Credentials = new NetworkCredential(userName, password);
+        public static void SendMail(string host, int port, bool enableSsl, string userName, string password, string senderName, string from, string to,
+            string subject, string body, bool isBodyHtml, bool sendAsync, string cc = null, string bcc = null) {
 
-            Message = new MailMessage();
-            Message.From = new MailAddress(from, senderName.IsNullOrEmpty() ? from : senderName);
-            ParseMailAddress(to, Message.To);
-            if (!cc.IsNullOrEmpty())
-                ParseMailAddress(cc, Message.CC);
-            if (!bcc.IsNullOrEmpty())
-                ParseMailAddress(bcc, Message.Bcc);
-            Message.SubjectEncoding = Encoding.UTF8;
-            Message.BodyEncoding = Encoding.UTF8;
-            Message.IsBodyHtml = isBodyHtml;
-            Message.Subject = subject;
-            Message.Body = body;
+            using (SmtpClient client = new SmtpClient(host)) {
+                client.Port = port;
+                client.EnableSsl = enableSsl;
+                if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
+                    client.Credentials = new NetworkCredential(userName, password);
 
-            if (sendAsync) {
-                if (onCompletedCallBack != null)
-                    client.SendCompleted += onCompletedCallBack;
-                client.SendAsync(Message, null);
+                message = new MailMessage();
+                message.From = new MailAddress(from, senderName.IsNullOrEmpty() ? from : senderName);
+                ParseMailAddress(to, message.To);
+                if (!cc.IsNullOrEmpty())
+                    ParseMailAddress(cc, message.CC);
+                if (!bcc.IsNullOrEmpty())
+                    ParseMailAddress(bcc, message.Bcc);
+                message.SubjectEncoding = Encoding.UTF8;
+                message.BodyEncoding = Encoding.UTF8;
+                message.IsBodyHtml = isBodyHtml;
+                message.Subject = subject;
+                message.Body = body;
+
+                if (sendAsync) {
+                    client.SendCompleted += new SendCompletedEventHandler(ClientSendCompleted);
+                    client.SendAsync(message, null);
+                }
+                else {
+                    client.Send(message);
+                    message.Dispose();
+                }
             }
-            else {
-                client.Send(Message);
-                Message.Dispose();
-            }
+        }
+
+        private static void ClientSendCompleted(object sender, AsyncCompletedEventArgs e) {
+            if (SendCompleted != null)
+                SendCompleted(sender, e);
+            message.Dispose();
         }
 
         private static void ParseMailAddress(string address, MailAddressCollection mac) {

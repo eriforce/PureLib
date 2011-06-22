@@ -3,12 +3,36 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
     /// <summary>
     /// Provides common methods.
     /// </summary>
     public static class Utility {
+        /// <summary>
+        /// Parses the startup arguments from command-line 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> ParseCmdArguments(string[] args) {
+            const string argumentNamePattern = @"^(/|\-{1,2})(?<name>\w+)$";
+            Dictionary<string, string> argsDic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            string currentName = null;
+            foreach (string arg in args) {
+                Match m = Regex.Match(arg, argumentNamePattern);
+                if (m.Success) {
+                    currentName = m.Groups["name"].Value;
+                    argsDic.Add(currentName, null);
+                }
+                else if (!currentName.IsNullOrEmpty()) {
+                    argsDic[currentName] = arg;
+                    currentName = null;
+                }
+            }
+            return argsDic;
+        }
+
         /// <summary>
         /// Gets the duration of the code execution.
         /// </summary>
