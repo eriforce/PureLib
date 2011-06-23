@@ -18,7 +18,7 @@ namespace PureLib.Common.Entities {
                 return;
 
             const string argumentName = "name";
-            string argumentNamePattern = @"^(/|\-{1,2})(?<{0}>\w+)$".FormatWith(argumentName);
+            string argumentNamePattern = @"^(/|\-{{1,2}})(?<{0}>\w+)$".FormatWith(argumentName);
             string currentName = null;
             foreach (string arg in args) {
                 Match m = Regex.Match(arg, argumentNamePattern);
