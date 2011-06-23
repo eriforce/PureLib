@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Entities\Arguments.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Common\DiskHelper.cs" />
