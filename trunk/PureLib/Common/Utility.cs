@@ -13,7 +13,7 @@ namespace PureLib.Common {
         /// <summary>
         /// Parses the data size.
         /// </summary>
-        /// <param name="size"></param>
+        /// <param name="sizeString"></param>
         /// <returns></returns>
         public static long ParseDataSize(string sizeString) {
             Dictionary<string, long> units = new Dictionary<string, long> { 
@@ -23,16 +23,17 @@ namespace PureLib.Common {
                 { "t", 1 << 40 },
                 { "p", 1 << 50 } 
             };
-            string sizeStringPattern = @"^(?<number>\d+)(?<unit>[{0}]?)b?$".FormatWith(string.Join(string.Empty, units.Keys));
+            const string numberName = "number";
+            const string unitName = "unit";
+            string sizeStringPattern = @"^(?<{0}>\d+)(?<{1}>[{2}]?)b?$".FormatWith(numberName, unitName, string.Join(string.Empty, units.Keys));
             Match m = Regex.Match(sizeString, sizeStringPattern, RegexOptions.IgnoreCase);
             if (!m.Success)
                 throw new ApplicationException("Size string cannot be parsed.");
 
-            long result = long.Parse(m.Groups["number"].Value);
-            string unit = m.Groups["unit"].Value.ToLower();
-            if (!unit.IsNullOrEmpty()) {
+            long result = long.Parse(m.Groups[numberName].Value);
+            string unit = m.Groups[unitName].Value.ToLower();
+            if (!unit.IsNullOrEmpty())
                 result *= units[unit];
-            }
             return result;
         }
         
@@ -45,13 +46,14 @@ namespace PureLib.Common {
             if ((args == null) || (args.Length == 0))
                 return null;
 
-            const string argumentNamePattern = @"^(/|\-{1,2})(?<name>\w+)$";
+            const string argumentName = "name";
+            string argumentNamePattern = @"^(/|\-{1,2})(?<{0}>\w+)$".FormatWith(argumentName);
             Dictionary<string, string> argsDic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             string currentName = null;
             foreach (string arg in args) {
                 Match m = Regex.Match(arg, argumentNamePattern);
                 if (m.Success) {
-                    currentName = m.Groups["name"].Value;
+                    currentName = m.Groups[argumentName].Value;
                     argsDic.Add(currentName, null);
                 }
                 else if (!currentName.IsNullOrEmpty()) {
