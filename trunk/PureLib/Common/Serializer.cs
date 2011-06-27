@@ -19,8 +19,9 @@ namespace PureLib.Common {
         /// <param name="indent"></param>
         /// <param name="fileMode"></param>
         public static void WriteToXml(this string path, object obj, bool indent = true, FileMode fileMode = FileMode.Create) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None);
-            ToXml(obj, stream, indent);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
+                ToXml(obj, stream, indent);
+            }
         }
 
         /// <summary>
@@ -30,19 +31,19 @@ namespace PureLib.Common {
         /// <param name="indent"></param>
         /// <returns></returns>
         public static string ToXml(this object obj, bool indent = true) {
-            MemoryStream stream = new MemoryStream();
-            ToXml(obj, stream, indent);
-            byte[] buffer = stream.GetBuffer();
+            byte[] buffer = null;
+            using (MemoryStream stream = new MemoryStream()) {
+                ToXml(obj, stream, indent);
+                buffer = stream.GetBuffer();
+            }
             return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
         }
 
         private static void ToXml(object obj, Stream stream, bool indent) {
             XmlSerializer serializer = new XmlSerializer(obj.GetType());
-            XmlWriter writer = XmlWriter.Create(stream, new XmlWriterSettings() { Indent = indent });
-            serializer.Serialize(writer, obj);
-            writer.Flush();
-            writer.Close();
-            stream.Close();
+            using (XmlWriter writer = XmlWriter.Create(stream, new XmlWriterSettings() { Indent = indent })) {
+                serializer.Serialize(writer, obj);
+            }
         }
 
         /// <summary>
@@ -53,8 +54,9 @@ namespace PureLib.Common {
         /// <param name="fileMode"></param>
         /// <returns></returns>
         public static T ReadFromXml<T>(this string path, FileMode fileMode = FileMode.Open) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read);
-            return FromXml<T>(stream);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
+                return FromXml<T>(stream);
+            }
         }
 
         /// <summary>
@@ -64,16 +66,17 @@ namespace PureLib.Common {
         /// <param name="xml"></param>
         /// <returns></returns>
         public static T FromXml<T>(this string xml) {
-            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            return FromXml<T>(stream);
+            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml))) {
+                return FromXml<T>(stream);
+            }
         }
 
         private static T FromXml<T>(Stream stream) {
-            XmlReader reader = XmlReader.Create(stream);
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            T obj = (T)serializer.Deserialize(reader);
-            reader.Close();
-            stream.Close();
+            T obj;
+            using (XmlReader reader = XmlReader.Create(stream)) {
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                obj = (T)serializer.Deserialize(reader);
+            }
             return obj;
         }
 
@@ -114,8 +117,9 @@ namespace PureLib.Common {
         /// <param name="fileMode"></param>
         /// <returns></returns>
         public static T ReadFromBinary<T>(this string path, FileMode fileMode = FileMode.Open) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read);
-            return FromBinary<T>(stream);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
+                return FromBinary<T>(stream);
+            }
         }
 
         /// <summary>
@@ -125,14 +129,14 @@ namespace PureLib.Common {
         /// <param name="binary"></param>
         /// <returns></returns>
         public static T FromBinary<T>(this byte[] binary) {
-            MemoryStream stream = new MemoryStream(binary);
-            return FromBinary<T>(stream);
+            using (MemoryStream stream = new MemoryStream(binary)) {
+                return FromBinary<T>(stream);
+            }
         }
 
         private static T FromBinary<T>(Stream stream) {
             BinaryFormatter formatter = new BinaryFormatter();
             T obj = (T)formatter.Deserialize(stream);
-            stream.Close();
             return obj;
         }
     }
