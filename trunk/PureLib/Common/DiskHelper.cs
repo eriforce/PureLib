@@ -15,12 +15,10 @@ namespace PureLib.Common {
         /// <param name="bytes"></param>
         /// <param name="fileMode"></param>
         public static void WriteBinary(this string path, byte[] bytes, FileMode fileMode = FileMode.Create) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None);
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(bytes);
-            writer.Flush();
-            writer.Close();
-            stream.Close();
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
+                BinaryWriter writer = new BinaryWriter(stream);
+                writer.Write(bytes);
+            }
         }
 
         /// <summary>
@@ -30,13 +28,12 @@ namespace PureLib.Common {
         /// <param name="fileMode"></param>
         /// <returns></returns>
         public static byte[] ReadBinary(this string path, FileMode fileMode = FileMode.Open) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read);
-            BinaryReader reader = new BinaryReader(stream);
-            byte[] bytes = new byte[stream.Length];
-            reader.Read(bytes, 0, bytes.Length);
-            reader.Close();
-            stream.Close();
-            return bytes;
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
+                BinaryReader reader = new BinaryReader(stream);
+                byte[] bytes = new byte[stream.Length];
+                reader.Read(bytes, 0, bytes.Length);
+                return bytes;
+            }
         }
 
         /// <summary>
@@ -47,12 +44,10 @@ namespace PureLib.Common {
         /// <param name="enc"></param>
         /// <param name="fileMode"></param>
         public static void WriteText(this string path, string text, Encoding enc, FileMode fileMode = FileMode.Create) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None);
-            StreamWriter writer = new StreamWriter(stream, enc);
-            writer.Write(text);
-            writer.Flush();
-            writer.Close();
-            stream.Close();
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
+                StreamWriter writer = new StreamWriter(stream, enc);
+                writer.Write(text);
+            }
         }
 
         /// <summary>
@@ -66,12 +61,10 @@ namespace PureLib.Common {
             if (enc == null)
                 enc = Encoding.Default;
 
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read);
-            StreamReader reader = new StreamReader(stream, enc, true);
-            string text = reader.ReadToEnd();
-            reader.Close();
-            stream.Close();
-            return text;
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
+                StreamReader reader = new StreamReader(stream, enc, true);
+                return reader.ReadToEnd();
+            }
         }
     }
 }

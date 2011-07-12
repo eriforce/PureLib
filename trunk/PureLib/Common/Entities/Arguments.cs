@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,7 @@ namespace PureLib.Common.Entities {
     /// <summary>
     /// A structure of the startup arguments from command-line.
     /// </summary>
+    [Serializable]
     public class Arguments : Dictionary<string, List<string>> {
         /// <summary>
         /// Initializes a new instance of Arguments.
@@ -29,6 +31,15 @@ namespace PureLib.Common.Entities {
                 else if (!currentName.IsNullOrEmpty())
                     this[currentName].Add(arg);
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Arguments with serialized data.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        protected Arguments(SerializationInfo info, StreamingContext context)
+            : base(info, context) {
         }
 
         /// <summary>

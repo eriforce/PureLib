@@ -87,8 +87,9 @@ namespace PureLib.Common {
         /// <param name="obj"></param>
         /// <param name="fileMode"></param>
         public static void WriteToBinary(this string path, object obj, FileMode fileMode = FileMode.Create) {
-            FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None);
-            ToBinary(obj, stream);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
+                ToBinary(obj, stream);
+            }
         }
 
         /// <summary>
@@ -97,16 +98,15 @@ namespace PureLib.Common {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static byte[] ToBinary(this object obj) {
-            MemoryStream stream = new MemoryStream();
-            ToBinary(obj, stream);
-            byte[] buffer = stream.GetBuffer();
-            return buffer;
+            using (MemoryStream stream = new MemoryStream()) {
+                ToBinary(obj, stream);
+                return stream.GetBuffer();
+            }
         }
 
         private static void ToBinary(object obj, Stream stream) {
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(stream, obj);
-            stream.Close();
         }
 
         /// <summary>
