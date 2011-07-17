@@ -18,6 +18,7 @@ namespace PureLib.Common {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
                 BinaryWriter writer = new BinaryWriter(stream);
                 writer.Write(bytes);
+                writer.Flush();
             }
         }
 
@@ -47,6 +48,7 @@ namespace PureLib.Common {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
                 StreamWriter writer = new StreamWriter(stream, enc);
                 writer.Write(text);
+                writer.Flush();
             }
         }
 
