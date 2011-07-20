@@ -29,7 +29,7 @@ namespace PureLib.Common.Entities {
                     Add(currentName, new List<string>());
                 }
                 else if (!currentName.IsNullOrEmpty())
-                    this[currentName].Add(arg);
+                    this[currentName].Add(arg.Replace("\"", string.Empty));
             }
         }
 
