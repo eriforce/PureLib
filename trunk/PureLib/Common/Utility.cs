@@ -4,12 +4,52 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using PureLib.Properties;
 
 namespace PureLib.Common {
     /// <summary>
     /// Provides common methods.
     /// </summary>
     public static class Utility {
+        /// <summary>
+        /// Gets friendly string of size
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static string ToFriendlyString(this decimal size) {
+            string[] units = new string[] { "B", "KB", "MB", "GB", "TB" };
+            int unitIndex = 0;
+            while ((size >= 1000) && (unitIndex < (units.Length - 1))) {
+                size /= 1024;
+                unitIndex++;
+            }
+            string result = (unitIndex > 0) ? size.ToString("#.##") : size.ToString();
+            return "{0} {1}".FormatWith(result, units[unitIndex]);
+        }
+
+        /// <summary>
+        /// Gets friendly string of timespan.
+        /// </summary>
+        /// <param name="ts"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static string ToFriendlyString(this TimeSpan ts, string separator = null) {
+            const string partFormat = "{0} {1}";
+            List<string> parts = new List<string>();
+            if (ts.Days != 0)
+                parts.Add(partFormat.FormatWith(ts.Days, Resources.Days));
+            if (ts.Hours != 0)
+                parts.Add(partFormat.FormatWith(ts.Hours, Resources.Hours));
+            if (ts.Minutes != 0)
+                parts.Add(partFormat.FormatWith(ts.Minutes, Resources.Minutes));
+            if (ts.Seconds != 0)
+                parts.Add(partFormat.FormatWith(ts.Seconds, Resources.Seconds));
+            if (ts.Milliseconds != 0)
+                parts.Add(partFormat.FormatWith(ts.Milliseconds, Resources.Milliseconds));
+
+            return string.Join(separator.IsNullOrEmpty() ? Resources.Comma : separator, parts);
+        }
+
         /// <summary>
         /// Parses the data size.
         /// </summary>
@@ -28,7 +68,7 @@ namespace PureLib.Common {
             string sizeStringPattern = @"^(?<{0}>\d+)(?<{1}>[{2}]?)b?$".FormatWith(numberName, unitName, string.Join(string.Empty, units.Keys));
             Match m = Regex.Match(sizeString, sizeStringPattern, RegexOptions.IgnoreCase);
             if (!m.Success)
-                throw new ApplicationException("Size string cannot be parsed.");
+                throw new ArgumentException("Size string cannot be parsed.");
 
             long result = long.Parse(m.Groups[numberName].Value);
             string unit = m.Groups[unitName].Value.ToLower();
