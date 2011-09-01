@@ -70,10 +70,6 @@ namespace PureLib.Common {
             }
         }
 
-        private static byte[] CreateHash(this byte[] bytes, HashAlgorithm hashAlgorithm) {
-            return hashAlgorithm.ComputeHash(bytes);
-        }
-
         /// <summary>
         /// Encryptos binary data.
         /// </summary>
@@ -120,6 +116,10 @@ namespace PureLib.Common {
                 iv = symmetricAlgorithm.IV;
                 key = symmetricAlgorithm.Key;
             }
+        }
+
+        private static byte[] CreateHash(byte[] bytes, HashAlgorithm hashAlgorithm) {
+            return hashAlgorithm.ComputeHash(bytes);
         }
 
         private static byte[] GetBytes(string text) {
