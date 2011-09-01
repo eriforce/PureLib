@@ -16,15 +16,14 @@ namespace PureLib.Common {
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        public static string ToFriendlyString(this decimal size) {
+        public static string ToFriendlyString(this decimal size, int digits = 2) {
             string[] units = new string[] { "B", "KB", "MB", "GB", "TB" };
             int unitIndex = 0;
             while ((size >= 1000) && (unitIndex < (units.Length - 1))) {
                 size /= 1024;
                 unitIndex++;
             }
-            string result = (unitIndex > 0) ? size.ToString("#.##") : size.ToString();
-            return "{0} {1}".FormatWith(result, units[unitIndex]);
+            return "{0} {1}".FormatWith(Math.Round(size, digits), units[unitIndex]);
         }
 
         /// <summary>
