@@ -12,9 +12,10 @@ namespace PureLib.Common {
     /// </summary>
     public static class Utility {
         /// <summary>
-        /// Gets friendly string of size
+        /// Gets friendly string of size.
         /// </summary>
         /// <param name="size"></param>
+        /// <param name="digits"></param>
         /// <returns></returns>
         public static string ToFriendlyString(this decimal size, int digits = 2) {
             string[] units = new string[] { "B", "KB", "MB", "GB", "TB" };
