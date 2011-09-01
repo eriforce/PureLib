@@ -56,6 +56,9 @@
   <ItemGroup>
     <Compile Include="Common\Entities\Arguments.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
+    <Compile Include="Common\Type\DateTimeUnit.cs" />
+    <Compile Include="Common\Type\SizeUnitDisplay.cs" />
+    <Compile Include="Common\Type\SizeUnit.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Common\DiskHelper.cs" />
     <Compile Include="Common\Serializer.cs" />

@@ -11,6 +11,8 @@ namespace PureLib.Common {
     /// Provides common methods.
     /// </summary>
     public static class Utility {
+        private const string pairFormat = "{0} {1}";
+
         /// <summary>
         /// Gets friendly string of size.
         /// </summary>
@@ -18,35 +20,38 @@ namespace PureLib.Common {
         /// <param name="digits"></param>
         /// <returns></returns>
         public static string ToFriendlyString(this decimal size, int digits = 2) {
-            string[] units = new string[] { "B", "KB", "MB", "GB", "TB" };
+            return ToFriendlyString(size, null, digits);
+        }
+
+        /// <summary>
+        /// Gets friendly string of size.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="unitNames"></param>
+        /// <param name="digits"></param>
+        /// <returns></returns>
+        public static string ToFriendlyString(this decimal size, Dictionary<SizeUnit, string> unitNames, int digits = 2) {
+            int maxIndex = Enum.GetValues(typeof(SizeUnit)).Length - 1;
             int unitIndex = 0;
-            while ((size >= 1000) && (unitIndex < (units.Length - 1))) {
+            while ((size >= 1000) && (unitIndex < maxIndex)) {
                 size /= 1024;
                 unitIndex++;
             }
-            return "{0} {1}".FormatWith(Math.Round(size, digits), units[unitIndex]);
+            SizeUnit unit = (SizeUnit)unitIndex;
+            return pairFormat.FormatWith(Math.Round(size, digits), unit.ToDisplayName(unitNames));
         }
 
         /// <summary>
         /// Gets friendly string of timespan.
         /// </summary>
         /// <param name="ts"></param>
+        /// <param name="truncateUnit"></param>
+        /// <param name="truncateToInteger"></param>
         /// <param name="separator"></param>
         /// <returns></returns>
-        public static string ToFriendlyString(this TimeSpan ts, string separator = null) {
-            const string partFormat = "{0} {1}";
+        public static string ToFriendlyString(this TimeSpan ts, DateTimeUnit? truncateUnit = null, bool truncateToInteger = false, int truncateDigits = 3, string separator = null) {
             List<string> parts = new List<string>();
-            if (ts.Days != 0)
-                parts.Add(partFormat.FormatWith(ts.Days, Resources.Days));
-            if (ts.Hours != 0)
-                parts.Add(partFormat.FormatWith(ts.Hours, Resources.Hours));
-            if (ts.Minutes != 0)
-                parts.Add(partFormat.FormatWith(ts.Minutes, Resources.Minutes));
-            if (ts.Seconds != 0)
-                parts.Add(partFormat.FormatWith(ts.Seconds, Resources.Seconds));
-            if (ts.Milliseconds != 0)
-                parts.Add(partFormat.FormatWith(ts.Milliseconds, Resources.Milliseconds));
-
+            ParseTimeSpan(ts, parts, truncateUnit, truncateToInteger, truncateDigits);
             return string.Join(separator.IsNullOrEmpty() ? Resources.Comma : separator, parts);
         }
 
@@ -210,6 +215,53 @@ namespace PureLib.Common {
         /// <returns></returns>
         public static bool IsDarkColor(this byte[] rgb) {
             return rgb.Max() + rgb.Min() < 255; // L < 0.5 
+        }
+
+        private static void ParseTimeSpan(TimeSpan ts, List<string> parts, DateTimeUnit? truncateUnit, bool truncateToInteger, int truncateDigits) {
+            if (ts.Days != 0) {
+                if (truncateUnit == DateTimeUnit.Day) {
+                    parts.Add(pairFormat.FormatWith(truncateToInteger ? ts.Days : Math.Round(ts.TotalDays, truncateDigits), Resources.Days));
+                    return;
+                }
+                else
+                    parts.Add(pairFormat.FormatWith(ts.Days, Resources.Days));
+            }
+
+            if (ts.Hours != 0) {
+                if (truncateUnit == DateTimeUnit.Hour) {
+                    parts.Add(pairFormat.FormatWith(truncateToInteger ? ts.Hours : Math.Round(ts.TotalHours % 24, truncateDigits), Resources.Hours));
+                    return;
+                }
+                else
+                    parts.Add(pairFormat.FormatWith(ts.Hours, Resources.Hours));
+            }
+
+            if (ts.Minutes != 0) {
+                if (truncateUnit == DateTimeUnit.Minute) {
+                    parts.Add(pairFormat.FormatWith(truncateToInteger ? ts.Minutes : Math.Round(ts.TotalMinutes % 60, truncateDigits), Resources.Minutes));
+                    return;
+                }
+                else
+                    parts.Add(pairFormat.FormatWith(ts.Minutes, Resources.Minutes));
+            }
+
+            if (ts.Seconds != 0) {
+                if (truncateUnit == DateTimeUnit.Second) {
+                    parts.Add(pairFormat.FormatWith(truncateToInteger ? ts.Seconds : Math.Round(ts.TotalSeconds % 60, truncateDigits), Resources.Seconds));
+                    return;
+                }
+                else
+                    parts.Add(pairFormat.FormatWith(ts.Seconds, Resources.Seconds));
+            }
+
+            if (ts.Milliseconds != 0) {
+                if (truncateUnit == DateTimeUnit.Millisecond) {
+                    parts.Add(pairFormat.FormatWith(truncateToInteger ? ts.Milliseconds : Math.Round(ts.TotalMilliseconds % 1000, truncateDigits), Resources.Milliseconds));
+                    return;
+                }
+                else
+                    parts.Add(pairFormat.FormatWith(ts.Milliseconds, Resources.Milliseconds));
+            }
         }
     }
 }
