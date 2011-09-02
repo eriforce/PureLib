@@ -214,7 +214,9 @@ namespace PureLib.Common {
         /// </summary>
         /// <param name="rgb"></param>
         /// <returns></returns>
-        public static bool IsDarkColor(this byte[] rgb) {
+        public static bool IsDarkColor(byte[] rgb) {
+            if (rgb.Length != 3)
+                throw new ArgumentException("RGB array is invalid.");
             return rgb.Max() + rgb.Min() < 255; // L < 0.5 
         }
 
