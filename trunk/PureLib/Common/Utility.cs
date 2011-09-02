@@ -218,57 +218,40 @@ namespace PureLib.Common {
             return rgb.Max() + rgb.Min() < 255; // L < 0.5 
         }
 
-        private static void ParseTimeSpan(TimeSpan ts, List<string> parts, 
+        private static void ParseTimeSpan(TimeSpan ts, List<string> parts,
             DateTimeUnit? truncateUnit, bool truncateToInteger, int truncateDigits) {
-                if (ts.Days != 0) {
-                    if (truncateUnit == DateTimeUnit.Day) {
-                        parts.Add(pairFormat.FormatWith(truncateToInteger ? 
-                            ts.Days : Math.Round(ts.TotalDays, truncateDigits), Resources.Days));
-                        return;
-                    }
-                    else
-                        parts.Add(pairFormat.FormatWith(ts.Days, Resources.Days));
-                }
 
-                if (ts.Hours != 0) {
-                    if (truncateUnit == DateTimeUnit.Hour) {
-                        parts.Add(pairFormat.FormatWith(truncateToInteger ? 
-                            ts.Hours : Math.Round(ts.TotalHours % 24, truncateDigits), Resources.Hours));
-                        return;
-                    }
-                    else
-                        parts.Add(pairFormat.FormatWith(ts.Hours, Resources.Hours));
-                }
+            if (!ParseTimeSpanPart(DateTimeUnit.Day, ts.Days, ts.TotalDays,
+                Resources.Days, parts, truncateUnit, truncateToInteger, truncateDigits))
+                return;
+            if (!ParseTimeSpanPart(DateTimeUnit.Hour, ts.Hours, ts.TotalHours % 24,
+                Resources.Hours, parts, truncateUnit, truncateToInteger, truncateDigits))
+                return;
+            if (!ParseTimeSpanPart(DateTimeUnit.Minute, ts.Minutes, ts.TotalMinutes % 60,
+                Resources.Minutes, parts, truncateUnit, truncateToInteger, truncateDigits))
+                return;
+            if (!ParseTimeSpanPart(DateTimeUnit.Second, ts.Seconds, ts.TotalSeconds % 60,
+                Resources.Seconds, parts, truncateUnit, truncateToInteger, truncateDigits))
+                return;
+            if (!ParseTimeSpanPart(DateTimeUnit.Millisecond, ts.Milliseconds, ts.TotalMilliseconds % 1000,
+                Resources.Milliseconds, parts, truncateUnit, truncateToInteger, truncateDigits))
+                return;
+        }
 
-                if (ts.Minutes != 0) {
-                    if (truncateUnit == DateTimeUnit.Minute) {
-                        parts.Add(pairFormat.FormatWith(truncateToInteger ? 
-                            ts.Minutes : Math.Round(ts.TotalMinutes % 60, truncateDigits), Resources.Minutes));
-                        return;
-                    }
-                    else
-                        parts.Add(pairFormat.FormatWith(ts.Minutes, Resources.Minutes));
-                }
+        private static bool ParseTimeSpanPart(DateTimeUnit timePart, int timePartValue, double timePartFloat,
+            string timePartName, List<string> parts, DateTimeUnit? truncateUnit, bool truncateToInteger, int truncateDigits) {
 
-                if (ts.Seconds != 0) {
-                    if (truncateUnit == DateTimeUnit.Second) {
-                        parts.Add(pairFormat.FormatWith(truncateToInteger ? 
-                            ts.Seconds : Math.Round(ts.TotalSeconds % 60, truncateDigits), Resources.Seconds));
-                        return;
-                    }
-                    else
-                        parts.Add(pairFormat.FormatWith(ts.Seconds, Resources.Seconds));
+            bool toContinue = true;
+            if (timePartValue != 0) {
+                if (truncateUnit == timePart) {
+                    parts.Add(pairFormat.FormatWith(truncateToInteger ?
+                        timePartValue : Math.Round(timePartFloat, truncateDigits), timePartName));
+                    toContinue = false;
                 }
-
-                if (ts.Milliseconds != 0) {
-                    if (truncateUnit == DateTimeUnit.Millisecond) {
-                        parts.Add(pairFormat.FormatWith(truncateToInteger ? 
-                            ts.Milliseconds : Math.Round(ts.TotalMilliseconds % 1000, truncateDigits), Resources.Milliseconds));
-                        return;
-                    }
-                    else
-                        parts.Add(pairFormat.FormatWith(ts.Milliseconds, Resources.Milliseconds));
-                }
+                else
+                    parts.Add(pairFormat.FormatWith(timePartValue, timePartName));
+            }
+            return toContinue;
         }
     }
 }
