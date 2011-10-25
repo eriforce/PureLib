@@ -62,13 +62,13 @@ namespace PureLib.Common {
         /// </summary>
         /// <param name="sizeString"></param>
         /// <returns></returns>
-        public static double ParseDataSize(string sizeString) {
+        public static long ParseDataSize(string sizeString) {
             const string numberName = "number";
             const string unitName = "unit";
             SizeUnit[] units = (SizeUnit[])Enum.GetValues(typeof(SizeUnit));
             Dictionary<string, double> unitKeyValueMaps = units.ToDictionary(u => u.ToString().First().ToString(),
                 u => Math.Pow(2, (int)u * 10), StringComparer.OrdinalIgnoreCase);
-            string sizeStringPattern = @"^(?<{0}>\d+)(?<{1}>[{2}]?)b?$".FormatWith(
+            string sizeStringPattern = @"^(?<{0}>\d+) *(?<{1}>[{2}]?)b?$".FormatWith(
                 numberName, unitName, string.Join(string.Empty, unitKeyValueMaps.Keys));
             Match m = Regex.Match(sizeString, sizeStringPattern, RegexOptions.IgnoreCase);
             if (!m.Success)
@@ -78,7 +78,7 @@ namespace PureLib.Common {
             string unit = m.Groups[unitName].Value.ToLower();
             if (!unit.IsNullOrEmpty())
                 result *= unitKeyValueMaps[unit];
-            return result;
+            return (long)result;
         }
 
         /// <summary>
