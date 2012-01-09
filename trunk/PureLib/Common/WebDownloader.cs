@@ -24,17 +24,27 @@ namespace PureLib.Common {
         /// Initializes a new instance of WebDownloader with one thread.
         /// </summary>
         public WebDownloader()
-            : this(1) {
+            : this(null, 1) {
         }
 
         /// <summary>
         /// Initializes a new instance of WebDownloader with specified thread(s).
         /// </summary>
         /// <param name="threadCount"></param>
-        public WebDownloader(int threadCount) {
+        public WebDownloader(int threadCount)
+            : this(null, threadCount) {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of WebDownloader with provided items and specified thread(s).
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="threadCount"></param>
+        public WebDownloader(List<DownloadItem> items, int threadCount) {
+            SetThreadCount(threadCount);
+
             _clientItemMaps = new Dictionary<AdvancedWebClient, DownloadItem>();
-            _items = new List<DownloadItem>();
-            ThreadCount = threadCount;
+            _items = items ?? new List<DownloadItem>();
         }
 
         /// <summary>
@@ -42,8 +52,12 @@ namespace PureLib.Common {
         /// </summary>
         /// <param name="count"></param>
         public void SetThreadCount(int count) {
+            if (count <= 0)
+                throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
+
             ThreadCount = count;
-            StartDownloading();
+            for (int i = 0; i < ThreadCount; i++)
+                StartDownloading();
         }
 
         /// <summary>
@@ -51,6 +65,9 @@ namespace PureLib.Common {
         /// </summary>
         /// <param name="item"></param>
         public void AddItem(DownloadItem item) {
+            if (item == null)
+                throw new ArgumentNullException("Download item is null.");
+
             _items.Add(item);
             if (item.State == DownloadItemState.Queued)
                 StartDownloading();
