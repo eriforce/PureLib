@@ -45,10 +45,9 @@ namespace PureLib.Common {
         /// <param name="items"></param>
         /// <param name="threadCount"></param>
         public WebDownloader(List<DownloadItem> items, int threadCount) {
-            StartDownloading(threadCount);
-
             _clientItemMaps = new Dictionary<AdvancedWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
+            StartDownloading(threadCount);
         }
 
         /// <summary>
