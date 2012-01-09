@@ -21,8 +21,12 @@ namespace PureLib.Common {
         /// </summary>
         Queued,
         /// <summary>
-        /// Indicates item id completed.
+        /// Indicates item is completed.
         /// </summary>
-        Completed
+        Completed,
+        /// <summary>
+        /// Indicates error occurred while downloading.
+        /// </summary>
+        Error,
     }
 }

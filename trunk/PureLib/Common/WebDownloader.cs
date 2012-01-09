@@ -19,6 +19,10 @@ namespace PureLib.Common {
         /// Indicates download thread count
         /// </summary>
         public int ThreadCount { get; private set; }
+        /// <summary>
+        /// Indicates if downloader stopped
+        /// </summary>
+        public bool IsStopped { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of WebDownloader with one thread.
@@ -41,7 +45,7 @@ namespace PureLib.Common {
         /// <param name="items"></param>
         /// <param name="threadCount"></param>
         public WebDownloader(List<DownloadItem> items, int threadCount) {
-            SetThreadCount(threadCount);
+            StartDownloading(threadCount);
 
             _clientItemMaps = new Dictionary<AdvancedWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
@@ -50,14 +54,14 @@ namespace PureLib.Common {
         /// <summary>
         /// Sets the thread count.
         /// </summary>
-        /// <param name="count"></param>
-        public void SetThreadCount(int count) {
-            if (count <= 0)
+        /// <param name="threadCount"></param>
+        public void StartDownloading(int threadCount) {
+            if (threadCount <= 0)
                 throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
 
-            ThreadCount = count;
+            ThreadCount = threadCount;
             for (int i = 0; i < ThreadCount; i++)
-                StartDownloading();
+                Download();
         }
 
         /// <summary>
@@ -70,10 +74,34 @@ namespace PureLib.Common {
 
             _items.Add(item);
             if (item.State == DownloadItemState.Queued)
-                StartDownloading();
+                Download();
         }
 
-        private void StartDownloading() {
+        /// <summary>
+        /// Stops all items including downloading ones.
+        /// </summary>
+        public void StopAll() {
+            foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Queued)) {
+                i.State = DownloadItemState.Stopped;
+            }
+            foreach (var p in _clientItemMaps) {
+                p.Key.CancelAsync();
+            }
+            IsStopped = true;
+        }
+
+        /// <summary>
+        /// Resumes all stopped items to start downloading.
+        /// </summary>
+        public void ResumeAll() {
+            foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Stopped)) {
+                i.State = DownloadItemState.Queued;
+            }
+            StartDownloading(ThreadCount);
+            IsStopped = false;
+        }
+
+        private void Download() {
             lock (this) {
                 if (_downloadingCount < ThreadCount) {
                     DownloadItem item = _items.FirstOrDefault(i => i.State == DownloadItemState.Queued);
@@ -101,10 +129,14 @@ namespace PureLib.Common {
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
             AdvancedWebClient client = (AdvancedWebClient)sender;
             DownloadItem item = _clientItemMaps[client];
-            item.State = DownloadItemState.Completed;
             _downloadingCount--;
+            if (e.Cancelled)
+                item.State = DownloadItemState.Stopped;
+            else {
+                item.State = DownloadItemState.Completed;
+                Download();
+            }
             _clientItemMaps.Remove(client);
-            StartDownloading();
         }
     }
 }
