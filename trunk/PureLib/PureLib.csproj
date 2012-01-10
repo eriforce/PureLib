@@ -59,6 +59,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Common\Entities\Arguments.cs" />
+    <Compile Include="Common\Entities\ResumableWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Common\JsonFormatter.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\Type\DateTimeUnit.cs" />
     <Compile Include="Common\Type\DownloadItem.cs" />
