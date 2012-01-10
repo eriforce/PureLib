@@ -7,29 +7,13 @@ using System.Text.RegularExpressions;
 using PureLib.Properties;
 
 namespace PureLib.Common {
-    /// <summary>
-    /// Provides common methods.
-    /// </summary>
     public static class Utility {
         private const string pairFormat = "{0} {1}";
 
-        /// <summary>
-        /// Gets friendly string of size.
-        /// </summary>
-        /// <param name="size"></param>
-        /// <param name="digits"></param>
-        /// <returns></returns>
         public static string ToFriendlyString(decimal size, int digits = 2) {
             return ToFriendlyString(size, null, digits);
         }
 
-        /// <summary>
-        /// Gets friendly string of size.
-        /// </summary>
-        /// <param name="size"></param>
-        /// <param name="unitNames"></param>
-        /// <param name="digits"></param>
-        /// <returns></returns>
         public static string ToFriendlyString(decimal size, Dictionary<SizeUnit, string> unitNames, int digits = 2) {
             int maxIndex = Enum.GetValues(typeof(SizeUnit)).Length - 1;
             int unitIndex = 0;
@@ -41,15 +25,6 @@ namespace PureLib.Common {
             return pairFormat.FormatWith(Math.Round(size, digits), unit.ToDisplayName(unitNames));
         }
 
-        /// <summary>
-        /// Gets friendly string of timespan.
-        /// </summary>
-        /// <param name="ts"></param>
-        /// <param name="truncateUnit"></param>
-        /// <param name="truncateToInteger"></param>
-        /// <param name="truncateDigits"></param>
-        /// <param name="separator"></param>
-        /// <returns></returns>
         public static string ToFriendlyString(this TimeSpan ts, DateTimeUnit? truncateUnit = null, 
             bool truncateToInteger = false, int truncateDigits = 3, string separator = null) {
                 List<string> parts = new List<string>();
@@ -57,11 +32,6 @@ namespace PureLib.Common {
                 return string.Join(separator.IsNullOrEmpty() ? Resources.Comma : separator, parts);
         }
 
-        /// <summary>
-        /// Parses the data size.
-        /// </summary>
-        /// <param name="sizeString"></param>
-        /// <returns></returns>
         public static long ParseDataSize(string sizeString) {
             const string numberName = "number";
             const string unitName = "unit";
@@ -81,23 +51,12 @@ namespace PureLib.Common {
             return (long)result;
         }
 
-        /// <summary>
-        /// Gets the duration of the code execution.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
         public static TimeSpan GetExecutingDuration(Action action) {
             DateTime start = DateTime.UtcNow;
             action();
             return DateTime.UtcNow - start;
         }
 
-        /// <summary>
-        /// Gets the number of weekdays in a period.
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
         public static int GetWeekdayCount(DateTime start, DateTime end) {
             int dayCount = 0;
             int daysRemain = 0;
@@ -112,59 +71,26 @@ namespace PureLib.Common {
             return dayCount + daysRemain;
         }
 
-        /// <summary>
-        /// Indicates whether the specified System.String object is null or an System.String.Empty string.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
         public static bool IsNullOrEmpty(this string str) {
             return string.IsNullOrEmpty(str);
         }
 
-        /// <summary>
-        /// Replaces the format item in a specified System.String with the text equivalent of 
-        /// the value of a corresponding System.Object instance in a specified array.
-        /// </summary>
-        /// <param name="format"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public static string FormatWith(this string format, params object[] args) {
             return string.Format(format, args);
         }
 
-        /// <summary>
-        /// Returns the time string in ISO8601 format.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <returns></returns>
         public static string ToIso8601(this DateTime time) {
             return time.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
         }
 
-        /// <summary>
-        /// Converts an array of 8-bit unsigned integers to its equivalent System.String representation encoded with base 64 digits.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
         public static string ToBase64String(this byte[] bytes) {
             return Convert.ToBase64String(bytes);
         }
 
-        /// <summary>
-        /// Converts the specified System.String, which encodes binary data as base 64 digits,
-        /// to an equivalent 8-bit unsigned integer array.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
         public static byte[] FromBase64String(this string str) {
             return Convert.FromBase64String(str);
         }
 
-        /// <summary>
-        /// Converts an array of 8-bit unsigned integers to its equivalent hexadecimal System.String representation.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
         public static string ToHexString(this byte[] bytes) {
             StringBuilder sb = new StringBuilder();
             foreach (var b in bytes) {
@@ -173,11 +99,6 @@ namespace PureLib.Common {
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Converts the specified hexadecimal System.String to an equivalent 8-bit unsigned integer array.
-        /// </summary>
-        /// <param name="hex"></param>
-        /// <returns></returns>
         public static byte[] FromHexString(this string hex) {
             if (hex.IsNullOrEmpty() || (hex.Length % 2 != 0))
                 return null;
@@ -190,30 +111,14 @@ namespace PureLib.Common {
             return bytes;
         }
 
-        /// <summary>
-        /// Gets the instance of a type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T GetInstance<T>() {
             return Activator.CreateInstance<T>();
         }
 
-        /// <summary>
-        /// Gets the instance of a type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public static T GetInstance<T>(params object[] args) {
             return (T)Activator.CreateInstance(typeof(T), args);
         }
 
-        /// <summary>
-        /// Indicates whether the RGB represents a dark color.
-        /// </summary>
-        /// <param name="rgb"></param>
-        /// <returns></returns>
         public static bool IsDarkColor(byte[] rgb) {
             if (rgb.Length != 3)
                 throw new ArgumentException("RGB array is invalid.");

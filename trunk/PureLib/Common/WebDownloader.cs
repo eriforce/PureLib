@@ -7,53 +7,28 @@ using System.Text;
 using PureLib.Common.Entities;
 
 namespace PureLib.Common {
-    /// <summary>
-    /// Provides ability to download a list of items.
-    /// </summary>
     public class WebDownloader {
         private Dictionary<AdvancedWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
         private int _downloadingCount;
 
-        /// <summary>
-        /// Indicates download thread count
-        /// </summary>
         public int ThreadCount { get; private set; }
-        /// <summary>
-        /// Indicates if downloader stopped
-        /// </summary>
         public bool IsStopped { get; private set; }
 
-        /// <summary>
-        /// Initializes a new instance of WebDownloader with one thread.
-        /// </summary>
         public WebDownloader()
             : this(null, 1) {
         }
 
-        /// <summary>
-        /// Initializes a new instance of WebDownloader with specified thread(s).
-        /// </summary>
-        /// <param name="threadCount"></param>
         public WebDownloader(int threadCount)
             : this(null, threadCount) {
         }
 
-        /// <summary>
-        /// Initializes a new instance of WebDownloader with provided items and specified thread(s).
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="threadCount"></param>
         public WebDownloader(List<DownloadItem> items, int threadCount) {
             _clientItemMaps = new Dictionary<AdvancedWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
             StartDownloading(threadCount);
         }
 
-        /// <summary>
-        /// Sets the thread count.
-        /// </summary>
-        /// <param name="threadCount"></param>
         public void StartDownloading(int threadCount) {
             if (threadCount <= 0)
                 throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
@@ -63,10 +38,6 @@ namespace PureLib.Common {
                 Download();
         }
 
-        /// <summary>
-        /// Adds an item to download list.
-        /// </summary>
-        /// <param name="item"></param>
         public void AddItem(DownloadItem item) {
             if (item == null)
                 throw new ArgumentNullException("Download item is null.");
@@ -76,9 +47,6 @@ namespace PureLib.Common {
                 Download();
         }
 
-        /// <summary>
-        /// Stops all items including downloading ones.
-        /// </summary>
         public void StopAll() {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Queued)) {
                 i.State = DownloadItemState.Stopped;
@@ -89,9 +57,6 @@ namespace PureLib.Common {
             IsStopped = true;
         }
 
-        /// <summary>
-        /// Resumes all stopped items to start downloading.
-        /// </summary>
         public void ResumeAll() {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Stopped)) {
                 i.State = DownloadItemState.Queued;

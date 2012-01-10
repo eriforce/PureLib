@@ -7,29 +7,13 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace PureLib.Common {
-    /// <summary>
-    /// Provides methods to serialize and deserialize objects to XML or binary.
-    /// </summary>
     public static class Serializer {
-        /// <summary>
-        /// Serializes an object and write the XML string to disk.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="obj"></param>
-        /// <param name="indent"></param>
-        /// <param name="fileMode"></param>
         public static void WriteToXml(this string path, object obj, bool indent = true, FileMode fileMode = FileMode.Create) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
                 ToXml(obj, stream, indent);
             }
         }
 
-        /// <summary>
-        /// Serializes an object to XML string.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="indent"></param>
-        /// <returns></returns>
         public static string ToXml(this object obj, bool indent = true) {
             byte[] buffer = null;
             using (MemoryStream stream = new MemoryStream()) {
@@ -46,25 +30,12 @@ namespace PureLib.Common {
             }
         }
 
-        /// <summary>
-        /// Deserializes an object from the XML string read from disk.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="path"></param>
-        /// <param name="fileMode"></param>
-        /// <returns></returns>
         public static T ReadFromXml<T>(this string path, FileMode fileMode = FileMode.Open) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
                 return FromXml<T>(stream);
             }
         }
 
-        /// <summary>
-        /// Deserializes an object from XML string.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="xml"></param>
-        /// <returns></returns>
         public static T FromXml<T>(this string xml) {
             using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml))) {
                 return FromXml<T>(stream);
@@ -80,23 +51,12 @@ namespace PureLib.Common {
             return obj;
         }
 
-        /// <summary>
-        /// Serializes an object and write the binary to disk.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="obj"></param>
-        /// <param name="fileMode"></param>
         public static void WriteToBinary(this string path, object obj, FileMode fileMode = FileMode.Create) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
                 ToBinary(obj, stream);
             }
         }
 
-        /// <summary>
-        /// Serializes an object to binary data.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public static byte[] ToBinary(this object obj) {
             using (MemoryStream stream = new MemoryStream()) {
                 ToBinary(obj, stream);
@@ -109,25 +69,12 @@ namespace PureLib.Common {
             formatter.Serialize(stream, obj);
         }
 
-        /// <summary>
-        /// Deserializes an object from the binary data read from disk.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="path"></param>
-        /// <param name="fileMode"></param>
-        /// <returns></returns>
         public static T ReadFromBinary<T>(this string path, FileMode fileMode = FileMode.Open) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
                 return FromBinary<T>(stream);
             }
         }
 
-        /// <summary>
-        /// Deserializes an object from binary data.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="binary"></param>
-        /// <returns></returns>
         public static T FromBinary<T>(this byte[] binary) {
             using (MemoryStream stream = new MemoryStream(binary)) {
                 return FromBinary<T>(stream);

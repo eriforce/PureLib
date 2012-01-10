@@ -6,15 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PureLib.Common.Entities {
-    /// <summary>
-    /// A structure of the startup arguments from command-line.
-    /// </summary>
     [Serializable]
     public class Arguments : Dictionary<string, List<string>> {
-        /// <summary>
-        /// Initializes a new instance of Arguments.
-        /// </summary>
-        /// <param name="args"></param>
         public Arguments(string[] args) : base(StringComparer.OrdinalIgnoreCase) {
             if ((args == null) || (args.Length == 0))
                 return;
@@ -33,20 +26,10 @@ namespace PureLib.Common.Entities {
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of Arguments with serialized data.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
         protected Arguments(SerializationInfo info, StreamingContext context)
             : base(info, context) {
         }
 
-        /// <summary>
-        /// Gets the value by provided key.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public string GetValue(string key) {
             if (!ContainsKey(key))
                 throw new ApplicationException("The key cannot be found in arguments.");

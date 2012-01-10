@@ -7,71 +7,31 @@ using System.IO;
 using Microsoft.VisualBasic;
 
 namespace PureLib.Common {
-    /// <summary>
-    /// Providers methods about string conversion.
-    /// </summary>
     public static class LanguageHelper {
-        /// <summary>
-        /// Resolves the unreadable codes cause by wrong decoding charset applied.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="src"></param>
-        /// <param name="dst"></param>
-        /// <returns></returns>
         public static string ResolveUnreadableCodes(this string text, Encoding src, Encoding dst) {
             return dst.GetString(src.GetBytes(text));
         }
 
-        /// <summary>
-        /// Converts the first letter of every word in the string to uppercase.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         public static string ToProperCase(this string text) {
             return Strings.StrConv(text, VbStrConv.ProperCase);
         }
 
-        /// <summary>
-        /// Converts wide (double-byte) characters in the string to narrow (single-byte) characters. Applies to Asian locales.
-        /// </summary>
-        /// <param name="wide"></param>
-        /// <returns></returns>
         public static string ToNarrow(this string wide) {
             return Strings.StrConv(wide, VbStrConv.Narrow);
         }
 
-        /// <summary>
-        /// Converts narrow (single-byte) characters in the string to wide (double-byte) characters. Applies to Asian locales.
-        /// </summary>
-        /// <param name="narrow"></param>
-        /// <returns></returns>
         public static string ToWide(this string narrow) {
             return Strings.StrConv(narrow, VbStrConv.Wide);
         }
 
-        /// <summary>
-        /// Converts Hiragana characters in the string to Katakana characters.
-        /// </summary>
-        /// <param name="hiragana"></param>
-        /// <returns></returns>
         public static string ToKatakana(this string hiragana) {
             return ConvertJapanese(hiragana, HiraganaToKatakanaMethodName);
         }
 
-        /// <summary>
-        /// Converts Katakana characters in the string to Hiragana characters.
-        /// </summary>
-        /// <param name="katakana"></param>
-        /// <returns></returns>
         public static string ToHiragana(this string katakana) {
             return ConvertJapanese(katakana, KatakanaToHiraganaMethodName);
         }
 
-        /// <summary>
-        /// Parse Romaji to Hiragana characters in the string.
-        /// </summary>
-        /// <param name="romaji"></param>
-        /// <returns></returns>
         public static string ParseRomaji(this string romaji) {
             return ConvertJapanese(romaji, RomajiToHiraganaMethodName);
         }
@@ -82,20 +42,10 @@ namespace PureLib.Common {
             return method.Invoke(null, new object[] { text }) as string;
         }
 
-        /// <summary>
-        /// Converts the string to Simplified Chinese characters.
-        /// </summary>
-        /// <param name="traditional"></param>
-        /// <returns></returns>
         public static string ToSimplifiedChinese(this string traditional) {
             return ConvertChinese(traditional, Direction.TraditionalToSimplified);
         }
 
-        /// <summary>
-        /// Converts the string to Traditional Chinese characters.
-        /// </summary>
-        /// <param name="simplified"></param>
-        /// <returns></returns>
         public static string ToTraditionalChinese(this string simplified) {
             return ConvertChinese(simplified, Direction.SimplifiedToTraditional);
         }

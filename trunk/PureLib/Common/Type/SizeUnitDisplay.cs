@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 
 namespace PureLib.Common {
-    /// <summary>
-    /// Provides SizeUnit display methods.
-    /// </summary>
     internal static class SizeUnitDisplay {
         private static readonly Dictionary<SizeUnit, string> defaultUnitNames = new Dictionary<SizeUnit, string>() {
             { SizeUnit.Byte,      "B"  },
@@ -20,12 +17,6 @@ namespace PureLib.Common {
             { SizeUnit.Yottabyte, "YB" },
         };
 
-        /// <summary>
-        /// Gets display name of size unit.
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <param name="unitNames"></param>
-        /// <returns></returns>
         public static string ToDisplayName(this SizeUnit unit, Dictionary<SizeUnit, string> unitNames) {
             string displayName;
             if (unitNames == null || !unitNames.TryGetValue(unit, out displayName))

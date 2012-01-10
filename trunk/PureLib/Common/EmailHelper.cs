@@ -7,29 +7,14 @@ using System.Net.Mail;
 using System.Text;
 
 namespace PureLib.Common {
-    /// <summary>
-    /// Provides methods to send email.
-    /// </summary>
     public static class EmailHelper {
         private static readonly char[] mailAddressSeparators = new char[] { ';', ',' };
         private static MailMessage message;
 
-        /// <summary>
-        /// Represents the token string in HTML template.
-        /// </summary>
         public const string htmlTemplateToken = "%%";
 
-        /// <summary>
-        /// Occurs when an asynchronous e-mail send operation completes.
-        /// </summary>
         public static event SendCompletedEventHandler SendCompleted;
 
-        /// <summary>
-        /// Gets content from HTML template.
-        /// </summary>
-        /// <param name="htmlTemplate"></param>
-        /// <param name="tokens"></param>
-        /// <returns></returns>
         public static string GetContentFromHtmlTemplate(string htmlTemplate, Dictionary<string, string> tokens) {
             string[] parts = htmlTemplate.Split(new string[] { htmlTemplateToken }, StringSplitOptions.RemoveEmptyEntries);
             StringBuilder sb = new StringBuilder();
@@ -43,23 +28,6 @@ namespace PureLib.Common {
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Sends a email.
-        /// </summary>
-        /// <param name="host"></param>
-        /// <param name="port"></param>
-        /// <param name="enableSsl"></param>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <param name="senderName"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <param name="subject"></param>
-        /// <param name="body"></param>
-        /// <param name="isBodyHtml"></param>
-        /// <param name="sendAsync"></param>
-        /// <param name="cc"></param>
-        /// <param name="bcc"></param>
         public static void SendMail(string host, int port, bool enableSsl, string userName, string password, string senderName, string from, string to,
             string subject, string body, bool isBodyHtml, bool sendAsync, string cc = null, string bcc = null) {
 
