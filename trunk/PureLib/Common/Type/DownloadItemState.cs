@@ -6,8 +6,8 @@ using System.Text;
 namespace PureLib.Common {
     public enum DownloadItemState {
         Stopped,
-        Downloading,
         Queued,
+        Downloading,
         Completed,
         Error,
     }

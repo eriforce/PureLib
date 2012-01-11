@@ -14,7 +14,11 @@ namespace PureLib.Common {
         private int _downloadingCount;
 
         public int ThreadCount { get; private set; }
-        public bool IsStopped { get; private set; }
+        public bool IsStopped {
+            get {
+                return _clientItemMaps.Count == 0;
+            }
+        }
 
         public WebDownloader()
             : this(null, 1) {
@@ -28,6 +32,10 @@ namespace PureLib.Common {
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
             StartDownloading(threadCount);
+        }
+
+        public void StartDownloading() {
+            StartDownloading(ThreadCount);
         }
 
         public void StartDownloading(int threadCount) {
@@ -55,7 +63,6 @@ namespace PureLib.Common {
             foreach (var p in _clientItemMaps) {
                 p.Key.CancelAsync();
             }
-            IsStopped = true;
         }
 
         public void ResumeAll() {
@@ -63,7 +70,6 @@ namespace PureLib.Common {
                 i.State = DownloadItemState.Queued;
             }
             StartDownloading(ThreadCount);
-            IsStopped = false;
         }
 
         private void Download() {
