@@ -29,22 +29,21 @@ namespace PureLib.Common {
         }
 
         public WebDownloader(List<DownloadItem> items, int threadCount) {
+            SetThreadCount(threadCount);
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
-            StartDownloading(threadCount);
         }
 
         public void StartDownloading() {
-            StartDownloading(ThreadCount);
+            for (int i = 0; i < ThreadCount; i++)
+                Download();
         }
 
-        public void StartDownloading(int threadCount) {
+        public void SetThreadCount(int threadCount) {
             if (threadCount <= 0)
                 throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
 
             ThreadCount = threadCount;
-            for (int i = 0; i < ThreadCount; i++)
-                Download();
         }
 
         public void AddItem(DownloadItem item) {
@@ -69,7 +68,7 @@ namespace PureLib.Common {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Stopped)) {
                 i.State = DownloadItemState.Queued;
             }
-            StartDownloading(ThreadCount);
+            StartDownloading();
         }
 
         private void Download() {

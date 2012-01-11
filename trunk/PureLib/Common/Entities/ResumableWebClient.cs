@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using PureLib.Common;
-using System.ComponentModel;
 
 namespace PureLib.Common.Entities {
     public sealed class ResumableWebClient : IAsyncWebClient, IDisposable {
