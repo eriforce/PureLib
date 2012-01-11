@@ -14,6 +14,7 @@ namespace PureLib.Common {
         public virtual DownloadItemState State { get; set; }
         public virtual long TotalBytes { get; set; }
         public virtual long ReceivedBytes { get; set; }
+        public virtual int Percentage { get; set; }
 
         public DownloadItem(string url, string referer, CookieContainer cookies, string path) {
             Url = url;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -88,16 +89,28 @@ namespace PureLib.Common {
             DownloadItem item = _clientItemMaps[(AdvancedWebClient)sender];
             item.TotalBytes = e.TotalBytesToReceive;
             item.ReceivedBytes = e.BytesReceived;
+            item.Percentage = e.ProgressPercentage;
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
             AdvancedWebClient client = (AdvancedWebClient)sender;
             DownloadItem item = _clientItemMaps[client];
             _downloadingCount--;
-            if (e.Cancelled)
+            if (e.Cancelled) {
                 item.State = DownloadItemState.Stopped;
+                FileInfo file = new FileInfo(item.Path);
+                if (file.Exists) {
+                    item.ReceivedBytes = file.Length;
+                    if (item.TotalBytes > 0)
+                        item.Percentage = (int)((item.ReceivedBytes * 100) / item.TotalBytes);
+                }
+            }
             else {
                 item.State = DownloadItemState.Completed;
+                if (item.TotalBytes == 0)
+                    item.TotalBytes = new FileInfo(item.Path).Length;
+                item.ReceivedBytes = item.TotalBytes;
+                item.Percentage = 100;
                 Download();
             }
             _clientItemMaps.Remove(client);
