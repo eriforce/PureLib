@@ -39,6 +39,7 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -67,6 +68,7 @@
     <Compile Include="Common\Type\DateTimeUnit.cs" />
     <Compile Include="Common\Type\DownloadItem.cs" />
     <Compile Include="Common\Type\DownloadItemState.cs" />
+    <Compile Include="Common\Entities\IAsyncWebClient.cs" />
     <Compile Include="Common\Type\SizeUnitDisplay.cs" />
     <Compile Include="Common\Type\SizeUnit.cs" />
     <Compile Include="Common\Utility.cs" />

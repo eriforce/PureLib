@@ -5,7 +5,7 @@ using System.Text;
 using System.Net;
 
 namespace PureLib.Common.Entities {
-    public class AdvancedWebClient : WebClient {
+    public class AdvancedWebClient : WebClient, IAsyncWebClient {
         private string referer;
         private CookieContainer cookies;
 

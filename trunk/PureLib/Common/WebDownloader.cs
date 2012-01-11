@@ -9,7 +9,7 @@ using PureLib.Common.Entities;
 
 namespace PureLib.Common {
     public class WebDownloader {
-        private Dictionary<AdvancedWebClient, DownloadItem> _clientItemMaps;
+        private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
         private int _downloadingCount;
 
@@ -25,7 +25,7 @@ namespace PureLib.Common {
         }
 
         public WebDownloader(List<DownloadItem> items, int threadCount) {
-            _clientItemMaps = new Dictionary<AdvancedWebClient, DownloadItem>();
+            _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
             StartDownloading(threadCount);
         }
@@ -74,12 +74,15 @@ namespace PureLib.Common {
                         item.State = DownloadItemState.Downloading;
                         _downloadingCount++;
 
-                        using (AdvancedWebClient client = new AdvancedWebClient(item.Referer, item.Cookies)) {
-                            _clientItemMaps.Add(client, item);
-                            client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
-                            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                            client.DownloadFileAsync(new Uri(item.Url), item.Path);
-                        }
+                        object[] parameters = new object[] { item.Referer, item.Cookies };
+                        IAsyncWebClient client = File.Exists(item.Path) ?
+                            (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
+                            (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
+                        _clientItemMaps.Add(client, item);
+                        client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
+                        if (client is AdvancedWebClient)
+                            ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+                        client.DownloadFileAsync(new Uri(item.Url), item.Path);
                     }
                 }
             }
@@ -93,7 +96,7 @@ namespace PureLib.Common {
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
-            AdvancedWebClient client = (AdvancedWebClient)sender;
+            dynamic client = sender;
             DownloadItem item = _clientItemMaps[client];
             _downloadingCount--;
             if (e.Cancelled) {
@@ -114,6 +117,7 @@ namespace PureLib.Common {
                 Download();
             }
             _clientItemMaps.Remove(client);
+            client.Dispose();
         }
     }
 }

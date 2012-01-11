@@ -6,13 +6,14 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using PureLib.Common;
+using System.ComponentModel;
 
 namespace PureLib.Common.Entities {
-    public sealed class ResumableWebClient : IDisposable {
+    public sealed class ResumableWebClient : IAsyncWebClient, IDisposable {
         private ResumableInternalWebClient client;
 
+        public event AsyncCompletedEventHandler DownloadFileCompleted;
         public event EventHandler RequestRangeNotSatisfiable;
-        public event EventHandler DownloadCancelled;
 
         public ResumableWebClient()
             : this(null, null) {
@@ -53,9 +54,10 @@ namespace PureLib.Common.Entities {
                 using (FileStream stream = new FileStream(fileName, FileMode.Append)) {
                     try {
                         e.Result.CopyTo(stream);
+                        OnDownloadFileCompleted(false);
                     }
                     catch (WebException) {
-                        OnDownloadCancelled();
+                        OnDownloadFileCompleted(true);
                     }
                     catch (TargetInvocationException) {
                         OnRequestRangeNotSatisfiable();
@@ -64,14 +66,14 @@ namespace PureLib.Common.Entities {
             }
         }
 
+        private void OnDownloadFileCompleted(bool isCancelled) {
+            if (DownloadFileCompleted != null)
+                DownloadFileCompleted(this, new AsyncCompletedEventArgs(null, isCancelled, null));
+        }
+
         private void OnRequestRangeNotSatisfiable() {
             if (RequestRangeNotSatisfiable != null)
                 RequestRangeNotSatisfiable(this, new EventArgs());
-        }
-
-        private void OnDownloadCancelled() {
-            if (DownloadCancelled != null)
-                DownloadCancelled(this, new EventArgs());
         }
     }
 
