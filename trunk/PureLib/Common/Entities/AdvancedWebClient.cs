@@ -45,8 +45,10 @@ namespace PureLib.Common.Entities {
         protected override WebRequest GetWebRequest(Uri address) {
             HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
             request.Referer = referer;
-            if (!userName.IsNullOrEmpty() || !password.IsNullOrEmpty())
+            if (!userName.IsNullOrEmpty() || !password.IsNullOrEmpty()) {
+                request.Credentials = new NetworkCredential(userName, password);
                 request.Headers.Set(BasicAuthenticationHeaderName, GetBasicAuthenticationHeader(userName, password));
+            }
             request.CookieContainer = cookies;
             return request;
         }
