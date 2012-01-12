@@ -89,14 +89,14 @@ namespace PureLib.Common {
                         _downloadingCount++;
 
                         object[] parameters = new object[] { item.Referer, item.Cookies };
-                        IAsyncWebClient client = File.Exists(item.Path) ?
+                        IAsyncWebClient client = File.Exists(item.FilePath) ?
                             (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
                             (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
                         _clientItemMaps.Add(client, item);
                         client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
                         if (client is AdvancedWebClient)
                             ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                        client.DownloadFileAsync(new Uri(item.Url), item.Path);
+                        client.DownloadFileAsync(new Uri(item.Url), item.FilePath);
                     }
                 }
             }
@@ -115,7 +115,7 @@ namespace PureLib.Common {
             _downloadingCount--;
             if (e.Cancelled) {
                 item.State = DownloadItemState.Stopped;
-                FileInfo file = new FileInfo(item.Path);
+                FileInfo file = new FileInfo(item.FilePath);
                 if (file.Exists) {
                     item.ReceivedBytes = file.Length;
                     if (item.TotalBytes > 0)
@@ -125,7 +125,7 @@ namespace PureLib.Common {
             else {
                 item.State = DownloadItemState.Completed;
                 if (item.TotalBytes == 0)
-                    item.TotalBytes = new FileInfo(item.Path).Length;
+                    item.TotalBytes = new FileInfo(item.FilePath).Length;
                 item.ReceivedBytes = item.TotalBytes;
                 item.Percentage = 100;
                 Download();
