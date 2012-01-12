@@ -55,6 +55,15 @@ namespace PureLib.Common {
                 Download();
         }
 
+        public void AddItems(List<DownloadItem> items) {
+            if (items == null)
+                throw new ArgumentNullException("Download items are null.");
+
+            _items.AddRange(items);
+            if (items.Any(i => i.State == DownloadItemState.Queued))
+                StartDownloading();
+        }
+
         public void StopAll() {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Queued)) {
                 i.State = DownloadItemState.Stopped;

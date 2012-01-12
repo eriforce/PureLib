@@ -16,19 +16,23 @@ namespace PureLib.Common.Entities {
         public event EventHandler RequestRangeNotSatisfiable;
 
         public ResumableWebClient()
-            : this(null, null) {
+            : this(null, null, null, null) {
         }
 
         public ResumableWebClient(string referer)
-            : this(referer, null) {
+            : this(referer, null, null, null) {
+        }
+
+        public ResumableWebClient(string userName, string password)
+            : this(null, userName, password, null) {
         }
 
         public ResumableWebClient(CookieContainer cookies)
-            : this(null, cookies) {
+            : this(null, null, null, cookies) {
         }
 
-        public ResumableWebClient(string referer, CookieContainer cookies) {
-            client = new ResumableInternalWebClient(referer, cookies);
+        public ResumableWebClient(string referer, string userName, string password, CookieContainer cookies) {
+            client = new ResumableInternalWebClient(referer, userName, password, cookies);
             client.OpenReadCompleted += new OpenReadCompletedEventHandler(OpenReadCompleted);
         }
 
@@ -80,8 +84,8 @@ namespace PureLib.Common.Entities {
     internal class ResumableInternalWebClient : AdvancedWebClient {
         public string FileName { get; set; }
 
-        public ResumableInternalWebClient(string referer, CookieContainer cookies)
-            : base(referer, cookies) {
+        public ResumableInternalWebClient(string referer, string userName, string password, CookieContainer cookies)
+            : base(referer, userName, password, cookies) {
         }
 
         protected override WebRequest GetWebRequest(Uri address) {
