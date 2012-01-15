@@ -70,7 +70,7 @@ namespace PureLib.Common {
                 StartDownloading();
         }
 
-        public void StopAll() {
+        public void StopAllItems() {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Queued)) {
                 i.State = DownloadItemState.Stopped;
             }
@@ -79,7 +79,7 @@ namespace PureLib.Common {
             }
         }
 
-        public void ResumeAll() {
+        public void ResumeAllItems() {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Stopped)) {
                 i.State = DownloadItemState.Queued;
             }
@@ -94,7 +94,7 @@ namespace PureLib.Common {
                         item.State = DownloadItemState.Downloading;
                         _downloadingCount++;
 
-                        object[] parameters = new object[] { item.Referer, item.Cookies };
+                        object[] parameters = new object[] { item.Referer, null, null, item.Cookies };
                         IAsyncWebClient client = File.Exists(item.FilePath) ?
                             (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
                             (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
