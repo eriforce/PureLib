@@ -32,6 +32,9 @@ namespace PureLib.Common {
             SetThreadCount(threadCount, false);
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
+            foreach (DownloadItem item in _items) {
+                item.StateChanged += new DownloadItemStateChangedEventHandler(ItemStateChanged);
+            }
         }
 
         public void StartDownloading() {
@@ -56,6 +59,7 @@ namespace PureLib.Common {
             if (item == null)
                 throw new ArgumentNullException("Download item is null.");
 
+            item.StateChanged += new DownloadItemStateChangedEventHandler(ItemStateChanged);
             _items.Add(item);
             if (item.State == DownloadItemState.Queued)
                 StartDownloading();
@@ -65,6 +69,9 @@ namespace PureLib.Common {
             if (items == null)
                 throw new ArgumentNullException("Download items are null.");
 
+            foreach (DownloadItem item in items) {
+                item.StateChanged += new DownloadItemStateChangedEventHandler(ItemStateChanged);
+            }
             _items.AddRange(items);
             if (items.Any(i => i.State == DownloadItemState.Queued))
                 StartDownloading();
@@ -84,6 +91,22 @@ namespace PureLib.Common {
                 i.State = DownloadItemState.Queued;
             }
             StartDownloading();
+        }
+
+        private void ItemStateChanged(object sender, DownloadItemStateChangedEventArgs e) {
+            switch (e.NewState) {
+                case DownloadItemState.Queued:
+                    StartDownloading();
+                    break;
+                case DownloadItemState.Stopped:
+                    foreach (var p in _clientItemMaps) {
+                        if (p.Value == e.DownloadItem) {
+                            p.Key.CancelAsync();
+                            break;
+                        }
+                    }
+                    break;
+            }
         }
 
         private void Download() {
