@@ -29,12 +29,14 @@ namespace PureLib.Common {
         }
 
         public WebDownloader(List<DownloadItem> items, int threadCount) {
-            SetThreadCount(threadCount, false);
+            CheckThreadCount(threadCount);
+
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
             foreach (DownloadItem item in _items) {
-                item.StateChanged += new DownloadItemStateChangedEventHandler(ItemStateChanged);
+                item.StateChanged += ItemStateChanged;
             }
+            SetThreadCount(threadCount);
         }
 
         public void StartDownloading() {
@@ -46,20 +48,18 @@ namespace PureLib.Common {
             }
         }
 
-        public void SetThreadCount(int threadCount, bool shouldTriggerDownload = true) {
-            if (threadCount <= 0)
-                throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
+        public void SetThreadCount(int threadCount) {
+            CheckThreadCount(threadCount);
 
             ThreadCount = threadCount;
-            if (shouldTriggerDownload)
-                StartDownloading();
+            StartDownloading();
         }
 
         public void AddItem(DownloadItem item) {
             if (item == null)
                 throw new ArgumentNullException("Download item is null.");
 
-            item.StateChanged += new DownloadItemStateChangedEventHandler(ItemStateChanged);
+            item.StateChanged += ItemStateChanged;
             _items.Add(item);
             if (item.State == DownloadItemState.Queued)
                 StartDownloading();
@@ -70,7 +70,7 @@ namespace PureLib.Common {
                 throw new ArgumentNullException("Download items are null.");
 
             foreach (DownloadItem item in items) {
-                item.StateChanged += new DownloadItemStateChangedEventHandler(ItemStateChanged);
+                item.StateChanged += ItemStateChanged;
             }
             _items.AddRange(items);
             if (items.Any(i => i.State == DownloadItemState.Queued))
@@ -161,6 +161,11 @@ namespace PureLib.Common {
             }
             _clientItemMaps.Remove(client);
             client.Dispose();
+        }
+
+        private static void CheckThreadCount(int threadCount) {
+            if (threadCount <= 0)
+                throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
         }
     }
 }
