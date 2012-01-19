@@ -9,14 +9,14 @@ namespace PureLib.Common {
         private const string space = " ";
         private const string indent = space + space + space + space;
 
-        private bool isInDoubleString = false;
-        private bool isInSingleString = false;
-        private bool isInVariableAssignment = false;
-        private Stack<JsonContextType> context = new Stack<JsonContextType>();
+        private bool _isInDoubleString = false;
+        private bool _isInSingleString = false;
+        private bool _isInVariableAssignment = false;
+        private Stack<JsonContextType> _context = new Stack<JsonContextType>();
 
-        private bool isInString {
+        private bool _isInString {
             get {
-                return isInDoubleString || isInSingleString;
+                return _isInDoubleString || _isInSingleString;
             }
         }
 
@@ -36,24 +36,24 @@ namespace PureLib.Common {
                 c = input[i];
                 switch (c) {
                     case '{':
-                        if (!isInString) {
-                            if (isInVariableAssignment || (context.Count > 0 && context.Peek() != JsonContextType.Array)) {
+                        if (!_isInString) {
+                            if (_isInVariableAssignment || (_context.Count > 0 && _context.Peek() != JsonContextType.Array)) {
                                 output.Append(Environment.NewLine);
-                                BuildIndents(context.Count, output);
+                                BuildIndents(_context.Count, output);
                             }
                             output.Append(c);
-                            context.Push(JsonContextType.Object);
+                            _context.Push(JsonContextType.Object);
                             output.Append(Environment.NewLine);
-                            BuildIndents(context.Count, output);
+                            BuildIndents(_context.Count, output);
                         }
                         else
                             output.Append(c);
                         break;
                     case '}':
-                        if (!isInString) {
+                        if (!_isInString) {
                             output.Append(Environment.NewLine);
-                            context.Pop();
-                            BuildIndents(context.Count, output);
+                            _context.Pop();
+                            BuildIndents(_context.Count, output);
                             output.Append(c);
                         }
                         else
@@ -61,13 +61,13 @@ namespace PureLib.Common {
                         break;
                     case '[':
                         output.Append(c);
-                        if (!isInString)
-                            context.Push(JsonContextType.Array);
+                        if (!_isInString)
+                            _context.Push(JsonContextType.Array);
                         break;
                     case ']':
-                        if (!isInString) {
+                        if (!_isInString) {
                             output.Append(c);
-                            context.Pop();
+                            _context.Pop();
                         }
                         else
                             output.Append(c);
@@ -77,20 +77,20 @@ namespace PureLib.Common {
                         break;
                     case ',':
                         output.Append(c);
-                        if (!isInString && context.Peek() != JsonContextType.Array) {
+                        if (!_isInString && _context.Peek() != JsonContextType.Array) {
                             output.Append(Environment.NewLine);
-                            BuildIndents(context.Count, output);
-                            isInVariableAssignment = false;
+                            BuildIndents(_context.Count, output);
+                            _isInVariableAssignment = false;
                         }
                         break;
                     case '\'':
-                        if (!isInDoubleString && !IsQuoteInString(input, i))
-                            isInSingleString = !isInSingleString;
+                        if (!_isInDoubleString && !IsQuoteInString(input, i))
+                            _isInSingleString = !_isInSingleString;
                         output.Append(c);
                         break;
                     case ':':
-                        if (!isInString) {
-                            isInVariableAssignment = true;
+                        if (!_isInString) {
+                            _isInVariableAssignment = true;
                             output.Append(space);
                             output.Append(c);
                             output.Append(space);
@@ -99,8 +99,8 @@ namespace PureLib.Common {
                             output.Append(c);
                         break;
                     case '"':
-                        if (!isInSingleString && !IsQuoteInString(input, i))
-                            isInDoubleString = !isInDoubleString;
+                        if (!_isInSingleString && !IsQuoteInString(input, i))
+                            _isInDoubleString = !_isInDoubleString;
                         output.Append(c);
                         break;
                     default:

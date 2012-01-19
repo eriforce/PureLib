@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -31,5 +32,7 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.1.4.51")]
-[assembly: AssemblyFileVersion("1.1.4.51")]
+[assembly: AssemblyVersion("1.1.4.52")]
+[assembly: AssemblyFileVersion("1.1.4.52")]
+
+[assembly: SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Suppressed all LinkDemand related warnings.", Scope = "member", Target = "PureLib.Common.TaskbarManager.#_ownerHandle")]

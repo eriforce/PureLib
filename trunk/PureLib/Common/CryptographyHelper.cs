@@ -5,6 +5,8 @@ using System.Text;
 
 namespace PureLib.Common {
     public static class CryptographyHelper {
+        private static readonly Encoding defaultTextEncoding = Encoding.UTF8;
+
         public static byte[] CreateFileHash<T>(this string path) where T : HashAlgorithm {
             using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                 using (HashAlgorithm hashAlgorithm = Utility.GetInstance<T>()) {
@@ -14,7 +16,7 @@ namespace PureLib.Common {
         }
 
         public static byte[] CreateHash<T>(this string plaintext) where T : HashAlgorithm {
-            return CreateHash<T>(GetBytes(plaintext));
+            return CreateHash<T>(defaultTextEncoding.GetBytes(plaintext));
         }
 
         public static byte[] CreateHash<T>(this byte[] bytes) where T : HashAlgorithm {
@@ -25,7 +27,7 @@ namespace PureLib.Common {
 
         public static byte[] CreateHMAC<T>(this string plaintext, byte[] key) where T : HMAC {
             using (HMAC hmac = Utility.GetInstance<T>(key)) {
-                return CreateHash(GetBytes(plaintext), hmac);
+                return CreateHash(defaultTextEncoding.GetBytes(plaintext), hmac);
             }
         }
 
@@ -62,10 +64,6 @@ namespace PureLib.Common {
 
         private static byte[] CreateHash(byte[] bytes, HashAlgorithm hashAlgorithm) {
             return hashAlgorithm.ComputeHash(bytes);
-        }
-
-        private static byte[] GetBytes(string text) {
-            return Encoding.UTF8.GetBytes(text);
         }
     }
 }

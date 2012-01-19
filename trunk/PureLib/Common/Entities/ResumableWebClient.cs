@@ -10,7 +10,7 @@ using PureLib.Common;
 
 namespace PureLib.Common.Entities {
     public sealed class ResumableWebClient : IAsyncWebClient, IDisposable {
-        private ResumableInternalWebClient client;
+        private ResumableInternalWebClient _client;
 
         public event AsyncCompletedEventHandler DownloadFileCompleted;
         public event EventHandler RequestRangeNotSatisfiable;
@@ -32,24 +32,24 @@ namespace PureLib.Common.Entities {
         }
 
         public ResumableWebClient(string referer, string userName, string password, CookieContainer cookies) {
-            client = new ResumableInternalWebClient(referer, userName, password, cookies);
-            client.OpenReadCompleted += new OpenReadCompletedEventHandler(OpenReadCompleted);
+            _client = new ResumableInternalWebClient(referer, userName, password, cookies);
+            _client.OpenReadCompleted += new OpenReadCompletedEventHandler(OpenReadCompleted);
         }
 
         public void DownloadFileAsync(Uri address, string fileName) {
             if (fileName.IsNullOrEmpty())
                 throw new ArgumentNullException("FileName cannot be empty.");
 
-            client.FileName = fileName;
-            client.OpenReadAsync(address);
+            _client.FileName = fileName;
+            _client.OpenReadAsync(address);
         }
 
         public void CancelAsync() {
-            client.CancelAsync();
+            _client.CancelAsync();
         }
 
         public void Dispose() {
-            client.Dispose();
+            _client.Dispose();
         }
 
         private void OpenReadCompleted(object sender, OpenReadCompletedEventArgs e) {

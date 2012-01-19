@@ -8,10 +8,9 @@ using System.Text;
 
 namespace PureLib.Common {
     public static class EmailHelper {
+        private const string htmlTemplateToken = "%%";
         private static readonly char[] mailAddressSeparators = new char[] { ';', ',' };
-        private static MailMessage message;
-
-        public const string htmlTemplateToken = "%%";
+        private static MailMessage _message;
 
         public static event SendCompletedEventHandler SendCompleted;
 
@@ -37,26 +36,26 @@ namespace PureLib.Common {
                 if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
                     client.Credentials = new NetworkCredential(userName, password);
 
-                message = new MailMessage();
-                message.From = new MailAddress(from, senderName.IsNullOrEmpty() ? from : senderName);
-                ParseMailAddress(to, message.To);
+                _message = new MailMessage();
+                _message.From = new MailAddress(from, senderName.IsNullOrEmpty() ? from : senderName);
+                ParseMailAddress(to, _message.To);
                 if (!cc.IsNullOrEmpty())
-                    ParseMailAddress(cc, message.CC);
+                    ParseMailAddress(cc, _message.CC);
                 if (!bcc.IsNullOrEmpty())
-                    ParseMailAddress(bcc, message.Bcc);
-                message.SubjectEncoding = Encoding.UTF8;
-                message.BodyEncoding = Encoding.UTF8;
-                message.IsBodyHtml = isBodyHtml;
-                message.Subject = subject;
-                message.Body = body;
+                    ParseMailAddress(bcc, _message.Bcc);
+                _message.SubjectEncoding = Encoding.UTF8;
+                _message.BodyEncoding = Encoding.UTF8;
+                _message.IsBodyHtml = isBodyHtml;
+                _message.Subject = subject;
+                _message.Body = body;
 
                 if (sendAsync) {
                     client.SendCompleted += new SendCompletedEventHandler(ClientSendCompleted);
-                    client.SendAsync(message, null);
+                    client.SendAsync(_message, null);
                 }
                 else {
-                    client.Send(message);
-                    message.Dispose();
+                    client.Send(_message);
+                    _message.Dispose();
                 }
             }
         }
@@ -64,7 +63,7 @@ namespace PureLib.Common {
         private static void ClientSendCompleted(object sender, AsyncCompletedEventArgs e) {
             if (SendCompleted != null)
                 SendCompleted(sender, e);
-            message.Dispose();
+            _message.Dispose();
         }
 
         private static void ParseMailAddress(string address, MailAddressCollection mac) {

@@ -25,20 +25,20 @@ namespace PureLib.Common {
         }
 
         public static string ToKatakana(this string hiragana) {
-            return ConvertJapanese(hiragana, HiraganaToKatakanaMethodName);
+            return ConvertJapanese(hiragana, hiraganaToKatakanaMethodName);
         }
 
         public static string ToHiragana(this string katakana) {
-            return ConvertJapanese(katakana, KatakanaToHiraganaMethodName);
+            return ConvertJapanese(katakana, katakanaToHiraganaMethodName);
         }
 
         public static string ParseRomaji(this string romaji) {
-            return ConvertJapanese(romaji, RomajiToHiraganaMethodName);
+            return ConvertJapanese(romaji, romajiToHiraganaMethodName);
         }
 
         private static string ConvertJapanese(string text, string methodName) {
-            Assembly assembly = LoadAssembly(JapaneseConverterAssemblyPath);
-            MethodInfo method = assembly.GetType(JapaneseConverterName).GetMethod(methodName);
+            Assembly assembly = LoadAssembly(japaneseConverterAssemblyPath);
+            MethodInfo method = assembly.GetType(japaneseConverterName).GetMethod(methodName);
             return method.Invoke(null, new object[] { text }) as string;
         }
 
@@ -51,9 +51,9 @@ namespace PureLib.Common {
         }
 
         private static string ConvertChinese(string text, Direction direction) {
-            Assembly assembly = LoadAssembly(ChineseConverterAssemblyPath);
-            MethodInfo convert = assembly.GetType(ChineseConverterName).GetMethod(ChineseConvertMethodName);
-            var d = Enum.GetValues(assembly.GetType(ChineseConversionDirection)).GetValue((int)direction);
+            Assembly assembly = LoadAssembly(chineseConverterAssemblyPath);
+            MethodInfo convert = assembly.GetType(chineseConverterName).GetMethod(chineseConvertMethodName);
+            var d = Enum.GetValues(assembly.GetType(chineseConversionDirection)).GetValue((int)direction);
             return convert.Invoke(null, new object[] { text, d }) as string;
         }
 
@@ -67,16 +67,16 @@ namespace PureLib.Common {
             return assembly;
         }
 
-        private const string ChineseConverterAssemblyPath = @"Lib\ChineseConverter.dll";
-        private const string ChineseConverterName = "Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter.ChineseConverter";
-        private const string ChineseConversionDirection = "Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter.ChineseConversionDirection";
-        private const string ChineseConvertMethodName = "Convert";
+        private const string chineseConverterAssemblyPath = @"Lib\ChineseConverter.dll";
+        private const string chineseConverterName = "Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter.ChineseConverter";
+        private const string chineseConversionDirection = "Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter.ChineseConversionDirection";
+        private const string chineseConvertMethodName = "Convert";
 
-        private const string JapaneseConverterAssemblyPath = @"Lib\JpnKanaConvHelper.dll";
-        private const string JapaneseConverterName = "Microsoft.International.Converters.KanaConverter";
-        private const string HiraganaToKatakanaMethodName = "HiraganaToKatakana";
-        private const string KatakanaToHiraganaMethodName = "KatakanaToHiragana";
-        private const string RomajiToHiraganaMethodName = "RomajiToHiragana";
+        private const string japaneseConverterAssemblyPath = @"Lib\JpnKanaConvHelper.dll";
+        private const string japaneseConverterName = "Microsoft.International.Converters.KanaConverter";
+        private const string hiraganaToKatakanaMethodName = "HiraganaToKatakana";
+        private const string katakanaToHiraganaMethodName = "KatakanaToHiragana";
+        private const string romajiToHiraganaMethodName = "RomajiToHiragana";
     }
 
     enum Direction {

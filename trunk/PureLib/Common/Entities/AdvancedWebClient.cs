@@ -8,10 +8,10 @@ namespace PureLib.Common.Entities {
     public class AdvancedWebClient : WebClient, IAsyncWebClient {
         public const string BasicAuthenticationHeaderName = "Authorization";
 
-        private string referer;
-        private string userName;
-        private string password;
-        private CookieContainer cookies;
+        private string _referer;
+        private string _userName;
+        private string _password;
+        private CookieContainer _cookies;
 
         public AdvancedWebClient()
             : this(null, null, null, null) {
@@ -30,10 +30,10 @@ namespace PureLib.Common.Entities {
         }
 
         public AdvancedWebClient(string referer, string userName, string password, CookieContainer cookies) {
-            this.referer = referer;
-            this.userName = userName;
-            this.password = password;
-            this.cookies = cookies;
+            _referer = referer;
+            _userName = userName;
+            _password = password;
+            _cookies = cookies;
         }
 
         public static string GetBasicAuthenticationHeader(string username, string password)
@@ -44,12 +44,12 @@ namespace PureLib.Common.Entities {
 
         protected override WebRequest GetWebRequest(Uri address) {
             HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
-            request.Referer = referer;
-            if (!userName.IsNullOrEmpty() || !password.IsNullOrEmpty()) {
-                request.Credentials = new NetworkCredential(userName, password);
-                request.Headers.Set(BasicAuthenticationHeaderName, GetBasicAuthenticationHeader(userName, password));
+            request.Referer = _referer;
+            if (!_userName.IsNullOrEmpty() || !_password.IsNullOrEmpty()) {
+                request.Credentials = new NetworkCredential(_userName, _password);
+                request.Headers.Set(BasicAuthenticationHeaderName, GetBasicAuthenticationHeader(_userName, _password));
             }
-            request.CookieContainer = cookies;
+            request.CookieContainer = _cookies;
             return request;
         }
     }

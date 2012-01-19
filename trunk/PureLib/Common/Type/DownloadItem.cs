@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PureLib.Common {
     public class DownloadItem {
-        private DownloadItemState state;
+        private DownloadItemState _state;
 
         public event DownloadItemStateChangedEventHandler StateChanged;
 
@@ -17,12 +17,12 @@ namespace PureLib.Common {
         public string FilePath { get; private set; }
         public DownloadItemState State {
             get {
-                return state;
+                return _state;
             }
             internal set {
-                if (state != value)
-                    OnStateChanged(this, state, value);
-                state = value;
+                if (_state != value)
+                    OnStateChanged(this, _state, value);
+                _state = value;
             }
         }
         public string FileName {
@@ -36,7 +36,7 @@ namespace PureLib.Common {
         public virtual int Percentage { get; set; }
 
         public DownloadItem(string url, string referer, CookieContainer cookies, string path, DownloadItemState state = DownloadItemState.Queued) {
-            this.state = state;
+            _state = state;
             
             Url = url;
             Referer = referer;
