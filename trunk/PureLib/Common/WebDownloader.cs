@@ -81,9 +81,6 @@ namespace PureLib.Common {
             foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Queued)) {
                 i.State = DownloadItemState.Stopped;
             }
-            foreach (var p in _clientItemMaps) {
-                p.Key.CancelAsync();
-            }
         }
 
         public void ResumeAllItems() {
@@ -142,6 +139,7 @@ namespace PureLib.Common {
             dynamic client = sender;
             DownloadItem item = _clientItemMaps[client];
             _downloadingCount--;
+            _clientItemMaps.Remove(client);
             if (e.Cancelled) {
                 item.State = DownloadItemState.Stopped;
                 FileInfo file = new FileInfo(item.FilePath);
@@ -159,7 +157,6 @@ namespace PureLib.Common {
                 item.Percentage = 100;
                 Download();
             }
-            _clientItemMaps.Remove(client);
             client.Dispose();
         }
 
