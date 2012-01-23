@@ -11,7 +11,6 @@ namespace PureLib.Common {
     public class WebDownloader {
         private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
-        private int _downloadingCount;
 
         public int ThreadCount { get; private set; }
         public bool IsStopped {
@@ -37,15 +36,6 @@ namespace PureLib.Common {
                 item.StateChanged += ItemStateChanged;
             }
             SetThreadCount(threadCount);
-        }
-
-        public void StartDownloading() {
-            if (_clientItemMaps.Count < ThreadCount) {
-                int needToStart = Math.Min(ThreadCount - _clientItemMaps.Count,
-                    _items.Count(i => i.State == DownloadItemState.Queued));
-                for (int i = 0; i < needToStart; i++)
-                    Download();
-            }
         }
 
         public void SetThreadCount(int threadCount) {
@@ -90,10 +80,19 @@ namespace PureLib.Common {
             StartDownloading();
         }
 
+        private void StartDownloading() {
+            if (_clientItemMaps.Count < ThreadCount) {
+                int needToStart = Math.Min(ThreadCount - _clientItemMaps.Count,
+                    _items.Count(i => i.State == DownloadItemState.Queued));
+                for (int i = 0; i < needToStart; i++)
+                    Download();
+            }
+        }
+
         private void ItemStateChanged(object sender, DownloadItemStateChangedEventArgs e) {
             switch (e.NewState) {
                 case DownloadItemState.Queued:
-                    StartDownloading();
+                    Download();
                     break;
                 case DownloadItemState.Stopped:
                     foreach (var p in _clientItemMaps) {
@@ -108,13 +107,12 @@ namespace PureLib.Common {
 
         private void Download() {
             lock (this) {
-                if (_downloadingCount < ThreadCount) {
+                if (_clientItemMaps.Count < ThreadCount) {
                     DownloadItem item = _items.FirstOrDefault(i => i.State == DownloadItemState.Queued);
                     if (item != null) {
                         item.State = DownloadItemState.Downloading;
-                        _downloadingCount++;
 
-                        object[] parameters = new object[] { item.Referer, null, null, item.Cookies };
+                        object[] parameters = new object[] { item.Referer, item.UserName, item.Password, item.Cookies };
                         IAsyncWebClient client = File.Exists(item.FilePath) ?
                             (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
                             (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
@@ -129,7 +127,7 @@ namespace PureLib.Common {
         }
 
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
-            DownloadItem item = _clientItemMaps[(AdvancedWebClient)sender];
+            DownloadItem item = _clientItemMaps[(IAsyncWebClient)sender];
             item.TotalBytes = e.TotalBytesToReceive;
             item.ReceivedBytes = e.BytesReceived;
             item.Percentage = e.ProgressPercentage;
@@ -138,7 +136,6 @@ namespace PureLib.Common {
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
             dynamic client = sender;
             DownloadItem item = _clientItemMaps[client];
-            _downloadingCount--;
             _clientItemMaps.Remove(client);
             if (e.Cancelled) {
                 item.State = DownloadItemState.Stopped;

@@ -13,6 +13,8 @@ namespace PureLib.Common {
 
         public string Url { get; private set; }
         public string Referer { get; private set; }
+        public string UserName { get; private set; }
+        public string Password { get; private set; }
         public CookieContainer Cookies { get; private set; }
         public string FilePath { get; private set; }
         public DownloadItemState State {
