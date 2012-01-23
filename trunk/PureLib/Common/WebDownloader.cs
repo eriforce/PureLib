@@ -120,6 +120,8 @@ namespace PureLib.Common {
                         client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
                         if (client is AdvancedWebClient)
                             ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+                        if (client is ResumableWebClient)
+                            ((ResumableWebClient)client).RequestRangeNotSatisfiable += new EventHandler((s, e) => { DownloadFileCompleted(s, new AsyncCompletedEventArgs(null, false, null)); });
                         client.DownloadFileAsync(new Uri(item.Url), item.FilePath);
                     }
                 }
