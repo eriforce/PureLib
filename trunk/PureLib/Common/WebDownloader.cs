@@ -9,13 +9,14 @@ using PureLib.Common.Entities;
 
 namespace PureLib.Common {
     public class WebDownloader {
+        private object _clientItemMapsLock;
         private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
 
         public int ThreadCount { get; private set; }
         public bool IsStopped {
             get {
-                lock (this) {
+                lock (_clientItemMapsLock) {
                     return _clientItemMaps.Count == 0;
                 }
             }
@@ -32,6 +33,7 @@ namespace PureLib.Common {
         public WebDownloader(List<DownloadItem> items, int threadCount) {
             CheckThreadCount(threadCount);
 
+            _clientItemMapsLock = new object();
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
             foreach (DownloadItem item in _items) {
@@ -83,7 +85,7 @@ namespace PureLib.Common {
         }
 
         private void StartDownloading() {
-            lock (this) {
+            lock (_clientItemMapsLock) {
                 if (_clientItemMaps.Count < ThreadCount) {
                     int needToStart = Math.Min(ThreadCount - _clientItemMaps.Count,
                         _items.Count(i => i.State == DownloadItemState.Queued));
@@ -96,7 +98,7 @@ namespace PureLib.Common {
         private void ItemStateChanged(object sender, DownloadItemStateChangedEventArgs e) {
             switch (e.NewState) {
                 case DownloadItemState.Queued:
-                    lock (this) {
+                    lock (_clientItemMapsLock) {
                         Download();
                     }
                     break;
@@ -140,7 +142,7 @@ namespace PureLib.Common {
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
-            lock (this) {
+            lock (_clientItemMapsLock) {
                 dynamic client = sender;
                 DownloadItem item = _clientItemMaps[client];
                 _clientItemMaps.Remove(client);

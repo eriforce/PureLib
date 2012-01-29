@@ -77,10 +77,10 @@ namespace PureLib.Common {
         private const string hiraganaToKatakanaMethodName = "HiraganaToKatakana";
         private const string katakanaToHiraganaMethodName = "KatakanaToHiragana";
         private const string romajiToHiraganaMethodName = "RomajiToHiragana";
-    }
 
-    enum Direction {
-        SimplifiedToTraditional,
-        TraditionalToSimplified
+        private enum Direction {
+            SimplifiedToTraditional,
+            TraditionalToSimplified
+        }
     }
 }

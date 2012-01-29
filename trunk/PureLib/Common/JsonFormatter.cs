@@ -6,24 +6,21 @@ using System.Text;
 namespace PureLib.Common {
     public class JsonFormatter {
         private const int defaultIndent = 0;
-        private const string space = " ";
-        private const string indent = space + space + space + space;
+        private const char space = ' ';
+        private readonly string indent;
 
+        private Stack<JsonContextType> _context = new Stack<JsonContextType>();
         private bool _isInDoubleString = false;
         private bool _isInSingleString = false;
         private bool _isInVariableAssignment = false;
-        private Stack<JsonContextType> _context = new Stack<JsonContextType>();
-
         private bool _isInString {
             get {
                 return _isInDoubleString || _isInSingleString;
             }
         }
 
-        private void BuildIndents(int indents, StringBuilder output) {
-            indents += defaultIndent;
-            for (; indents > 0; indents--)
-                output.Append(indent);
+        public JsonFormatter(int indentSize = 4) {
+            indent = new string(space, indentSize);
         }
 
         public string FormatJson(string jsonString) {
@@ -109,6 +106,12 @@ namespace PureLib.Common {
                 }
             }
             return output.ToString();
+        }
+
+        private void BuildIndents(int indents, StringBuilder output) {
+            indents += defaultIndent;
+            for (; indents > 0; indents--)
+                output.Append(indent);
         }
 
         private bool IsQuoteInString(StringBuilder input, int index) {

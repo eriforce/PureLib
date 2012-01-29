@@ -32,7 +32,7 @@ namespace PureLib.Common.Entities {
 
         public string GetValue(string key) {
             if (!ContainsKey(key))
-                throw new ApplicationException("The key cannot be found in arguments.");
+                throw new KeyNotFoundException("The key cannot be found in arguments.");
             return this[key].FirstOrDefault();
         }
     }
