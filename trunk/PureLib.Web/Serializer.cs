@@ -6,11 +6,11 @@ using PureLib.Common;
 
 namespace PureLib.Common {
     public static class Serializer {
-        public static string ToJson(this object obj, bool indent = true) {
+        public static string ToJson(this object obj, int indentSize = 0) {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             string json = serializer.Serialize(obj);
-            if (indent)
-                return new JsonFormatter().FormatJson(json);
+            if (indentSize > 0)
+                return new JsonFormatter(indentSize).FormatJson(json);
             else
                 return json;
         }
