@@ -5,6 +5,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace PureLib.Common {
     public static class Serializer {
@@ -43,12 +45,10 @@ namespace PureLib.Common {
         }
 
         private static T FromXml<T>(Stream stream) {
-            T obj;
             using (XmlReader reader = XmlReader.Create(stream)) {
                 XmlSerializer serializer = new XmlSerializer(typeof(T));
-                obj = (T)serializer.Deserialize(reader);
+                return (T)serializer.Deserialize(reader);
             }
-            return obj;
         }
 
         public static void WriteToBinary(this string path, object obj, FileMode fileMode = FileMode.Create) {
@@ -83,8 +83,37 @@ namespace PureLib.Common {
 
         private static T FromBinary<T>(Stream stream) {
             BinaryFormatter formatter = new BinaryFormatter();
-            T obj = (T)formatter.Deserialize(stream);
-            return obj;
+            return (T)formatter.Deserialize(stream);
         }
+
+        public static void WriteDataContractToXml(this object obj, Stream stream, SerializationFormat format) {
+            XmlObjectSerializer serializer = GetSerializer(obj.GetType(), format);
+            serializer.WriteObject(stream, obj);
+        }
+
+        public static T ReadDataContractFromXml<T>(this Stream stream, SerializationFormat format) {
+            XmlObjectSerializer serializer = GetSerializer(typeof(T), format);
+            return (T)serializer.ReadObject(stream);
+        }
+
+        private static XmlObjectSerializer GetSerializer(Type type, SerializationFormat format) {
+            XmlObjectSerializer serializer = null;
+            switch (format) {
+                case SerializationFormat.Xml:
+                    serializer = new DataContractSerializer(type);
+                    break;
+                case SerializationFormat.Json:
+                    serializer = new DataContractJsonSerializer(type);
+                    break;
+                default:
+                    throw new NotSupportedException("Serialization format '{0}' is not supported.".FormatWith(format));
+            }
+            return serializer;
+        }
+    }
+
+    public enum SerializationFormat {
+        Xml,
+        Json
     }
 }
