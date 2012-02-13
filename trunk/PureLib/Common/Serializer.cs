@@ -86,12 +86,12 @@ namespace PureLib.Common {
             return (T)formatter.Deserialize(stream);
         }
 
-        public static void WriteDataContractToXml(this object obj, Stream stream, SerializationFormat format) {
+        public static void WriteDataContract(this Stream stream, object obj, SerializationFormat format) {
             XmlObjectSerializer serializer = GetSerializer(obj.GetType(), format);
             serializer.WriteObject(stream, obj);
         }
 
-        public static T ReadDataContractFromXml<T>(this Stream stream, SerializationFormat format) {
+        public static T ReadDataContract<T>(this Stream stream, SerializationFormat format) {
             XmlObjectSerializer serializer = GetSerializer(typeof(T), format);
             return (T)serializer.ReadObject(stream);
         }
