@@ -7,6 +7,14 @@ namespace PureLib.Common {
     public static class CryptographyHelper {
         private static readonly Encoding defaultTextEncoding = Encoding.UTF8;
 
+        public static byte[] GenerateSalt(int length) {
+            byte[] randomNumberBuffer = new byte[length];
+            using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider()) {
+                rngCsp.GetBytes(randomNumberBuffer);
+            }
+            return randomNumberBuffer;
+        }
+
         public static byte[] CreateFileHash<T>(this string path) where T : HashAlgorithm {
             using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                 using (HashAlgorithm hashAlgorithm = Utility.GetInstance<T>()) {
