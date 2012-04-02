@@ -13,6 +13,7 @@ namespace PureLib.Common {
         private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
 
+        public bool UseResumableClient { get; set; }
         public int ThreadCount { get; private set; }
         public bool IsStopped {
             get {
@@ -22,17 +23,14 @@ namespace PureLib.Common {
             }
         }
 
-        public WebDownloader()
-            : this(null, 1) {
+        public WebDownloader(bool useResumableClient = true)
+            : this(null, 1, useResumableClient) {
         }
 
-        public WebDownloader(int threadCount)
-            : this(null, threadCount) {
-        }
-
-        public WebDownloader(List<DownloadItem> items, int threadCount) {
+        public WebDownloader(List<DownloadItem> items, int threadCount, bool useResumableClient) {
             CheckThreadCount(threadCount);
 
+            UseResumableClient = useResumableClient;
             _clientItemMapsLock = new object();
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = items ?? new List<DownloadItem>();
