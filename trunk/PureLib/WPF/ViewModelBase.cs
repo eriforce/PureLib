@@ -39,6 +39,21 @@ namespace PureLib.WPF {
             uiDispatcher.BeginInvoke(action, fieldName);
         }
 
+        protected void WorkInBackground(DoWorkEventHandler work, RunWorkerCompletedEventHandler onCompleted = null) {
+            if (uiDispatcher == null)
+                work.Invoke(null, new DoWorkEventArgs(null));
+            else {
+                using (BackgroundWorker worker = new BackgroundWorker()) {
+                    worker.DoWork += (s, e) => {
+                        work(s, e);
+                    };
+                    if (onCompleted != null)
+                        worker.RunWorkerCompleted += onCompleted;
+                    worker.RunWorkerAsync();
+                }
+            }
+        }
+
         public void RunOnUIThread(Action code) {
             uiDispatcher.BeginInvoke(code);
         }
