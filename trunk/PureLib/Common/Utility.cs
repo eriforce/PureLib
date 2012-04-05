@@ -71,6 +71,10 @@ namespace PureLib.Common {
             return dayCount + daysRemain;
         }
 
+        public static string WildcardToRegex(this string pattern) {
+            return Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".");
+        }
+
         public static bool IsNullOrEmpty(this string str) {
             return string.IsNullOrEmpty(str);
         }
