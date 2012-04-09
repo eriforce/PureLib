@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="WPF\RelayCommand.cs" />
     <Compile Include="WPF\ViewModelBase.cs" />
+    <Compile Include="WPF\WpfExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\ChineseConverter.dll">
