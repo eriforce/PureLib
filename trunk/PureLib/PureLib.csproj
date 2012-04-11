@@ -98,6 +98,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\BooleanToVisibilityConverter .cs" />
     <Compile Include="WPF\RelayCommand.cs" />
     <Compile Include="WPF\ViewModelBase.cs" />
     <Compile Include="WPF\WpfExtensions.cs" />
