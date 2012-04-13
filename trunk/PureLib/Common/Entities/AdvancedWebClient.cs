@@ -41,7 +41,6 @@ namespace PureLib.Common.Entities {
             return "Basic {0}".FormatWith(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)).ToBase64String());
         }
 
-
         protected override WebRequest GetWebRequest(Uri address) {
             HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
             request.Referer = _referer;
