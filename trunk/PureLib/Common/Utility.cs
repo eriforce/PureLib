@@ -29,7 +29,7 @@ namespace PureLib.Common {
             bool truncateToInteger = false, int truncateDigits = 3, string separator = null) {
                 List<string> parts = new List<string>();
                 ParseTimeSpan(ts, parts, truncateUnit, truncateToInteger, truncateDigits);
-                return string.Join(separator.IsNullOrEmpty() ? Resources.Comma : separator, parts);
+                return string.Join(separator.IsNullOrEmpty() ? Resources.Common_Comma : separator, parts);
         }
 
         public static long ParseDataSize(string sizeString) {
@@ -133,19 +133,19 @@ namespace PureLib.Common {
             DateTimeUnit? truncateUnit, bool truncateToInteger, int truncateDigits) {
 
             if (!ParseTimeSpanPart(DateTimeUnit.Day, ts.Days, ts.TotalDays,
-                Resources.Days, parts, truncateUnit, truncateToInteger, truncateDigits))
+                Resources.Common_Days, parts, truncateUnit, truncateToInteger, truncateDigits))
                 return;
             if (!ParseTimeSpanPart(DateTimeUnit.Hour, ts.Hours, ts.TotalHours % 24,
-                Resources.Hours, parts, truncateUnit, truncateToInteger, truncateDigits))
+                Resources.Common_Hours, parts, truncateUnit, truncateToInteger, truncateDigits))
                 return;
             if (!ParseTimeSpanPart(DateTimeUnit.Minute, ts.Minutes, ts.TotalMinutes % 60,
-                Resources.Minutes, parts, truncateUnit, truncateToInteger, truncateDigits))
+                Resources.Common_Minutes, parts, truncateUnit, truncateToInteger, truncateDigits))
                 return;
             if (!ParseTimeSpanPart(DateTimeUnit.Second, ts.Seconds, ts.TotalSeconds % 60,
-                Resources.Seconds, parts, truncateUnit, truncateToInteger, truncateDigits))
+                Resources.Common_Seconds, parts, truncateUnit, truncateToInteger, truncateDigits))
                 return;
             if (!ParseTimeSpanPart(DateTimeUnit.Millisecond, ts.Milliseconds, ts.TotalMilliseconds % 1000,
-                Resources.Milliseconds, parts, truncateUnit, truncateToInteger, truncateDigits))
+                Resources.Common_Milliseconds, parts, truncateUnit, truncateToInteger, truncateDigits))
                 return;
         }
 

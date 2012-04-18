@@ -117,22 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Comma" xml:space="preserve">
+  <data name="Common_Comma" xml:space="preserve">
     <value>, </value>
   </data>
-  <data name="Days" xml:space="preserve">
+  <data name="Common_Days" xml:space="preserve">
     <value>days</value>
   </data>
-  <data name="Hours" xml:space="preserve">
+  <data name="Common_Hours" xml:space="preserve">
     <value>hours</value>
   </data>
-  <data name="Milliseconds" xml:space="preserve">
+  <data name="Common_Milliseconds" xml:space="preserve">
     <value>ms</value>
   </data>
-  <data name="Minutes" xml:space="preserve">
+  <data name="Common_Minutes" xml:space="preserve">
     <value>minutes</value>
   </data>
-  <data name="Seconds" xml:space="preserve">
+  <data name="Common_Seconds" xml:space="preserve">
     <value>seconds</value>
+  </data>
+  <data name="ViewModelBase_ExpressionNotProperty_Exception" xml:space="preserve">
+    <value>The member access expression does not access a property.</value>
+  </data>
+  <data name="ViewModelBase_NotMemberAccessExpression_Exception" xml:space="preserve">
+    <value>The expression is not a member access expression.</value>
+  </data>
+  <data name="ViewModelBase_StaticExpression_Exception" xml:space="preserve">
+    <value>The referenced property is a static property.</value>
   </data>
 </root>
