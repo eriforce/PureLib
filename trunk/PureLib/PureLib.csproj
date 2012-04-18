@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="WPF\Converter\BooleanToVisibilityConverter .cs" />
     <Compile Include="WPF\Converter\InverseBooleanConverter.cs" />
+    <Compile Include="WPF\NotifyObject.cs" />
     <Compile Include="WPF\RelayCommand.cs" />
     <Compile Include="WPF\TextBoxFilters.cs" />
     <Compile Include="WPF\ViewModelBase.cs" />
