@@ -135,6 +135,9 @@
   <data name="Common_Seconds" xml:space="preserve">
     <value>seconds</value>
   </data>
+  <data name="ExceptionHandling_InnerException" xml:space="preserve">
+    <value>-: Inner Exception :-</value>
+  </data>
   <data name="ViewModelBase_ExpressionNotProperty_Exception" xml:space="preserve">
     <value>The member access expression does not access a property.</value>
   </data>

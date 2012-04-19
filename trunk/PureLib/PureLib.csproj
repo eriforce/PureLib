@@ -69,6 +69,7 @@
     <Compile Include="Common\Entities\ResumableWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Common\ExceptionHandling.cs" />
     <Compile Include="Common\JsonFormatter.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\TaskbarManager.cs" />

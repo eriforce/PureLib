@@ -135,6 +135,9 @@
   <data name="Common_Seconds" xml:space="preserve">
     <value>秒</value>
   </data>
+  <data name="ExceptionHandling_InnerException" xml:space="preserve">
+    <value>-: 内部错误 :-</value>
+  </data>
   <data name="ViewModelBase_ExpressionNotProperty_Exception" xml:space="preserve">
     <value>成员表达式没有指向属性。</value>
   </data>

@@ -115,6 +115,15 @@ namespace PureLib.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -: Inner Exception :-.
+        /// </summary>
+        internal static string ExceptionHandling_InnerException {
+            get {
+                return ResourceManager.GetString("ExceptionHandling_InnerException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The member access expression does not access a property..
         /// </summary>
         internal static string ViewModelBase_ExpressionNotProperty_Exception {
