@@ -9,7 +9,7 @@ using System.Text;
 namespace PureLib.Common {
     public static class EmailHelper {
         private const string htmlTemplateToken = "%%";
-        private static readonly char[] mailAddressSeparators = new char[] { ';', ',' };
+        private static readonly char[] _mailAddressSeparators = new char[] { ';', ',' };
         private static MailMessage _message;
 
         public static event SendCompletedEventHandler SendCompleted;
@@ -67,7 +67,7 @@ namespace PureLib.Common {
         }
 
         private static void ParseMailAddress(string address, MailAddressCollection mac) {
-            foreach (string s in address.Split(mailAddressSeparators, StringSplitOptions.RemoveEmptyEntries)) {
+            foreach (string s in address.Split(_mailAddressSeparators, StringSplitOptions.RemoveEmptyEntries)) {
                 mac.Add(new MailAddress(s));
             }
         }

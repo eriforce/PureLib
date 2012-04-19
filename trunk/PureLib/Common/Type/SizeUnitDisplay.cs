@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PureLib.Common {
     internal static class SizeUnitDisplay {
-        private static readonly Dictionary<SizeUnit, string> defaultUnitNames = new Dictionary<SizeUnit, string>() {
+        private static readonly Dictionary<SizeUnit, string> _defaultUnitNames = new Dictionary<SizeUnit, string>() {
             { SizeUnit.Byte,      "B"  },
             { SizeUnit.Kilobyte,  "KB" },
             { SizeUnit.Megabyte,  "MB" },
@@ -20,7 +20,7 @@ namespace PureLib.Common {
         public static string ToDisplayName(this SizeUnit unit, Dictionary<SizeUnit, string> unitNames) {
             string displayName;
             if (unitNames == null || !unitNames.TryGetValue(unit, out displayName))
-                displayName = defaultUnitNames[unit];
+                displayName = _defaultUnitNames[unit];
             return displayName;
         }
     }

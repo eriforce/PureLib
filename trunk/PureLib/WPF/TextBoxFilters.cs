@@ -10,7 +10,7 @@ using System.Windows.Input;
 namespace PureLib.WPF {
     public static class TextBoxFilters {
         // List of allowed keys. Put them here if you want to allow that key to pressed
-        private static readonly List<Key> controlKeys = new List<Key>
+        private static readonly List<Key> _controlKeys = new List<Key>
                                                             {
                                                                 Key.Back,
                                                                 Key.CapsLock,
@@ -56,7 +56,7 @@ namespace PureLib.WPF {
         }
 
         private static void AlphaNumericTextBoxKeyDown(object sender, KeyEventArgs e) {
-            e.Handled = (!controlKeys.Contains(e.Key) && !IsDigit(e.Key) && !IsLetter(e.Key));
+            e.Handled = (!_controlKeys.Contains(e.Key) && !IsDigit(e.Key) && !IsLetter(e.Key));
         }
 
         private static void AlphaNumericTextBoxPasting(object sender, DataObjectPastingEventArgs e) {
@@ -92,7 +92,7 @@ namespace PureLib.WPF {
         }
 
         private static void NumericTextBoxKeyDown(object sender, KeyEventArgs e) {
-            e.Handled = (!controlKeys.Contains(e.Key) && !IsDigit(e.Key));
+            e.Handled = (!_controlKeys.Contains(e.Key) && !IsDigit(e.Key));
         }
 
         private static void NumericTextBoxPasting(object sender, DataObjectPastingEventArgs e) {

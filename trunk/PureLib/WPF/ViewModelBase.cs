@@ -9,7 +9,7 @@ using PureLib.Properties;
 
 namespace PureLib.WPF {
     public abstract class ViewModelBase : NotifyObject {
-        private readonly Dispatcher uiDispatcher;
+        private readonly Dispatcher _uiDispatcher;
 
         public Window View { get; set; }
 
@@ -18,15 +18,18 @@ namespace PureLib.WPF {
         }
 
         public ViewModelBase(Dispatcher uiDispatcher) {
-            this.uiDispatcher = uiDispatcher;
+            _uiDispatcher = uiDispatcher;
         }
 
-        public void RunOnUIThread(Action code) {
-            uiDispatcher.BeginInvoke(code);
+        public void RunOnUIThread(Action action) {
+            if (_uiDispatcher == null)
+                action();
+            else
+                _uiDispatcher.BeginInvoke(action);
         }
 
         protected void RunInBackground(DoWorkEventHandler work, RunWorkerCompletedEventHandler onCompleted = null) {
-            if (uiDispatcher == null)
+            if (_uiDispatcher == null)
                 work.Invoke(null, new DoWorkEventArgs(null));
             else {
                 using (BackgroundWorker worker = new BackgroundWorker()) {

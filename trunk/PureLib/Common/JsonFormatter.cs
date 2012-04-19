@@ -7,7 +7,7 @@ namespace PureLib.Common {
     public class JsonFormatter {
         private const int defaultIndent = 0;
         private const char space = ' ';
-        private readonly string indent;
+        private readonly string _indent;
 
         private Stack<JsonContextType> _context = new Stack<JsonContextType>();
         private bool _isInDoubleString = false;
@@ -20,7 +20,7 @@ namespace PureLib.Common {
         }
 
         public JsonFormatter(int indentSize = 4) {
-            indent = new string(space, indentSize);
+            _indent = new string(space, indentSize);
         }
 
         public string FormatJson(string jsonString) {
@@ -28,7 +28,6 @@ namespace PureLib.Common {
             StringBuilder output = new StringBuilder();
             int inputLength = input.Length;
             char c;
-
             for (int i = 0; i < inputLength; i++) {
                 c = input[i];
                 switch (c) {
@@ -111,7 +110,7 @@ namespace PureLib.Common {
         private void BuildIndents(int indents, StringBuilder output) {
             indents += defaultIndent;
             for (; indents > 0; indents--)
-                output.Append(indent);
+                output.Append(_indent);
         }
 
         private bool IsQuoteInString(StringBuilder input, int index) {

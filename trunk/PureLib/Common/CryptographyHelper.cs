@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PureLib.Common {
     public static class CryptographyHelper {
-        private static readonly Encoding defaultTextEncoding = Encoding.UTF8;
+        private static readonly Encoding _defaultEncoding = Encoding.UTF8;
 
         public static byte[] GenerateSalt(int length) {
             byte[] randomNumberBuffer = new byte[length];
@@ -24,7 +24,7 @@ namespace PureLib.Common {
         }
 
         public static byte[] CreateHash<T>(this string plaintext) where T : HashAlgorithm {
-            return CreateHash<T>(defaultTextEncoding.GetBytes(plaintext));
+            return CreateHash<T>(_defaultEncoding.GetBytes(plaintext));
         }
 
         public static byte[] CreateHash<T>(this byte[] bytes) where T : HashAlgorithm {
@@ -35,7 +35,7 @@ namespace PureLib.Common {
 
         public static byte[] CreateHMAC<T>(this string plaintext, byte[] key) where T : HMAC {
             using (HMAC hmac = Utility.GetInstance<T>(key)) {
-                return CreateHash(defaultTextEncoding.GetBytes(plaintext), hmac);
+                return CreateHash(_defaultEncoding.GetBytes(plaintext), hmac);
             }
         }
 

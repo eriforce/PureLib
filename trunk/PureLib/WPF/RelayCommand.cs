@@ -7,14 +7,8 @@ using System.Windows.Input;
 
 namespace PureLib.WPF {
     public class RelayCommand : ICommand {
-        #region Fields
-
-        readonly Action<object> execute;
-        readonly Predicate<object> canExecute;
-
-        #endregion // Fields
-
-        #region Constructors
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
 
         public RelayCommand(Action<object> execute)
             : this(execute, null) {
@@ -24,16 +18,13 @@ namespace PureLib.WPF {
             if (execute == null)
                 throw new ArgumentNullException("execute");
 
-            this.execute = execute;
-            this.canExecute = canExecute;
+            _execute = execute;
+            _canExecute = canExecute;
         }
-        #endregion // Constructors
-
-        #region ICommand Members
 
         [DebuggerStepThrough]
         public bool CanExecute(object parameter) {
-            return (canExecute == null) ? true : canExecute(parameter);
+            return (_canExecute == null) ? true : _canExecute(parameter);
         }
 
         public event EventHandler CanExecuteChanged {
@@ -42,9 +33,7 @@ namespace PureLib.WPF {
         }
 
         public void Execute(object parameter) {
-            execute(parameter);
+            _execute(parameter);
         }
-
-        #endregion // ICommand Members
     }
 }

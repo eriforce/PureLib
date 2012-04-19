@@ -9,8 +9,6 @@ namespace PureLib.Common {
     public class DownloadItem {
         private DownloadItemState _state;
 
-        public event DownloadItemStateChangedEventHandler StateChanged;
-
         public string Url { get; private set; }
         public string Referer { get; private set; }
         public string UserName { get; private set; }
@@ -45,6 +43,8 @@ namespace PureLib.Common {
             Cookies = cookies;
             FilePath = path;
         }
+
+        public event DownloadItemStateChangedEventHandler StateChanged;
 
         public void Start() {
             State = DownloadItemState.Queued;
