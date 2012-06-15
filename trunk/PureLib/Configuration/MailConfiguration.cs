@@ -19,55 +19,46 @@ namespace PureLib.Configuration {
         [ConfigurationProperty(from, IsRequired = true)]
         public string From {
             get { return (string)this[from]; }
-            set { this[from] = value; }
         }
 
         [ConfigurationProperty(to, IsRequired = true)]
         public string To {
             get { return (string)this[to]; }
-            set { this[to] = value; }
         }
 
         [ConfigurationProperty(cc)]
         public string CC {
             get { return (string)this[cc]; }
-            set { this[cc] = value; }
         }
 
         [ConfigurationProperty(bcc)]
         public string Bcc {
             get { return (string)this[bcc]; }
-            set { this[bcc] = value; }
         }
 
         [ConfigurationProperty(host, IsRequired = true)]
         public string Host {
             get { return (string)this[host]; }
-            set { this[host] = value; }
         }
 
         [ConfigurationProperty(port, DefaultValue = 25, IsRequired = true)]
         public int Port {
             get { return (int)this[port]; }
-            set { this[port] = value; }
         }
 
         [ConfigurationProperty(ssl, DefaultValue = false, IsRequired = true)]
         public bool EnableSsl {
             get { return (bool)this[ssl]; }
-            set { this[ssl] = value; }
         }
 
         [ConfigurationProperty(userName, IsRequired = true)]
         public string UserName {
             get { return (string)this[userName]; }
-            set { this[userName] = value; }
         }
 
         [ConfigurationProperty(password, IsRequired = true)]
         public string Password {
             get { return (string)this[password]; }
-            set { this[password] = value; }
         }
     }
 }
