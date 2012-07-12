@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -17,6 +18,10 @@ namespace PureLib.Common {
             if (Regex.IsMatch(path, @"^([a-zA-Z]:|\\)?\\"))
                 return path;
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+        }
+
+        public static string CombineWithAppName(this string ext) {
+            return Path.ChangeExtension(Assembly.GetExecutingAssembly().GetName().Name, ext).WrapPath();
         }
     }
 }
