@@ -9,11 +9,10 @@ namespace PureLib.Common {
         public static string GetTraceText(this Exception ex) {
             StringBuilder sb = new StringBuilder();
             while (ex != null) {
-                if (sb.Length > 0) {
+                if (sb.Length > 0)
                     sb.AppendLine()
                         .AppendLine(Resources.ExceptionHandling_InnerException)
                         .AppendLine();
-                }
                 sb.AppendLine(ex.Message)
                     .AppendLine(ex.StackTrace);
 

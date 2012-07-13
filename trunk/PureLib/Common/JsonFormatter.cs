@@ -73,7 +73,7 @@ namespace PureLib.Common {
                         break;
                     case ',':
                         output.Append(c);
-                        if (!_isInString && _context.Peek() != JsonContextType.Array) {
+                        if (!_isInString && (_context.Peek() != JsonContextType.Array)) {
                             output.Append(Environment.NewLine);
                             BuildIndents(_context.Count, output);
                             _isInVariableAssignment = false;

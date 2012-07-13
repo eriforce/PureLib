@@ -31,7 +31,7 @@ namespace PureLib.WPF {
         protected void RunInBackground(DoWorkEventHandler work, RunWorkerCompletedEventHandler onCompleted = null) {
             if (_uiDispatcher == null)
                 work.Invoke(null, new DoWorkEventArgs(null));
-            else {
+            else
                 using (BackgroundWorker worker = new BackgroundWorker()) {
                     worker.DoWork += (s, e) => {
                         work(s, e);
@@ -40,7 +40,6 @@ namespace PureLib.WPF {
                         worker.RunWorkerCompleted += onCompleted;
                     worker.RunWorkerAsync();
                 }
-            }
         }
     }
 }
