@@ -30,33 +30,33 @@ namespace PureLib.Common {
         public static void SendMail(string host, int port, bool enableSsl, string userName, string password, string senderName, string from, string to,
             string subject, string body, bool isBodyHtml, bool sendAsync, string cc = null, string bcc = null) {
 
-            using (SmtpClient client = new SmtpClient(host)) {
-                client.Port = port;
-                client.EnableSsl = enableSsl;
-                if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
-                    client.Credentials = new NetworkCredential(userName, password);
+            SmtpClient client = new SmtpClient(host);
+            client.Port = port;
+            client.EnableSsl = enableSsl;
+            if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
+                client.Credentials = new NetworkCredential(userName, password);
 
-                _message = new MailMessage();
-                _message.From = new MailAddress(from, senderName.IsNullOrEmpty() ? from : senderName);
-                ParseMailAddress(to, _message.To);
-                if (!cc.IsNullOrEmpty())
-                    ParseMailAddress(cc, _message.CC);
-                if (!bcc.IsNullOrEmpty())
-                    ParseMailAddress(bcc, _message.Bcc);
-                _message.SubjectEncoding = Encoding.UTF8;
-                _message.BodyEncoding = Encoding.UTF8;
-                _message.IsBodyHtml = isBodyHtml;
-                _message.Subject = subject;
-                _message.Body = body;
+            _message = new MailMessage();
+            _message.From = new MailAddress(from, senderName.IsNullOrEmpty() ? from : senderName);
+            ParseMailAddress(to, _message.To);
+            if (!cc.IsNullOrEmpty())
+                ParseMailAddress(cc, _message.CC);
+            if (!bcc.IsNullOrEmpty())
+                ParseMailAddress(bcc, _message.Bcc);
+            _message.SubjectEncoding = Encoding.UTF8;
+            _message.BodyEncoding = Encoding.UTF8;
+            _message.IsBodyHtml = isBodyHtml;
+            _message.Subject = subject;
+            _message.Body = body;
 
-                if (sendAsync) {
-                    client.SendCompleted += new SendCompletedEventHandler(ClientSendCompleted);
-                    client.SendAsync(_message, null);
-                }
-                else {
-                    client.Send(_message);
-                    _message.Dispose();
-                }
+            if (sendAsync) {
+                client.SendCompleted += new SendCompletedEventHandler(ClientSendCompleted);
+                client.SendAsync(_message, null);
+            }
+            else {
+                client.Send(_message);
+                _message.Dispose();
+                client.Dispose();
             }
         }
 
@@ -64,6 +64,7 @@ namespace PureLib.Common {
             if (SendCompleted != null)
                 SendCompleted(sender, e);
             _message.Dispose();
+            ((SmtpClient)sender).Dispose();
         }
 
         private static void ParseMailAddress(string address, MailAddressCollection mac) {
