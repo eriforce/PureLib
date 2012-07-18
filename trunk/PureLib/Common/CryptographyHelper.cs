@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace PureLib.Common {
@@ -45,7 +46,27 @@ namespace PureLib.Common {
             }
         }
 
-        public static byte[] Encrypto<T>(this byte[] plaintext, byte[] iv, byte[] key) where T : SymmetricAlgorithm {
+        public static X509Certificate2 GetCertificate(StoreName storeName, StoreLocation storeLocation, X509FindType findType, string findValue) {
+            X509Store store = new X509Store(storeName, storeLocation);
+            store.Open(OpenFlags.ReadOnly);
+            X509Certificate2Collection certs = store.Certificates.Find(findType, findValue, false);
+            if (certs.Count == 0)
+                throw new FileNotFoundException("Certificate cannot be found.");
+            else if (certs.Count > 1)
+                throw new NotSupportedException("More than one certificates were found.");
+            else
+                return certs[0];
+        }
+
+        public static byte[] Encrypt(this byte[] plaintext, RSACryptoServiceProvider provider, bool useOAEP = true) {
+            return provider.Encrypt(plaintext, useOAEP);
+        }
+
+        public static byte[] Decrypt(this byte[] ciphertext, RSACryptoServiceProvider provider, bool useOAEP = true) {
+            return provider.Decrypt(ciphertext, useOAEP);
+        }
+
+        public static byte[] Encrypt<T>(this byte[] plaintext, byte[] iv, byte[] key) where T : SymmetricAlgorithm {
             using (SymmetricAlgorithm symmetricAlgorithm = Utility.GetInstance<T>()) {
                 symmetricAlgorithm.IV = iv;
                 symmetricAlgorithm.Key = key;
@@ -53,7 +74,7 @@ namespace PureLib.Common {
             }
         }
 
-        public static byte[] Decrypto<T>(this byte[] ciphertext, byte[] iv, byte[] key) where T : SymmetricAlgorithm {
+        public static byte[] Decrypt<T>(this byte[] ciphertext, byte[] iv, byte[] key) where T : SymmetricAlgorithm {
             using (SymmetricAlgorithm symmetricAlgorithm = Utility.GetInstance<T>()) {
                 symmetricAlgorithm.IV = iv;
                 symmetricAlgorithm.Key = key;
