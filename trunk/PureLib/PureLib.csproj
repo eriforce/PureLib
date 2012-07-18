@@ -62,6 +62,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\EmailSender.cs" />
     <Compile Include="Common\Entities\AdvancedWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -73,6 +74,7 @@
     <Compile Include="Common\JsonFormatter.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\TaskbarManager.cs" />
+    <Compile Include="Common\Templating.cs" />
     <Compile Include="Common\Type\DateTimeUnit.cs" />
     <Compile Include="Common\Type\DownloadItem.cs" />
     <Compile Include="Common\Type\DownloadItemState.cs" />
@@ -86,7 +88,6 @@
     <Compile Include="Common\WebDownloader.cs" />
     <Compile Include="Configuration\CryptoConfiguration.cs" />
     <Compile Include="Common\CryptographyHelper.cs" />
-    <Compile Include="Common\EmailHelper.cs" />
     <Compile Include="Configuration\MailConfiguration.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
