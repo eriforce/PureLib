@@ -10,23 +10,25 @@ namespace PureLib.Common {
         private const string tokenMessage = "Message";
         private const string tokenStack = "Stack";
 
-        public static string GetTraceText(this Exception ex, string innerExceptionSeparator = null, string template = null, string token = Templating.Token) {
+        public static string GetTraceText(this Exception ex, string template = null, string innerExceptionSeparator = null, string token = Templating.Token) {
             Dictionary<string, string> tokens = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
                 { tokenType, ex.GetType().AssemblyQualifiedName },
                 { tokenMessage, ex.Message },
                 { tokenStack, ex.StackTrace },
             };
 
-            if (template.IsNullOrEmpty())
+            if (template == null)
                 template = string.Join(Environment.NewLine, 
                     tokens.Keys.Select(k => "{0}{1}{0}".FormatWith(token, k)));
+
+            if (innerExceptionSeparator == null)
+                innerExceptionSeparator = "{0}{1}{0}".FormatWith(
+                    Environment.NewLine, Resources.ExceptionHandling_InnerException);
 
             StringBuilder sb = new StringBuilder();
             while (ex != null) {
                 if (sb.Length > 0)
-                    sb.AppendLine(innerExceptionSeparator.IsNullOrEmpty() ?
-                        "{0}{1}{0}".FormatWith(Environment.NewLine, Resources.ExceptionHandling_InnerException) :
-                        innerExceptionSeparator);
+                    sb.AppendLine(innerExceptionSeparator);
                 sb.AppendLine(template.FillInTemplate(tokens));
 
                 ex = ex.InnerException;
