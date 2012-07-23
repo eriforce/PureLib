@@ -20,9 +20,11 @@ namespace PureLib.Common {
                 return _state;
             }
             private set {
-                if (_state != value)
-                    OnStateChanged(this, _state, value);
-                _state = value;
+                if (_state != value) {
+                    DownloadItemState oldState = _state;
+                    _state = value;
+                    OnStateChanged(this, oldState, _state);
+                }
             }
         }
         public bool IsReady {
@@ -48,6 +50,8 @@ namespace PureLib.Common {
         public event DownloadItemStateChangedEventHandler StateChanged;
 
         public DownloadItem(string url, string referer, CookieContainer cookies, string path, DownloadItemState state = DownloadItemState.Queued) {
+            if ((state != DownloadItemState.Queued) && (state != DownloadItemState.Stopped))
+                throw new ApplicationException("{0} cannot be the inital state for download item.".FormatWith(state));
             _state = state;
 
             Url = url;
@@ -57,18 +61,26 @@ namespace PureLib.Common {
         }
 
         public void Start() {
-            State = DownloadItemState.Queued;
-        }
-
-        public void Download() {
-            State = DownloadItemState.Downloading;
+            if (State != DownloadItemState.Downloading)
+                State = DownloadItemState.Queued;
         }
 
         public void Stop() {
-            State = DownloadItemState.Stopped;
+            if ((State == DownloadItemState.Queued) || (State == DownloadItemState.Downloading))
+                State = DownloadItemState.Stopped;
         }
 
-        public void Complete() {
+        internal void Download() {
+            if (State != DownloadItemState.Queued)
+                throw new ApplicationException("Cannot download {0} with {1} state.".FormatWith(FileName, State));
+     
+            State = DownloadItemState.Downloading;
+        }
+
+        internal void Complete() {
+            if (State != DownloadItemState.Downloading)
+                throw new ApplicationException("Cannot complete {0} with {1} state.".FormatWith(FileName, State));
+
             State = DownloadItemState.Completed;
             if (TotalBytes == 0)
                 TotalBytes = new FileInfo(FilePath).Length;
