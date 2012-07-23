@@ -145,6 +145,7 @@ namespace PureLib.Common {
                 dynamic client = sender;
                 DownloadItem item = _clientItemMaps[client];
                 _clientItemMaps.Remove(client);
+                client.Dispose();
                 if (e.Cancelled) {
                     item.Stop();
                     FileInfo file = new FileInfo(item.FilePath);
@@ -161,7 +162,6 @@ namespace PureLib.Common {
                         item.Complete();
                     Download();
                 }
-                client.Dispose();
             }
         }
 

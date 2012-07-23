@@ -55,17 +55,17 @@ namespace PureLib.Common.Entities {
         private void OpenReadCompleted(object sender, OpenReadCompletedEventArgs e) {
             if (!e.Cancelled) {
                 string fileName = ((ResumableInternalWebClient)sender).FileName;
-                using (FileStream stream = new FileStream(fileName, FileMode.Append)) {
-                    try {
+                try {
+                    using (FileStream stream = new FileStream(fileName, FileMode.Append)) {
                         e.Result.CopyTo(stream);
-                        OnDownloadFileCompleted(false);
                     }
-                    catch (WebException) {
-                        OnDownloadFileCompleted(true);
-                    }
-                    catch (TargetInvocationException) {
-                        OnRequestRangeNotSatisfiable();
-                    }
+                    OnDownloadFileCompleted(false);
+                }
+                catch (WebException) {
+                    OnDownloadFileCompleted(true);
+                }
+                catch (TargetInvocationException) {
+                    OnRequestRangeNotSatisfiable();
                 }
             }
         }
