@@ -13,7 +13,7 @@ namespace PureLib.Common {
         private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
 
-        public bool UseResumableClient { get; set; }
+        public bool UseResumableClient { get; private set; }
         public int ThreadCount { get; private set; }
         public bool IsStopped {
             get {
@@ -22,6 +22,8 @@ namespace PureLib.Common {
                 }
             }
         }
+
+        public event DownloadCompletingEventHandler DownloadCompleting;
 
         public WebDownloader(bool useResumableClient = true)
             : this(null, 1, useResumableClient) {
@@ -53,7 +55,7 @@ namespace PureLib.Common {
 
             item.StateChanged += ItemStateChanged;
             _items.Add(item);
-            if (item.State == DownloadItemState.Queued)
+            if (item.IsReady)
                 StartDownloading();
         }
 
@@ -65,19 +67,19 @@ namespace PureLib.Common {
                 item.StateChanged += ItemStateChanged;
             }
             _items.AddRange(items);
-            if (items.Any(i => i.State == DownloadItemState.Queued))
+            if (items.Any(i => i.IsReady))
                 StartDownloading();
         }
 
         public void StopAllItems() {
-            foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Queued)) {
-                i.State = DownloadItemState.Stopped;
+            foreach (DownloadItem i in _items.Where(i => i.IsReady)) {
+                i.Stop();
             }
         }
 
         public void ResumeAllItems() {
-            foreach (DownloadItem i in _items.Where(i => i.State == DownloadItemState.Stopped)) {
-                i.State = DownloadItemState.Queued;
+            foreach (DownloadItem i in _items.Where(i => i.IsStopped)) {
+                i.Start();
             }
             StartDownloading();
         }
@@ -86,7 +88,7 @@ namespace PureLib.Common {
             lock (_clientItemMapsLock) {
                 if (_clientItemMaps.Count < ThreadCount) {
                     int needToStart = Math.Min(ThreadCount - _clientItemMaps.Count,
-                        _items.Count(i => i.State == DownloadItemState.Queued));
+                        _items.Count(i => i.IsReady));
                     for (int i = 0; i < needToStart; i++)
                         Download();
                 }
@@ -113,10 +115,9 @@ namespace PureLib.Common {
 
         private void Download() {
             if (_clientItemMaps.Count < ThreadCount) {
-                DownloadItem item = _items.FirstOrDefault(i => i.State == DownloadItemState.Queued);
+                DownloadItem item = _items.FirstOrDefault(i => i.IsReady);
                 if (item != null) {
-                    item.State = DownloadItemState.Downloading;
-
+                    item.Download();
                     object[] parameters = new object[] { item.Referer, item.UserName, item.Password, item.Cookies };
                     IAsyncWebClient client = File.Exists(item.FilePath) ?
                         (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
@@ -145,7 +146,7 @@ namespace PureLib.Common {
                 DownloadItem item = _clientItemMaps[client];
                 _clientItemMaps.Remove(client);
                 if (e.Cancelled) {
-                    item.State = DownloadItemState.Stopped;
+                    item.Stop();
                     FileInfo file = new FileInfo(item.FilePath);
                     if (file.Exists) {
                         item.ReceivedBytes = file.Length;
@@ -154,20 +155,36 @@ namespace PureLib.Common {
                     }
                 }
                 else {
-                    item.State = DownloadItemState.Completed;
-                    if (item.TotalBytes == 0)
-                        item.TotalBytes = new FileInfo(item.FilePath).Length;
-                    item.ReceivedBytes = item.TotalBytes;
-                    item.Percentage = 100;
+                    if (IsDownloadedFileCorrupted(item))
+                        item.Start();
+                    else
+                        item.Complete();
                     Download();
                 }
                 client.Dispose();
             }
         }
 
-        private static void CheckThreadCount(int threadCount) {
+        private void CheckThreadCount(int threadCount) {
             if (threadCount <= 0)
                 throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
         }
+
+        private bool IsDownloadedFileCorrupted(DownloadItem item) {
+            DownloadCompletingEventArgs e = new DownloadCompletingEventArgs(item);
+            if (DownloadCompleting != null)
+                DownloadCompleting(this, e);
+            return e.IsCorrupted;
+        }
     }
+
+    public class DownloadCompletingEventArgs : EventArgs {
+        public bool IsCorrupted { get; set; }
+        public DownloadItem Item { get; private set; }
+
+        public DownloadCompletingEventArgs(DownloadItem item) {
+            Item = item;
+        }
+    }
+    public delegate void DownloadCompletingEventHandler(object sender, DownloadCompletingEventArgs e);
 }

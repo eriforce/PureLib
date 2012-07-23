@@ -19,10 +19,20 @@ namespace PureLib.Common {
             get {
                 return _state;
             }
-            internal set {
+            private set {
                 if (_state != value)
                     OnStateChanged(this, _state, value);
                 _state = value;
+            }
+        }
+        public bool IsReady {
+            get {
+                return State == DownloadItemState.Queued;
+            }
+        }
+        public bool IsStopped {
+            get {
+                return State == DownloadItemState.Stopped;
             }
         }
         public string FileName {
@@ -35,23 +45,35 @@ namespace PureLib.Common {
         public virtual long ReceivedBytes { get; set; }
         public virtual int Percentage { get; set; }
 
+        public event DownloadItemStateChangedEventHandler StateChanged;
+
         public DownloadItem(string url, string referer, CookieContainer cookies, string path, DownloadItemState state = DownloadItemState.Queued) {
             _state = state;
-            
+
             Url = url;
             Referer = referer;
             Cookies = cookies;
             FilePath = path;
         }
 
-        public event DownloadItemStateChangedEventHandler StateChanged;
-
         public void Start() {
             State = DownloadItemState.Queued;
         }
 
+        public void Download() {
+            State = DownloadItemState.Downloading;
+        }
+
         public void Stop() {
             State = DownloadItemState.Stopped;
+        }
+
+        public void Complete() {
+            State = DownloadItemState.Completed;
+            if (TotalBytes == 0)
+                TotalBytes = new FileInfo(FilePath).Length;
+            ReceivedBytes = TotalBytes;
+            Percentage = 100;
         }
 
         protected virtual void OnStateChanged(DownloadItem item, DownloadItemState oldState, DownloadItemState newState) {
