@@ -25,11 +25,11 @@ namespace PureLib.Common {
 
         public event DownloadCompletingEventHandler DownloadCompleting;
 
-        public WebDownloader(bool useResumableClient = true)
-            : this(null, 1, useResumableClient) {
+        public WebDownloader(bool useResumableClient = false)
+            : this(1, useResumableClient) {
         }
 
-        public WebDownloader(List<DownloadItem> items, int threadCount, bool useResumableClient) {
+        public WebDownloader(int threadCount, bool useResumableClient) {
             CheckThreadCount(threadCount);
 
             UseResumableClient = useResumableClient;
@@ -37,7 +37,6 @@ namespace PureLib.Common {
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
             _items = new List<DownloadItem>();
             SetThreadCount(threadCount);
-            AddItems(items);
         }
 
         public void SetThreadCount(int threadCount) {
