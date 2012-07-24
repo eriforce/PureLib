@@ -35,11 +35,9 @@ namespace PureLib.Common {
             UseResumableClient = useResumableClient;
             _clientItemMapsLock = new object();
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
-            _items = items ?? new List<DownloadItem>();
-            foreach (DownloadItem item in _items) {
-                item.StateChanged += ItemStateChanged;
-            }
+            _items = new List<DownloadItem>();
             SetThreadCount(threadCount);
+            AddItems(items);
         }
 
         public void SetThreadCount(int threadCount) {
@@ -50,17 +48,11 @@ namespace PureLib.Common {
         }
 
         public void AddItem(DownloadItem item) {
-            if (item == null)
-                throw new ArgumentNullException("Download item is null.");
-
-            item.StateChanged += ItemStateChanged;
-            _items.Add(item);
-            if (item.IsReady)
-                StartDownloading();
+            AddItems(new List<DownloadItem>() { item });
         }
 
         public void AddItems(List<DownloadItem> items) {
-            if (items == null)
+            if ((items == null) || items.Any(i => i == null))
                 throw new ArgumentNullException("Download items are null.");
 
             foreach (DownloadItem item in items) {
@@ -69,6 +61,21 @@ namespace PureLib.Common {
             _items.AddRange(items);
             if (items.Any(i => i.IsReady))
                 StartDownloading();
+        }
+
+        public void RemoveItem(DownloadItem item) {
+            RemoveItems(new List<DownloadItem>() { item });
+        }
+
+        public void RemoveItems(List<DownloadItem> items) {
+            if ((items == null) || items.Any(i => i == null))
+                throw new ArgumentNullException("Download items are null.");
+
+            foreach (DownloadItem item in items) {
+                item.Stop();
+                item.StateChanged -= ItemStateChanged;
+                _items.Remove(item);
+            }
         }
 
         public void StopAllItems() {
