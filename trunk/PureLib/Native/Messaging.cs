@@ -7,8 +7,7 @@ using System.Text;
 
 namespace PureLib.Native {
     public class Messaging {
-        private const string user32Dll = "User32.dll";
-        public const int WM_COPYDATA = 0x004A;
+        internal const int WM_COPYDATA = 0x004A;
 
         public static void SendMessage(string message, Process process, bool sendAsync = false) {
             int length = Encoding.Default.GetBytes(message).Length;
@@ -19,23 +18,14 @@ namespace PureLib.Native {
             IntPtr lParam = Marshal.AllocHGlobal(Marshal.SizeOf(cds));
             Marshal.StructureToPtr(cds, lParam, true);
             if (sendAsync)
-                PostMessage(process.MainWindowHandle, WM_COPYDATA, IntPtr.Zero, lParam);
+                NativeMethods.PostMessage(process.MainWindowHandle, WM_COPYDATA, IntPtr.Zero, lParam);
             else
-                SendMessage(process.MainWindowHandle, WM_COPYDATA, IntPtr.Zero, lParam);
+                NativeMethods.SendMessage(process.MainWindowHandle, WM_COPYDATA, IntPtr.Zero, lParam);
         }
-
-        [DllImport(user32Dll)]
-        private static extern int FindWindow(string lpClassName, string lpWindowName);
-
-        [DllImport(user32Dll)]
-        private static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport(user32Dll)]
-        private static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct CopyDataStruct {
+    internal struct CopyDataStruct {
         /// <summary>
         /// User defined data
         /// </summary>

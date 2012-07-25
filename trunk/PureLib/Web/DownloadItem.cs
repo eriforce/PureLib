@@ -5,17 +5,22 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using PureLib.Common;
+using PureLib.WPF;
 
 namespace PureLib.Web {
-    public class DownloadItem {
+    public class DownloadItem : NotifyObject {
         private DownloadItemState _state;
+        private string _url;
+        private string _referer;
+        private string _userName;
+        private string _password;
+        private string _location;
+        private string _fileName;
+        private long _totalBytes;
+        private long _receiveBytes;
+        private int _percentage;
 
-        public string Url { get; private set; }
-        public string Referer { get; private set; }
-        public string UserName { get; private set; }
-        public string Password { get; private set; }
         public CookieContainer Cookies { get; private set; }
-        public string FilePath { get; private set; }
         public DownloadItemState State {
             get {
                 return _state;
@@ -25,7 +30,103 @@ namespace PureLib.Web {
                     DownloadItemState oldState = _state;
                     _state = value;
                     OnStateChanged(this, oldState, _state);
+                    RaiseChange(() => State);
                 }
+            }
+        }
+        public string Url {
+            get {
+                return _url;
+            }
+            set {
+                _url = value;
+                RaiseChange(() => Url);
+            }
+        }
+        public string Referer {
+            get {
+                return _referer;
+            }
+            set {
+                _referer = value;
+                RaiseChange(() => Referer);
+            }
+        }
+        public string UserName {
+            get {
+                return _userName;
+            }
+            set {
+                _userName = value;
+                RaiseChange(() => UserName);
+            }
+        }
+        public string Password {
+            get {
+                return _password;
+            }
+            set {
+                _password = value;
+                RaiseChange(() => Password);
+            }
+        }
+        public string Location {
+            get {
+                return _location;
+            }
+            set {
+                _location = value;
+                RaiseChange(() => Location);
+                RaiseChange(() => FilePath);
+            }
+        }
+        public string FileName {
+            get {
+                return _fileName;
+            }
+            set {
+                _fileName = value;
+                RaiseChange(() => FileName);
+                RaiseChange(() => FilePath);
+            }
+        }
+        public string FilePath {
+            get {
+                return Path.Combine(Location, FileName);
+            }
+            set {
+                _location = Path.GetDirectoryName(value);
+                _fileName = Path.GetFileName(value);
+                RaiseChange(() => Location);
+                RaiseChange(() => FileName);
+                RaiseChange(() => FilePath);
+            }
+        }
+        public long TotalBytes {
+            get {
+                return _totalBytes;
+            }
+            set {
+                _totalBytes = value;
+                RaiseChange(() => TotalBytes);
+            }
+        }
+        public long ReceivedBytes {
+            get {
+                return _receiveBytes;
+            }
+            set {
+                _receiveBytes = value;
+                RaiseChange(() => ReceivedBytes);
+            }
+        }
+        public int Percentage {
+            get {
+                return _percentage;
+            }
+            set {
+                _percentage = value;
+                RaiseChange(() => Percentage);
             }
         }
         public bool IsReady {
@@ -38,15 +139,6 @@ namespace PureLib.Web {
                 return State == DownloadItemState.Stopped;
             }
         }
-        public string FileName {
-            get {
-                return Path.GetFileName(FilePath);
-            }
-        }
-
-        public virtual long TotalBytes { get; set; }
-        public virtual long ReceivedBytes { get; set; }
-        public virtual int Percentage { get; set; }
 
         public event DownloadItemStateChangedEventHandler StateChanged;
 
