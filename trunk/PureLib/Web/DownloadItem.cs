@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using PureLib.Common;
 
-namespace PureLib.Common {
+namespace PureLib.Web {
     public class DownloadItem {
         private DownloadItemState _state;
 

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace PureLib.Common.Entities {
+namespace PureLib.Web {
     public interface IAsyncWebClient {
         event AsyncCompletedEventHandler DownloadFileCompleted;
 

@@ -5,8 +5,9 @@ using System.ComponentModel;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using PureLib.Common;
 
-namespace PureLib.Common {
+namespace PureLib.Web {
     public sealed class EmailSender : IDisposable {
         private static readonly char[] _mailAddressSeparators = new char[] { ';', ',' };
         private MailMessage _message;

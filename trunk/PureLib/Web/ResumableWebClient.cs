@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using PureLib.Common;
 
-namespace PureLib.Common.Entities {
+namespace PureLib.Web {
     public sealed class ResumableWebClient : IAsyncWebClient, IDisposable {
         private ResumableInternalWebClient _client;
 

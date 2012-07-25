@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace PureLib.Common {
+namespace PureLib.Native {
     public class TaskbarManager {
         private IntPtr _ownerHandleInternal;
         private IntPtr _ownerHandle {

@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using PureLib.Common.Entities;
+using PureLib.Common;
 
-namespace PureLib.Common {
+namespace PureLib.Web {
     public class WebDownloader {
         private object _clientItemMapsLock;
         private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;

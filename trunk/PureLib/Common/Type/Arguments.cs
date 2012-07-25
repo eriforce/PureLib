@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PureLib.Common.Entities {
+namespace PureLib.Common {
     [Serializable]
     public class Arguments : Dictionary<string, List<string>> {
         public Arguments(string[] args) : base(StringComparer.OrdinalIgnoreCase) {
