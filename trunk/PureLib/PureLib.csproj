@@ -108,6 +108,7 @@
     <Compile Include="WPF\MessageWindow.cs" />
     <Compile Include="WPF\NotifyObject.cs" />
     <Compile Include="WPF\RelayCommand.cs" />
+    <Compile Include="WPF\SingleInstanceApp.cs" />
     <Compile Include="WPF\TextBoxFilters.cs" />
     <Compile Include="WPF\ViewModelBase.cs" />
     <Compile Include="WPF\WpfExtensions.cs" />

@@ -12,6 +12,9 @@ namespace PureLib.Native {
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport(user32Dll)]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport(user32Dll)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport(user32Dll)]
