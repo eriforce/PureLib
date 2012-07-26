@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using PureLib.Common;
 using PureLib.WPF;
 
 namespace PureLib.Web {
+    [DataContract]
     public class DownloadItem : NotifyObject {
         private DownloadItemState _state;
         private string _url;
@@ -20,7 +21,7 @@ namespace PureLib.Web {
         private long _receiveBytes;
         private int _percentage;
 
-        public CookieContainer Cookies { get; private set; }
+        [DataMember]
         public DownloadItemState State {
             get {
                 return _state;
@@ -34,6 +35,7 @@ namespace PureLib.Web {
                 }
             }
         }
+        [DataMember]
         public string Url {
             get {
                 return _url;
@@ -43,6 +45,7 @@ namespace PureLib.Web {
                 RaiseChange(() => Url);
             }
         }
+        [DataMember]
         public string Referer {
             get {
                 return _referer;
@@ -52,6 +55,7 @@ namespace PureLib.Web {
                 RaiseChange(() => Referer);
             }
         }
+        [DataMember]
         public string UserName {
             get {
                 return _userName;
@@ -61,6 +65,7 @@ namespace PureLib.Web {
                 RaiseChange(() => UserName);
             }
         }
+        [DataMember]
         public string Password {
             get {
                 return _password;
@@ -70,6 +75,7 @@ namespace PureLib.Web {
                 RaiseChange(() => Password);
             }
         }
+        [DataMember]
         public string Location {
             get {
                 return _location;
@@ -80,6 +86,7 @@ namespace PureLib.Web {
                 RaiseChange(() => FilePath);
             }
         }
+        [DataMember]
         public string FileName {
             get {
                 return _fileName;
@@ -90,6 +97,7 @@ namespace PureLib.Web {
                 RaiseChange(() => FilePath);
             }
         }
+        [DataMember]
         public string FilePath {
             get {
                 return Path.Combine(Location, FileName);
@@ -102,6 +110,7 @@ namespace PureLib.Web {
                 RaiseChange(() => FilePath);
             }
         }
+        [DataMember]
         public long TotalBytes {
             get {
                 return _totalBytes;
@@ -111,6 +120,7 @@ namespace PureLib.Web {
                 RaiseChange(() => TotalBytes);
             }
         }
+        [DataMember]
         public long ReceivedBytes {
             get {
                 return _receiveBytes;
@@ -120,6 +130,7 @@ namespace PureLib.Web {
                 RaiseChange(() => ReceivedBytes);
             }
         }
+        [DataMember]
         public int Percentage {
             get {
                 return _percentage;
@@ -139,17 +150,24 @@ namespace PureLib.Web {
                 return State == DownloadItemState.Stopped;
             }
         }
+        public bool IsDownloading {
+            get {
+                return State == DownloadItemState.Downloading;
+            }
+        }
 
         public event DownloadItemStateChangedEventHandler StateChanged;
 
-        public DownloadItem(string url, string referer, CookieContainer cookies, string path, DownloadItemState state = DownloadItemState.Queued) {
-            if ((state != DownloadItemState.Queued) && (state != DownloadItemState.Stopped))
-                throw new ApplicationException("{0} cannot be the inital state for download item.".FormatWith(state));
+        public DownloadItem() {
+        }
+
+        public DownloadItem(string url, string referer, string path, DownloadItemState state = DownloadItemState.Queued) {
             _state = state;
+            if (!IsReady && !IsStopped)
+                throw new ApplicationException("{0} cannot be the inital state for download item.".FormatWith(state));
 
             Url = url;
             Referer = referer;
-            Cookies = cookies;
             FilePath = path;
         }
 

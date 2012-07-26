@@ -8,6 +8,7 @@ using System.Text;
 using PureLib.Properties;
 
 namespace PureLib.WPF {
+    [Serializable]
     public class NotifyObject : INotifyPropertyChanged {
         public event PropertyChangedEventHandler PropertyChanged;
 

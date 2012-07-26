@@ -58,13 +58,12 @@ namespace PureLib.Common {
         }
 
         private static Assembly LoadAssembly(string path) {
-            Assembly assembly = null;
             try {
-                assembly = Assembly.LoadFrom(path);
-            } catch (FileNotFoundException) {
+                return Assembly.LoadFrom(path);
+            }
+            catch (FileNotFoundException) {
                 throw new ApplicationException("{0} cannot be found.".FormatWith(path));
             }
-            return assembly;
         }
 
         private const string chineseConverterAssemblyPath = @"Lib\ChineseConverter.dll";

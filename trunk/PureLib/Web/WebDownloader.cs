@@ -13,6 +13,7 @@ namespace PureLib.Web {
         private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
         private List<DownloadItem> _items;
 
+        public CookieContainer Cookies { get; private set; }
         public bool UseResumableClient { get; private set; }
         public int ThreadCount { get; private set; }
         public bool IsStopped {
@@ -26,12 +27,13 @@ namespace PureLib.Web {
         public event DownloadCompletingEventHandler DownloadCompleting;
 
         public WebDownloader(bool useResumableClient = false)
-            : this(1, useResumableClient) {
+            : this(1, useResumableClient, null) {
         }
 
-        public WebDownloader(int threadCount, bool useResumableClient) {
+        public WebDownloader(int threadCount, bool useResumableClient, CookieContainer cookies) {
             CheckThreadCount(threadCount);
 
+            Cookies = cookies ?? new CookieContainer();
             UseResumableClient = useResumableClient;
             _clientItemMapsLock = new object();
             _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
@@ -124,7 +126,7 @@ namespace PureLib.Web {
                 DownloadItem item = _items.FirstOrDefault(i => i.IsReady);
                 if (item != null) {
                     item.Download();
-                    object[] parameters = new object[] { item.Referer, item.UserName, item.Password, item.Cookies };
+                    object[] parameters = new object[] { item.Referer, item.UserName, item.Password, Cookies };
                     IAsyncWebClient client = File.Exists(item.FilePath) ?
                         (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
                         (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
