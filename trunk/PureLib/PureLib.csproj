@@ -63,13 +63,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ExceptionHandling.cs" />
-    <Compile Include="Common\JsonFormatter.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\Templating.cs" />
     <Compile Include="Common\Type\Arguments.cs" />
     <Compile Include="Common\Type\DateTimeUnit.cs" />
-    <Compile Include="Common\Type\SizeUnitDisplay.cs" />
+    <Compile Include="Common\Type\JsonFormatter.cs" />
     <Compile Include="Common\Type\SizeUnit.cs" />
+    <Compile Include="Common\UnitDisplay.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Common\DiskHelper.cs" />
     <Compile Include="Common\Serializer.cs" />

@@ -27,10 +27,10 @@ namespace PureLib.Web {
         public event DownloadCompletingEventHandler DownloadCompleting;
 
         public WebDownloader(bool useResumableClient = false)
-            : this(1, useResumableClient, null) {
+            : this(1, null, useResumableClient) {
         }
 
-        public WebDownloader(int threadCount, bool useResumableClient, CookieContainer cookies) {
+        public WebDownloader(int threadCount, CookieContainer cookies, bool useResumableClient) {
             CheckThreadCount(threadCount);
 
             Cookies = cookies ?? new CookieContainer();
