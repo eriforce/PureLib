@@ -21,7 +21,7 @@ namespace PureLib.WPF {
 
         private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
             if (msg == Messaging.WM_COPYDATA) {
-                CopyDataStruct cds = (CopyDataStruct)Marshal.PtrToStructure(lParam, typeof(CopyDataStruct));//从发送方接收到的数据结构                
+                CopyDataStruct cds = (CopyDataStruct)Marshal.PtrToStructure(lParam, typeof(CopyDataStruct));
                 ReceiveMessage(cds.lpData);
             }
             return hWnd;
