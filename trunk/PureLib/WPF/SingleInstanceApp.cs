@@ -8,15 +8,23 @@ using System.Threading;
 using System.Windows;
 using PureLib.Common;
 using PureLib.Native;
-using System.IO;
 
 namespace PureLib.WPF {
     public class SingleInstanceApp : Application {
         private Mutex singleInstanceMutex;
 
-        public SingleInstanceApp() {
-            singleInstanceMutex = new Mutex(true, Process.GetCurrentProcess().MainModule.FileName
-                .CreateHash<MD5CryptoServiceProvider>().ToHexString());
+        public SingleInstanceApp()
+            : this(Process.GetCurrentProcess().MainModule.FileName.CreateHash<MD5CryptoServiceProvider>().ToHexString()) {
+        }
+
+        public SingleInstanceApp(string mutexName) {
+            singleInstanceMutex = new Mutex(true, mutexName);
+        }
+
+        protected virtual Process GetFirstProcess() {
+            Process current = Process.GetCurrentProcess();
+            return Process.GetProcessesByName(current.ProcessName).Single(
+                p => (p.Id != current.Id) && (p.MainModule.FileName == current.MainModule.FileName));
         }
 
         protected virtual void OnFirstStartup(StartupEventArgs e) {
@@ -34,11 +42,8 @@ namespace PureLib.WPF {
                 OnFirstStartup(e);
                 singleInstanceMutex.ReleaseMutex();
             }
-            else {
-                Process current = Process.GetCurrentProcess();
-                OnNextStartup(e, Process.GetProcessesByName(current.ProcessName)
-                    .Single(p => (p.Id != current.Id) && (p.MainModule.FileName == current.MainModule.FileName)));
-            }
+            else
+                OnNextStartup(e, GetFirstProcess());
         }
     }
 }
