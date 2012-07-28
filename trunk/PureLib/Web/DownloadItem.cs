@@ -11,7 +11,7 @@ namespace PureLib.Web {
     [DataContract]
     public class DownloadItem : NotifyObject {
         private DownloadItemState _state;
-        private string _url;
+        private Uri _url;
         private string _referer;
         private string _userName;
         private string _password;
@@ -36,7 +36,7 @@ namespace PureLib.Web {
             }
         }
         [DataMember]
-        public string Url {
+        public Uri Url {
             get {
                 return _url;
             }
@@ -165,8 +165,9 @@ namespace PureLib.Web {
             _state = state;
             if (!IsReady && !IsStopped)
                 throw new ApplicationException("{0} cannot be the inital state for download item.".FormatWith(state));
-
-            Url = url;
+            
+            if (!Uri.TryCreate(url, UriKind.Absolute, out _url))
+                throw new ArgumentException("Invalid url: {0}".FormatWith(url));
             Referer = referer;
             FilePath = path;
         }

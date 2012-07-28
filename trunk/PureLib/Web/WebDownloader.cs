@@ -135,7 +135,10 @@ namespace PureLib.Web {
                         ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
                     if (client is ResumableWebClient)
                         ((ResumableWebClient)client).RequestRangeNotSatisfiable += new EventHandler((s, e) => { DownloadFileCompleted(s, new AsyncCompletedEventArgs(null, false, null)); });
-                    client.DownloadFileAsync(new Uri(item.Url), item.FilePath);
+                    
+                    if (!Directory.Exists(item.Location))
+                        Directory.CreateDirectory(item.Location);
+                    client.DownloadFileAsync(item.Url, item.FilePath);
                     _clientItemMaps.Add(client, item);
                 }
             }
