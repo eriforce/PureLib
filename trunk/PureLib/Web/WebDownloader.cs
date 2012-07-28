@@ -127,14 +127,12 @@ namespace PureLib.Web {
                 if (item != null) {
                     item.Download();
                     object[] parameters = new object[] { item.Referer, item.UserName, item.Password, Cookies };
-                    IAsyncWebClient client = File.Exists(item.FilePath) ?
+                    IAsyncWebClient client = UseResumableClient ?
                         (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
                         (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
                     if (client is AdvancedWebClient)
                         ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                    if (client is ResumableWebClient)
-                        ((ResumableWebClient)client).RequestRangeNotSatisfiable += new EventHandler((s, e) => { DownloadFileCompleted(s, new AsyncCompletedEventArgs(null, false, null)); });
                     
                     if (!Directory.Exists(item.Location))
                         Directory.CreateDirectory(item.Location);
@@ -167,7 +165,9 @@ namespace PureLib.Web {
                     }
                 }
                 else {
-                    if (IsDownloadedFileCorrupted(item))
+                    if (e.Error != null)
+                        item.Error();
+                    else if (IsDownloadedFileCorrupted(item))
                         item.Start();
                     else
                         item.Complete();

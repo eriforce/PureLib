@@ -13,7 +13,6 @@ namespace PureLib.Web {
         private ResumableInternalWebClient _client;
 
         public event AsyncCompletedEventHandler DownloadFileCompleted;
-        public event EventHandler RequestRangeNotSatisfiable;
 
         public ResumableWebClient()
             : this(null, null, null, null) {
@@ -59,25 +58,16 @@ namespace PureLib.Web {
                     using (FileStream stream = new FileStream(fileName, FileMode.Append)) {
                         e.Result.CopyTo(stream);
                     }
-                    OnDownloadFileCompleted(false);
                 }
-                catch (WebException) {
-                    OnDownloadFileCompleted(true);
-                }
-                catch (TargetInvocationException) {
-                    OnRequestRangeNotSatisfiable();
+                catch {
+                    OnDownloadFileCompleted(e);
                 }
             }
         }
 
-        private void OnDownloadFileCompleted(bool isCancelled) {
+        private void OnDownloadFileCompleted(AsyncCompletedEventArgs e) {
             if (DownloadFileCompleted != null)
-                DownloadFileCompleted(this, new AsyncCompletedEventArgs(null, isCancelled, null));
-        }
-
-        private void OnRequestRangeNotSatisfiable() {
-            if (RequestRangeNotSatisfiable != null)
-                RequestRangeNotSatisfiable(this, new EventArgs());
+                DownloadFileCompleted(this, e);
         }
     }
 

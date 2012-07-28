@@ -10,4 +10,4 @@
 [assembly: SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "PureLib.WPF.SingleInstanceApp.#.ctor()")]
 [assembly: SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "PureLib.WPF.SingleInstanceApp.#OnNextStartup(System.Windows.StartupEventArgs,System.Diagnostics.Process)")]
 [assembly: SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "PureLib.WPF.SingleInstanceApp.#OnStartup(System.Windows.StartupEventArgs)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "PureLib.WPF.SingleInstanceApp.#GetFirstProcess()")]
+[assembly: SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "PureLib.WPF.SingleInstanceApp.#GetFirstProcess()")]

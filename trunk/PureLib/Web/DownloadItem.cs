@@ -182,6 +182,12 @@ namespace PureLib.Web {
                 State = DownloadItemState.Stopped;
         }
 
+        public void Error() {
+            if (State != DownloadItemState.Downloading)
+                throw new ApplicationException("Cannot set {0} to error with {1} state.".FormatWith(FileName, State));
+            State = DownloadItemState.Error;
+        }
+
         internal void Download() {
             if (State != DownloadItemState.Queued)
                 throw new ApplicationException("Cannot download {0} with {1} state.".FormatWith(FileName, State));
