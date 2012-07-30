@@ -41,14 +41,15 @@ namespace PureLib.Common {
         }
 
         public static string ToFriendlyString(this long size, int digits = 2, Dictionary<SizeUnit, string> unitNames = null) {
+            decimal displaySize = size;
             int maxIndex = Enum.GetValues(typeof(SizeUnit)).Length - 1;
             int unitIndex = 0;
-            while ((size >= 1000) && (unitIndex < maxIndex)) {
-                size /= 1024;
+            while ((displaySize >= 1000) && (unitIndex < maxIndex)) {
+                displaySize /= 1024;
                 unitIndex++;
             }
             SizeUnit unit = (SizeUnit)unitIndex;
-            return pairFormat.FormatWith(Math.Round((decimal)size, digits), unit.ToDisplayName(unitNames));
+            return pairFormat.FormatWith(Math.Round(displaySize, digits), unit.ToDisplayName(unitNames));
         }
 
         public static string ToFriendlyString(this TimeSpan ts, DateTimeUnit? truncateUnit = null,
