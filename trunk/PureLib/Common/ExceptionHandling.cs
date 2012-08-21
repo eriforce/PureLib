@@ -10,15 +10,13 @@ namespace PureLib.Common {
         private const string tokenMessage = "Message";
         private const string tokenStack = "Stack";
 
+        public static Func<Exception, Dictionary<string, string>> CustomizedGetTokens;
+
         public static string GetTraceText(this Exception ex, string template = null, string innerExceptionSeparator = null, string token = Templating.Token) {
-            Dictionary<string, string> tokens = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                { tokenType, ex.GetType().AssemblyQualifiedName },
-                { tokenMessage, ex.Message },
-                { tokenStack, ex.StackTrace },
-            };
+            Dictionary<string, string> tokens = GetTokens(ex);
 
             if (template == null)
-                template = string.Join(Environment.NewLine, 
+                template = string.Join(Environment.NewLine,
                     tokens.Keys.Select(k => "{0}{1}{0}".FormatWith(token, k)));
 
             if (innerExceptionSeparator == null)
@@ -27,13 +25,24 @@ namespace PureLib.Common {
 
             StringBuilder sb = new StringBuilder();
             while (ex != null) {
-                if (sb.Length > 0)
+                if (sb.Length > 0) {
+                    tokens = GetTokens(ex);
                     sb.AppendLine(innerExceptionSeparator);
+                }
                 sb.AppendLine(template.FillInTemplate(tokens));
 
                 ex = ex.InnerException;
             }
             return sb.ToString();
+        }
+
+        private static Dictionary<string, string> GetTokens(Exception ex) {
+            return (CustomizedGetTokens != null) ? CustomizedGetTokens(ex) :
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+                    { tokenType, ex.GetType().AssemblyQualifiedName },
+                    { tokenMessage, ex.Message },
+                    { tokenStack, ex.StackTrace },
+                };
         }
     }
 }
