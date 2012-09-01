@@ -30,10 +30,14 @@ namespace PureLib.WPF.BusyControl {
         }
 
         public async Task BusyWithAsync(string content, Action action) {
+            await BusyWithAsync(content, () => { action(); return 0; });
+        }
+
+        public async Task<T> BusyWithAsync<T>(string content, Func<T> func) {
             BusyContent = content;
             IsBusy = true;
             try {
-                await Task.Run(action);
+                return await Task.Run(func);
             }
             catch {
                 throw;
