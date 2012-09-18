@@ -28,19 +28,5 @@ namespace PureLib.WPF {
             else
                 _uiDispatcher.BeginInvoke(action);
         }
-
-        protected void RunInBackground(DoWorkEventHandler work, RunWorkerCompletedEventHandler onCompleted = null) {
-            if (_uiDispatcher == null)
-                work.Invoke(null, new DoWorkEventArgs(null));
-            else
-                using (BackgroundWorker worker = new BackgroundWorker()) {
-                    worker.DoWork += (s, e) => {
-                        work(s, e);
-                    };
-                    if (onCompleted != null)
-                        worker.RunWorkerCompleted += onCompleted;
-                    worker.RunWorkerAsync();
-                }
-        }
     }
 }

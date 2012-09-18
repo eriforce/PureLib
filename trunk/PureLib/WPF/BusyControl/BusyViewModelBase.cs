@@ -39,9 +39,6 @@ namespace PureLib.WPF.BusyControl {
             try {
                 return await Task.Run(func);
             }
-            catch {
-                throw;
-            }
             finally {
                 IsBusy = false;
             }
