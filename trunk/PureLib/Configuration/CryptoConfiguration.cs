@@ -34,12 +34,12 @@ namespace PureLib.Configuration {
             }
         }
 
-        [ConfigurationProperty(iv, IsRequired = true)]
+        [ConfigurationProperty(iv)]
         public string IvString {
             get { return (string)this[iv]; }
         }
 
-        [ConfigurationProperty(key, IsRequired = true)]
+        [ConfigurationProperty(key)]
         public string KeyString {
             get { return (string)this[key]; }
         }

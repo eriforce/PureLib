@@ -9,8 +9,7 @@ using System.Windows.Data;
 namespace PureLib.WPF {
     public class BooleanToVisibilityConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            bool isVisible = bool.Parse(value.ToString());
-            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
