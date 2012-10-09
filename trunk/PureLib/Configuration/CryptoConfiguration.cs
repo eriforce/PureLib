@@ -9,22 +9,28 @@ using PureLib.Common;
 
 namespace PureLib.Configuration {
     public class CryptoConfiguration : ConfigurationElement {
-        private const string iv = "iv";
-        private const string key = "key";
+        private const string iv = "aesIv";
+        private const string key = "aesKey";
         private const string thumbprint = "thumbprint";
         private const string storeName = "storeName";
         private const string storeLocation = "storeLocation";
 
-        public byte[] IV {
-            get { return GetBytesFromString(IvString); }
+        private X509Certificate2 _certificate;
+
+        public byte[] DecryptedIv {
+            get { return DecryptFromString(IvString); }
         }
-        public byte[] Key {
-            get { return GetBytesFromString(KeyString); }
+        public byte[] DecryptedKey {
+            get { return DecryptFromString(KeyString); }
         }
         public X509Certificate2 Certificate {
             get {
-                return Thumbprint.IsNullOrEmpty() ? null :
-                    CryptographyHelper.GetCertificate(StoreName, StoreLocation, X509FindType.FindByThumbprint, Thumbprint);
+                if (Thumbprint.IsNullOrEmpty())
+                    return null;
+
+                if (_certificate == null)
+                    _certificate = CryptographyHelper.GetCertificate(StoreName, StoreLocation, X509FindType.FindByThumbprint, Thumbprint);
+                return _certificate;
             }
         }
 
@@ -53,12 +59,12 @@ namespace PureLib.Configuration {
             get { return (StoreLocation)this[storeLocation]; }
         }
 
-        private byte[] GetBytesFromString(string s) {
+        private byte[] DecryptFromString(string s) {
             if (s.IsNullOrEmpty())
                 return null;
 
             byte[] bin = s.FromBase64String();
-            if (!Thumbprint.IsNullOrEmpty())
+            if (Certificate != null)
                 bin = bin.Decrypt((RSACryptoServiceProvider)Certificate.PrivateKey);
             return bin;
         }
