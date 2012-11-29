@@ -43,6 +43,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JpnKanaConvHelper, Version=1.0.1.0, Culture=neutral, PublicKeyToken=f107c6e5af142f74, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\JpnKanaConvHelper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="PresentationCore" />
@@ -121,9 +125,6 @@
     <Compile Include="WPF\WpfExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\ChineseConverter.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Lib\JpnKanaConversion.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
