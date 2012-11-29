@@ -56,13 +56,13 @@ namespace PureLib.Common {
         }
 
         private class ChineseConverter {
-            private const string additionalTcScPairName = "additionalTcScPair";
+            public const string AdditionalTcScPairName = "additionalTcScPair";
             private const char pairsSeparator = ',';
             private const char pairSeparator = ':';
             private Dictionary<string, string> tcScMaps = new Dictionary<string, string>();
 
             public ChineseConverter() {
-                string pairString = ConfigurationManager.AppSettings[additionalTcScPairName];
+                string pairString = ConfigurationManager.AppSettings[AdditionalTcScPairName];
                 if (!pairString.IsNullOrEmpty()) {
                     string[] scTcPairs = pairString.Split(pairsSeparator);
                     foreach (string scTcPair in scTcPairs) {
@@ -73,19 +73,17 @@ namespace PureLib.Common {
             }
 
             public string ToSimplifiedChinese(string traditional) {
-                string sc = Strings.StrConv(traditional, VbStrConv.SimplifiedChinese);
                 foreach (var p in tcScMaps) {
-                    sc = sc.Replace(p.Key, p.Value);
+                    traditional = traditional.Replace(p.Key, p.Value);
                 }
-                return sc;
+                return Strings.StrConv(traditional, VbStrConv.SimplifiedChinese);
             }
 
             public string ToTraditionalChinese(string simplified) {
-                string tc = Strings.StrConv(simplified, VbStrConv.TraditionalChinese);
                 foreach (var p in tcScMaps) {
-                    tc = tc.Replace(p.Value, p.Key);
+                    simplified = simplified.Replace(p.Value, p.Key);
                 }
-                return tc;
+                return Strings.StrConv(simplified, VbStrConv.TraditionalChinese);
             }
         }
     }
