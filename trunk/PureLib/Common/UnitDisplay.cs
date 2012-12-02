@@ -22,6 +22,10 @@ namespace PureLib.Common {
         };
 
         public static long ParseSize(this string sizeString) {
+            long size;
+            if (long.TryParse(sizeString, out size))
+                return size;
+            
             const string numberName = "number";
             const string unitName = "unit";
             SizeUnit[] units = (SizeUnit[])Enum.GetValues(typeof(SizeUnit));
