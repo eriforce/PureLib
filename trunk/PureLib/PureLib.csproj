@@ -46,7 +46,7 @@
     <Reference Include="JpnKanaConvHelper, Version=1.0.1.0, Culture=neutral, PublicKeyToken=f107c6e5af142f74, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\JpnKanaConvHelper.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
@@ -126,12 +126,8 @@
     <Compile Include="WPF\WpfExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\JpnKanaConversion.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Lib\JpnKanaConvHelper.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Lib\JpnKanaConversion.dll" />
+    <Content Include="Lib\JpnKanaConvHelper.dll" />
     <Content Include="purelib_license.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
