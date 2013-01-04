@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using PureLib.WPF;
 
 namespace PureLib.WPF.BusyControl {
@@ -25,8 +26,27 @@ namespace PureLib.WPF.BusyControl {
             }
         }
 
-        public async void BusyWith(string content, Action action) {
-            await BusyWithAsync(content, action);
+        public void BusyWith(string content, Action action) {
+            BusyWith(content, () => { action(); return 0; });
+        }
+
+        public T BusyWith<T>(string content, Func<T> func) {
+            BusyContent = content;
+            IsBusy = true;
+            DispatcherFrame frame = new DispatcherFrame();
+            T result = default(T);
+            try {
+                Task<T> task = Task.Run(func).ContinueWith(t => {
+                    frame.Continue = false;
+                    return t.Result;
+                });
+                Dispatcher.PushFrame(frame);
+                result = task.Result;
+            }
+            finally {
+                IsBusy = false;
+            }
+            return result;
         }
 
         public async Task BusyWithAsync(string content, Action action) {

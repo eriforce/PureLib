@@ -11,8 +11,9 @@ using PureLib.Properties;
 
 namespace PureLib.WPF {
     public abstract class ViewModelBase : NotifyObject {
-        private readonly Dispatcher _uiDispatcher;
         private ICommand _closeCommand;
+
+        protected Dispatcher UIDispatcher { get; private set; }
 
         public Window View { get; set; }
         public ICommand CloseCommand {
@@ -28,14 +29,14 @@ namespace PureLib.WPF {
         }
 
         public ViewModelBase(Dispatcher uiDispatcher) {
-            _uiDispatcher = uiDispatcher;
+            UIDispatcher = uiDispatcher;
         }
 
         public void RunOnUIThread(Action action) {
-            if ((_uiDispatcher == null) || (Thread.CurrentThread == _uiDispatcher.Thread))
+            if ((UIDispatcher == null) || (Thread.CurrentThread == UIDispatcher.Thread))
                 action();
             else
-                _uiDispatcher.BeginInvoke(action);
+                UIDispatcher.BeginInvoke(action);
         }
 
         protected virtual RelayCommand GetCloseCommand() {
