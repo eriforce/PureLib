@@ -33,20 +33,18 @@ namespace PureLib.WPF.BusyControl {
         public T BusyWith<T>(string content, Func<T> func) {
             BusyContent = content;
             IsBusy = true;
-            DispatcherFrame frame = new DispatcherFrame();
-            T result = default(T);
             try {
+                DispatcherFrame frame = new DispatcherFrame();
                 Task<T> task = Task.Run(func).ContinueWith(t => {
                     frame.Continue = false;
                     return t.Result;
                 });
                 Dispatcher.PushFrame(frame);
-                result = task.Result;
+                return task.Result;
             }
             finally {
                 IsBusy = false;
             }
-            return result;
         }
 
         public async Task BusyWithAsync(string content, Action action) {

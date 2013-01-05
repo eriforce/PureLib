@@ -10,12 +10,13 @@ using PureLib.Common;
 
 namespace PureLib.AspNet {
     public static class ClientCertificateExtensions {
-        public static bool Authenticate(this HttpClientCertificate certificate, string issuer = null) {
+        public static bool CertAuth(this HttpRequestBase request, string issuer = null) {
             if (Debugger.IsAttached)
-                FormsAuthentication.SetAuthCookie("Debug", false);
+                FormsAuthentication.SetAuthCookie("Debug", false, request.ApplicationPath);
 
-            if (ValidateClientCertificate(certificate, issuer))
-                FormsAuthentication.SetAuthCookie(certificate.Subject.Substring("CN=".Length), false);
+            HttpClientCertificate cert = request.ClientCertificate;
+            if (ValidateClientCertificate(cert, issuer))
+                FormsAuthentication.SetAuthCookie(cert.Subject.Substring("CN=".Length), false, request.ApplicationPath);
             else
                 return false;
 
