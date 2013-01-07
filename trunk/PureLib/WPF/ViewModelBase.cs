@@ -32,11 +32,11 @@ namespace PureLib.WPF {
             UIDispatcher = uiDispatcher;
         }
 
-        public void RunOnUIThread(Action action) {
-            if ((UIDispatcher == null) || (Thread.CurrentThread == UIDispatcher.Thread))
+        public void RunOnUIThread(Action action, DispatcherPriority priority = DispatcherPriority.Normal) {
+            if (UIDispatcher == null)
                 action();
             else
-                UIDispatcher.BeginInvoke(action);
+                UIDispatcher.BeginInvoke(action, priority);
         }
 
         protected virtual RelayCommand GetCloseCommand() {
