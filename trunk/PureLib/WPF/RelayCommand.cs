@@ -9,6 +9,18 @@ namespace PureLib.WPF {
     public class RelayCommand : ICommand {
         private readonly Action<object> _execute;
         private readonly Predicate<object> _canExecute;
+        private event EventHandler _canExecuteChanged;
+
+        public event EventHandler CanExecuteChanged {
+            add {
+                _canExecuteChanged += value;
+                CommandManager.RequerySuggested += value;
+            }
+            remove {
+                _canExecuteChanged -= value;
+                CommandManager.RequerySuggested -= value;
+            }
+        }
 
         public RelayCommand(Action<object> execute)
             : this(execute, null) {
@@ -27,13 +39,13 @@ namespace PureLib.WPF {
             return (_canExecute == null) ? true : _canExecute(parameter);
         }
 
-        public event EventHandler CanExecuteChanged {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-
         public void Execute(object parameter) {
             _execute(parameter);
+        }
+
+        public void RaiseCanExecuteChange() {
+            if (_canExecute != null && _canExecuteChanged != null)
+                _canExecuteChanged(this, EventArgs.Empty);
         }
     }
 }
