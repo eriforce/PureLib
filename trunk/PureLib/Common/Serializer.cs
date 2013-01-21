@@ -83,6 +83,8 @@ namespace PureLib.Common {
 
         private static T FromBinary<T>(Stream stream) {
             BinaryFormatter formatter = new BinaryFormatter();
+            if (stream.CanSeek)
+                stream.Position = 0;
             return (T)formatter.Deserialize(stream);
         }
 
