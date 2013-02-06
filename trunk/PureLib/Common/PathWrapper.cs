@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 namespace PureLib.Common {
     public static class PathWrapper {
         private const string invalidPathPattern = "[\":/<>\\?\\*\\|]";
+        private static readonly string escapedDirectorySeparator = "{0}{0}".FormatWith(Path.DirectorySeparatorChar);
 
         public static string FilterInvalidChar(this string path, string replacement = "_") {
             return Regex.Replace(path, invalidPathPattern, replacement);
@@ -22,6 +23,10 @@ namespace PureLib.Common {
 
         public static string CombineWithAppName(this string ext) {
             return Path.ChangeExtension(Process.GetCurrentProcess().MainModule.FileName, ext).WrapPath();
+        }
+
+        public static string EscapePathForCmd(this string path) {
+            return path.Replace(Path.DirectorySeparatorChar.ToString(), escapedDirectorySeparator);
         }
     }
 }
