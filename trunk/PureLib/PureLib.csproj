@@ -46,7 +46,7 @@
     <Reference Include="JpnKanaConvHelper, Version=1.0.1.0, Culture=neutral, PublicKeyToken=f107c6e5af142f74, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\JpnKanaConvHelper.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
@@ -85,6 +85,7 @@
     <Compile Include="Common\DiskHelper.cs" />
     <Compile Include="Common\Serializer.cs" />
     <Compile Include="Common\PathWrapper.cs" />
+    <Compile Include="Configuration\PureLibConfigurationSection.cs" />
     <Compile Include="Configuration\CryptoConfiguration.cs" />
     <Compile Include="Common\CryptographyHelper.cs" />
     <Compile Include="Configuration\MailConfiguration.cs" />
