@@ -8,6 +8,18 @@ namespace PureLib.Common {
     public static class CryptographyHelper {
         private static readonly Encoding _defaultEncoding = Encoding.UTF8;
 
+        public static int GetRandom(int maxValue = int.MaxValue) {
+            if (maxValue <= 1)
+                throw new ArgumentException("The max value doesn't make sense.");
+
+            using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider()) {
+                byte[] randData = new byte[4];
+                rngCsp.GetBytes(randData);
+                uint value = BitConverter.ToUInt32(randData, 0);
+                return (int)(value % maxValue);
+            }
+        }
+
         public static byte[] GenerateSalt(int length) {
             byte[] randomNumberBuffer = new byte[length];
             using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider()) {
