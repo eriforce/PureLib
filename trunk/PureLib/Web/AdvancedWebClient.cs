@@ -37,8 +37,7 @@ namespace PureLib.Web {
             _cookies = cookies;
         }
 
-        public static string GetBasicAuthenticationHeader(string username, string password)
-        {
+        public static string GetBasicAuthenticationHeader(string username, string password) {
             return "Basic {0}".FormatWith(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)).ToBase64String());
         }
 
@@ -51,6 +50,12 @@ namespace PureLib.Web {
             }
             request.CookieContainer = _cookies;
             return request;
+        }
+
+        protected override WebResponse GetWebResponse(WebRequest request) {
+            HttpWebResponse response = (HttpWebResponse)base.GetWebResponse(request);
+            _cookies.Add(response.Cookies);
+            return response;
         }
     }
 }

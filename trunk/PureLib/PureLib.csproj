@@ -107,6 +107,7 @@
     <Compile Include="Web\AdvancedWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Web\ContentType.cs" />
     <Compile Include="Web\DownloadItem.cs" />
     <Compile Include="Web\DownloadItemState.cs" />
     <Compile Include="Web\EmailSender.cs" />
@@ -115,6 +116,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web\WebDownloader.cs" />
+    <Compile Include="Web\WebRequester.cs" />
     <Compile Include="WPF\BusyControl\BusyIndicator.cs" />
     <Compile Include="WPF\BusyControl\BusyViewModelBase.cs" />
     <Compile Include="WPF\BusyControl\VisualStates.cs" />
