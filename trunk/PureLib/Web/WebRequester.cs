@@ -22,7 +22,8 @@ namespace PureLib.Web {
         public int RetryInterval { get; set; }
         public int RetryLimit { get; set; }
 
-        public event EventHandler<SetRequestEventArgs> SetRequest;
+        public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
+        public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
 
         public WebRequester()
             : this(new CookieContainer()) {
@@ -76,7 +77,7 @@ namespace PureLib.Web {
             req.Method = method;
             req.ContentType = contentType;
             if (SetRequest != null)
-                SetRequest(this, new SetRequestEventArgs(req));
+                SetRequest(this, new EventArgs<HttpWebRequest>(req));
 
             if (!param.IsNullOrEmpty()) {
                 byte[] buffer = Encoding.GetBytes(param);
@@ -87,18 +88,12 @@ namespace PureLib.Web {
             }
 
             HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+            if (GotResponse != null)
+                GotResponse(this, new EventArgs<HttpWebResponse>(res));
             _cookies.Add(res.Cookies);
             using (StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding)) {
                 return sr.ReadToEnd();
             }
-        }
-    }
-
-    public class SetRequestEventArgs : EventArgs {
-        public HttpWebRequest Request { get; private set; }
-
-        public SetRequestEventArgs(HttpWebRequest request) {
-            Request = request;
         }
     }
 }

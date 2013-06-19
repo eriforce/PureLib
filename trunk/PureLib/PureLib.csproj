@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AspNet\ClientCertificateExtensions.cs" />
+    <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\ExceptionHandling.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\Templating.cs" />
