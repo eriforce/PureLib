@@ -32,8 +32,8 @@ using System.Windows;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.2.0.130")]
-[assembly: AssemblyFileVersion("1.2.0.130")]
+[assembly: AssemblyVersion("1.3.0.131")]
+[assembly: AssemblyFileVersion("1.3.0.131")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

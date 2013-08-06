@@ -13,7 +13,7 @@ using PureLib.Common;
 
 namespace PureLib.Web {
     public class WebRequester {
-        private CookieContainer _cookies;
+        public CookieContainer Cookies { get; private set; }
 
         public string Agent { get; set; }
         public string Referer { get; set; }
@@ -30,7 +30,7 @@ namespace PureLib.Web {
         }
 
         public WebRequester(CookieContainer cookies) {
-            _cookies = cookies;
+            Cookies = cookies;
 
             Agent = "Mozilla/5.0 ({0} {1}; {2}) {3}/{4}".FormatWith(
                 Environment.OSVersion.Platform,
@@ -70,7 +70,7 @@ namespace PureLib.Web {
 
         private string RequestInternal(Uri uri, string method, string param, string contentType) {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-            req.CookieContainer = _cookies;
+            req.CookieContainer = Cookies;
             req.UserAgent = Agent;
             req.AllowAutoRedirect = AllowAutoRedirect;
             req.Referer = Referer;
@@ -90,7 +90,6 @@ namespace PureLib.Web {
             HttpWebResponse res = (HttpWebResponse)req.GetResponse();
             if (GotResponse != null)
                 GotResponse(this, new EventArgs<HttpWebResponse>(res));
-            _cookies.Add(res.Cookies);
             using (StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding)) {
                 return sr.ReadToEnd();
             }
