@@ -43,7 +43,7 @@ namespace PureLib.WPF {
             _execute(parameter);
         }
 
-        public void RaiseCanExecuteChange() {
+        public void RaiseCanExecuteChanged() {
             if (_canExecute != null && _canExecuteChanged != null)
                 _canExecuteChanged(this, EventArgs.Empty);
         }

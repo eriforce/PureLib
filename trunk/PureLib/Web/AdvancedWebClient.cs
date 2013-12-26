@@ -12,7 +12,8 @@ namespace PureLib.Web {
         private string _referer;
         private string _userName;
         private string _password;
-        private CookieContainer _cookies;
+
+        public CookieContainer Cookies { get; private set; }
 
         public AdvancedWebClient()
             : this(null, null, null, null) {
@@ -34,7 +35,7 @@ namespace PureLib.Web {
             _referer = referer;
             _userName = userName;
             _password = password;
-            _cookies = cookies;
+            Cookies = cookies;
         }
 
         public static string GetBasicAuthenticationHeader(string username, string password) {
@@ -48,14 +49,8 @@ namespace PureLib.Web {
                 request.Credentials = new NetworkCredential(_userName, _password);
                 request.Headers.Set(BasicAuthenticationHeaderName, GetBasicAuthenticationHeader(_userName, _password));
             }
-            request.CookieContainer = _cookies;
+            request.CookieContainer = Cookies;
             return request;
-        }
-
-        protected override WebResponse GetWebResponse(WebRequest request) {
-            HttpWebResponse response = (HttpWebResponse)base.GetWebResponse(request);
-            _cookies.Add(response.Cookies);
-            return response;
         }
     }
 }
