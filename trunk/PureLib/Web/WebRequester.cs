@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace PureLib.Web {
     public class WebRequester {
         public CookieContainer Cookies { get; private set; }
 
-        public string Agent { get; set; }
+        public string UserAgent { get; set; }
         public string Referer { get; set; }
         public bool AllowAutoRedirect { get; set; }
         public Encoding Encoding { get; set; }
@@ -32,12 +33,7 @@ namespace PureLib.Web {
         public WebRequester(CookieContainer cookies) {
             Cookies = cookies;
 
-            Agent = "Mozilla/5.0 ({0} {1}; {2}) {3}/{4}".FormatWith(
-                Environment.OSVersion.Platform,
-                Environment.OSVersion.Version.ToString(2),
-                Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE"),
-                this.GetType().Assembly.GetName().Name,
-                this.GetType().Assembly.GetName().Version);
+            UserAgent = GetUserAgent();
             AllowAutoRedirect = false;
             Encoding = Encoding.UTF8;
             RetryInterval = 1000;
@@ -63,7 +59,7 @@ namespace PureLib.Web {
                     Thread.Sleep(RetryInterval);
                 }
             }
-            Exception ex = new WebException("Retried {0} times but failed.".FormatWith(RetryLimit));
+            Exception ex = new WebException("Request failed after {0} times retried.".FormatWith(RetryLimit));
             ex.Data.Add("Url", uri);
             throw ex;
         }
@@ -71,7 +67,7 @@ namespace PureLib.Web {
         private string RequestInternal(Uri uri, string method, string param, string contentType) {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
             req.CookieContainer = Cookies;
-            req.UserAgent = Agent;
+            req.UserAgent = UserAgent;
             req.AllowAutoRedirect = AllowAutoRedirect;
             req.Referer = Referer;
             req.Method = method;
@@ -93,6 +89,16 @@ namespace PureLib.Web {
             using (StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding)) {
                 return sr.ReadToEnd();
             }
+        }
+
+        private string GetUserAgent() {
+            AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();
+            return "Mozilla/5.0 ({0} {1}; {2}) {3}/{4}".FormatWith(
+                Environment.OSVersion.Platform,
+                Environment.OSVersion.Version.ToString(2),
+                Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE"),
+                assemblyName.Name,
+                assemblyName.Version);
         }
     }
 }
