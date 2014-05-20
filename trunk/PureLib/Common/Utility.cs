@@ -84,5 +84,23 @@ namespace PureLib.Common {
                 throw new ArgumentException("RGB array is invalid.");
             return rgb.Max() + rgb.Min() < 255; // L < 0.5 
         }
+
+        public static void Shuffle<T>(this IList<T> list) {
+            Shuffle<T>(list, list.Count);
+        }
+
+        public static void Shuffle<T>(this T[] array) {
+            Shuffle<T>(array, array.Length);
+        }
+
+        private static void Shuffle<T>(dynamic list, int count) {
+            Random r = new Random();
+            for (int i = 1; i < count; i++) {
+                int pos = r.Next(i + 1);
+                T value = list[i];
+                list[i] = list[pos];
+                list[pos] = value;
+            }
+        }
     }
 }
