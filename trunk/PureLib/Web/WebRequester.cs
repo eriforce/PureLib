@@ -40,11 +40,27 @@ namespace PureLib.Web {
             RetryLimit = int.MaxValue;
         }
 
-        public string Request(string url, string method, string param = null, string contentType = ContentType.Web) {
+        public string Get(string url) {
+            return Request(url, WebRequestMethods.Http.Get);
+        }
+
+        public string Post(string url, string param, string contentType = ContentType.Form) {
+            return Request(url, WebRequestMethods.Http.Post, param, contentType);
+        }
+
+        public string Put(string url, string param, string contentType = ContentType.Form) {
+            return Request(url, WebRequestMethods.Http.Put, param, contentType);
+        }
+
+        public string Delete(string url) {
+            return Request(url, "DELETE");
+        }
+
+        public string Request(string url, string method, string param = null, string contentType = ContentType.Form) {
             return Request(new Uri(url), method, param, contentType);
         }
 
-        public string Request(Uri uri, string method, string param = null, string contentType = ContentType.Web) {
+        public string Request(Uri uri, string method, string param = null, string contentType = ContentType.Form) {
             int retry = 0;
             while (retry <= RetryLimit) {
                 try {
@@ -75,7 +91,7 @@ namespace PureLib.Web {
             if (SetRequest != null)
                 SetRequest(this, new EventArgs<HttpWebRequest>(req));
 
-            if (!param.IsNullOrEmpty()) {
+            if (!param.IsNullOrEmpty() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
                 byte[] buffer = Encoding.GetBytes(param);
                 req.ContentLength = buffer.Length;
                 using (Stream stream = req.GetRequestStream()) {
