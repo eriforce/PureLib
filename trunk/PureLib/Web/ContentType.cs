@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace PureLib.Web {
     public static class ContentType {
         public const string Form = "application/x-www-form-urlencoded";
+        public const string Stream = "application/octet-stream";
         public const string Xml = "application/xml";
         public const string Json = "application/json";
     }

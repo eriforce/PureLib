@@ -61,10 +61,18 @@ namespace PureLib.Web {
         }
 
         public string Request(Uri uri, string method, string param = null, string contentType = ContentType.Form) {
+            return Request(uri, method, Encoding.GetBytes(param), contentType);
+        }
+
+        public string Request(string url, string method, byte[] data, string contentType = ContentType.Stream) {
+            return Request(new Uri(url), method, data, contentType);
+        }
+
+        public string Request(Uri uri, string method, byte[] data, string contentType = ContentType.Stream) {
             int retry = 0;
             while (retry <= RetryLimit) {
                 try {
-                    return RequestInternal(uri, method, param, contentType);
+                    return RequestInternal(uri, method, data, contentType);
                 }
                 catch (WebException) {
                     retry++;
@@ -80,7 +88,7 @@ namespace PureLib.Web {
             throw ex;
         }
 
-        private string RequestInternal(Uri uri, string method, string param, string contentType) {
+        private string RequestInternal(Uri uri, string method, byte[] data, string contentType) {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
             req.CookieContainer = Cookies;
             req.UserAgent = UserAgent;
@@ -91,11 +99,10 @@ namespace PureLib.Web {
             if (SetRequest != null)
                 SetRequest(this, new EventArgs<HttpWebRequest>(req));
 
-            if (!param.IsNullOrEmpty() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
-                byte[] buffer = Encoding.GetBytes(param);
-                req.ContentLength = buffer.Length;
+            if ((data != null) && data.Any() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
+                req.ContentLength = data.Length;
                 using (Stream stream = req.GetRequestStream()) {
-                    stream.Write(buffer, 0, buffer.Length);
+                    stream.Write(data, 0, data.Length);
                 }
             }
 
