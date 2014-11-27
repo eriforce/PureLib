@@ -61,7 +61,7 @@ namespace PureLib.Web {
         }
 
         public string Request(Uri uri, string method, string param = null, string contentType = ContentType.Form) {
-            return Request(uri, method, Encoding.GetBytes(param), contentType);
+            return Request(uri, method, (param == null) ? null : Encoding.GetBytes(param), contentType);
         }
 
         public string Request(string url, string method, byte[] data, string contentType = ContentType.Stream) {
