@@ -76,6 +76,7 @@
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\ExceptionHandling.cs" />
     <Compile Include="Common\LanguageHelper.cs" />
+    <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\Templating.cs" />
     <Compile Include="Common\Type\Arguments.cs" />
     <Compile Include="Common\Type\DateTimeUnit.cs" />
