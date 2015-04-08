@@ -85,6 +85,14 @@ namespace PureLib.Common {
             return rgb.Max() + rgb.Min() < 255; // L < 0.5 
         }
 
+        public static T[] ToEnum<T>(this string str, string separator = ",") where T : struct, IConvertible {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException("T must be an enumerated type.");
+
+            return str.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => (T)Enum.Parse(typeof(T), s)).ToArray();
+        }
+
         public static void Shuffle<T>(this IList<T> list) {
             Shuffle<T>(list, list.Count);
         }
