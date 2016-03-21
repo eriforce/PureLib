@@ -35,13 +35,13 @@ More information about NuGet package avaliable at https://nuget.org/packages/Pur
 
 `NotifyObject` implements `INotifyPropertyChanged`, which enables you to raise changes of properties.
 ```csharp
-    public string StatusBarText {
-        get { return _statusBarText; }
-        set {
-            _statusBarText = value;
-            RaiseChange(() => StatusBarText); // or RaiseChange("StatusBarText");
-        }
+public string StatusBarText {
+    get { return _statusBarText; }
+    set {
+        _statusBarText = value;
+        RaiseChange(() => StatusBarText); // or RaiseChange("StatusBarText");
     }
+}
 ```
 
 ### View Model Base
@@ -64,24 +64,24 @@ More information about NuGet package avaliable at https://nuget.org/packages/Pur
 
 `RelayCommand` implements `ICommand`, which could be bind to UI controls.
 ```csharp
-    private ICommand _openDescriptionCommand;
-    public ICommand OpenDescriptionCommand {
-        get {
-            if (_openDescriptionCommand == null)
-                _openDescriptionCommand = new RelayCommand(p => {
-                    OpeningDescription(this, new EventArgs<string>(((WatFile)p).Description));
-                }, p => !((WatFile)p).Description.IsNullOrEmpty());
-            return _openDescriptionCommand;
-        }
+private ICommand _openDescriptionCommand;
+public ICommand OpenDescriptionCommand {
+    get {
+        if (_openDescriptionCommand == null)
+            _openDescriptionCommand = new RelayCommand(p => {
+                OpeningDescription(this, new EventArgs<string>(((WatFile)p).Description));
+            }, p => !((WatFile)p).Description.IsNullOrEmpty());
+        return _openDescriptionCommand;
     }
+}
 ```
 
 ### Single Instance App
 
 `SingleInstanceApp` inherits `Application`. The application inherits `SingleInstanceApp` will not be able to run multiple instances.
 ```csharp
-    public partial class App : SingleInstanceApp { 
-    }
+public partial class App : SingleInstanceApp { 
+}
 ```
 
 ### Converters
@@ -94,89 +94,88 @@ PureLib provides commonly used converters for UI bindings.
 
 `AdvancedWebClient` inherits `WebClient`, which added Basic Authentication and cookies support.
 ```csharp
-    using (AdvancedWebClient client = new AdvancedWebClient(referer, userName, password, cookies)) {
-    }
+using (AdvancedWebClient client = new AdvancedWebClient(referer, userName, password, cookies)) {
+}
 ```
 
 ### Resumable Web Client
 
 `ResumableWebClient` uses `AdvancedWebClient` internally. It could be used to resume imcompleted downloads.
 ```csharp
-    using (ResumableWebClient client = new ResumableWebClient(referer, userName, password, cookies)) {
-    }
+using (ResumableWebClient client = new ResumableWebClient(referer, userName, password, cookies)) {
+}
 ```
 
 ### Web Requester
 
 `WebRequester` is a wrapper for easily using `HttpWebRequest`. It features auto retrying with specified times.
 ```csharp
-    _requester = new WebRequester(_cookiePersister.CookieContainer) {
-        UserAgent = agent,
-        Referer = referer,
-        Encoding = Encoding.GetEncoding("gbk"),
-        RetryInterval = 2000,
-        RetryLimit = 5
-    };
-    _requester.SetRequest += (s, e) => {
-        e.Data.Proxy = null;
-    };
-    _requester.GotResponse += (s, e) => {
-        if (!_ignoreCookie)
-            _cookiePersister.Update(e.Data);
-    };
+_requester = new WebRequester(_cookiePersister.CookieContainer) {
+    UserAgent = agent,
+    Referer = referer,
+    Encoding = Encoding.GetEncoding("gbk"),
+    RetryInterval = 2000,
+    RetryLimit = 5
+};
+_requester.SetRequest += (s, e) => {
+    e.Data.Proxy = null;
+};
+_requester.GotResponse += (s, e) => {
+    if (!_ignoreCookie)
+        _cookiePersister.Update(e.Data);
+};
 ```
 
 ### Web Downloader
 
 `WebDownloader` features essential functions of a download manager. It has a download queue and dispatches web clients to download tasks in pararell.
 ```csharp
-    WebDownloader downloader = new WebDownloader(Global.Config.ThreadCount, null, false);
-    downloader.DownloadCompleting += OnDownloadCompleting;
-    downloader.AddItems(_itemPostMaps.Keys.ToList());
+WebDownloader downloader = new WebDownloader(Global.Config.ThreadCount, null, false);
+downloader.DownloadCompleting += OnDownloadCompleting;
+downloader.AddItems(_itemPostMaps.Keys.ToList());
 ```
 
 ### Utility
 
 Get running time of specfic code segment:
 ```csharp
-    TimeSpan ts = Utility.GetExecutingDuration(() => { 
-        for (int i = 0; i < 1000000; i++) {
-        }
-    });
+TimeSpan ts = Utility.GetExecutingDuration(() => { 
+    for (int i = 0; i < 1000000; i++) {
+    }
+});
 ```
 
 Convert a wildcard to a regular expression:
 ```csharp
-    string regex = "*.txt".WildcardToRegex();
+string regex = "*.txt".WildcardToRegex();
 ```
 
 Convert a byte array to a string in hex format:
 ```csharp
-    string hex = Encoding.UTF8.GetBytes("hello").ToHexString();
+string hex = Encoding.UTF8.GetBytes("hello").ToHexString();
 ```
 
 Convert a string of enum list to an enum array:
 ```csharp
-    DayOfWeek[] days = "Sunday,Saturday".ToEnum<DayOfWeek>();
+DayOfWeek[] days = "Sunday,Saturday".ToEnum<DayOfWeek>();
 ```
 
 Get human friendly text of an exception:
 ```csharp
-    try {
-    } catch (Exception ex) {
-        string text = ex.GetTraceText();
-    }
+try {
+} catch (Exception ex) {
+    string text = ex.GetTraceText();
+}
 ```
 
 Shortcuts for reading/writing files on disk:
 ```csharp
-    "D:\\data.bin".WriteBinary(new byte[] { 0x00, 0x01 });
-    byte[] data = "D:\\data.bin".ReadBinary();
-    
-    "D:\\text.txt".WriteText("hello", Encoding.Default);
-    string text = "D:\\text.txt".ReadText();
-```
+"D:\\data.bin".WriteBinary(new byte[] { 0x00, 0x01 });
+byte[] data = "D:\\data.bin".ReadBinary();
 
+"D:\\text.txt".WriteText("hello", Encoding.Default);
+string text = "D:\\text.txt".ReadText();
+```
 
 
 ## License
