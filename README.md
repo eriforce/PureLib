@@ -1,6 +1,8 @@
 # PureLib
 
 [![Build status](https://ci.appveyor.com/api/projects/status/aogji08cvj7g1rq6?svg=true)](https://ci.appveyor.com/project/eriforce/purelib)
+[![NuGet Version](https://img.shields.io/nuget/v/PureLib.svg?style=flat-square)](https://www.nuget.org/packages/PureLib/)
+![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 A lightweight C# utility library.
 
@@ -62,7 +64,7 @@ public string StatusBarText {
 
 ### Relay Command
 
-`RelayCommand` implements `ICommand`, which could be bind to UI controls.
+`RelayCommand` implements `ICommand`, which could be bound to UI controls.
 ```csharp
 private ICommand _openDescriptionCommand;
 public ICommand OpenDescriptionCommand {
@@ -92,7 +94,7 @@ PureLib provides commonly used converters for UI bindings.
 
 ### Advanced Web Client
 
-`AdvancedWebClient` inherits `WebClient`, which added Basic Authentication and cookies support.
+`AdvancedWebClient` inherits `WebClient`, which supports Basic Authentication and cookies.
 ```csharp
 using (AdvancedWebClient client = new AdvancedWebClient(referer, userName, password, cookies)) {
 }
@@ -108,7 +110,7 @@ using (ResumableWebClient client = new ResumableWebClient(referer, userName, pas
 
 ### Web Requester
 
-`WebRequester` is a wrapper for easily using `HttpWebRequest`. It features auto retrying with specified times.
+`WebRequester` is a wrapper for easily using `HttpWebRequest`. It features auto retry with specified times.
 ```csharp
 _requester = new WebRequester(_cookiePersister.CookieContainer) {
     UserAgent = agent,
@@ -128,7 +130,7 @@ _requester.GotResponse += (s, e) => {
 
 ### Web Downloader
 
-`WebDownloader` features essential functions of a download manager. It has a download queue and dispatches web clients to download tasks in pararell.
+`WebDownloader` contains essential functions of a download manager. It can dispatch any number of threads to download concurrently.
 ```csharp
 WebDownloader downloader = new WebDownloader(Global.Config.ThreadCount, null, false);
 downloader.DownloadCompleting += OnDownloadCompleting;
@@ -160,7 +162,7 @@ Convert a string of enum list to an enum array:
 DayOfWeek[] days = "Sunday,Saturday".ToEnum<DayOfWeek>();
 ```
 
-Get human friendly text of an exception:
+Get human-friendly text from an exception:
 ```csharp
 try {
 } catch (Exception ex) {
