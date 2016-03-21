@@ -129,11 +129,11 @@ namespace PureLib.Web {
                     object[] parameters = new object[] { item.Referer, item.UserName, item.Password, Cookies };
                     IAsyncWebClient client = UseResumableClient ?
                         (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
-                        (IAsyncWebClient)Utility.GetInstance<AdvancedWebClient>(parameters);
+                        Utility.GetInstance<AdvancedWebClient>(parameters);
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
                     if (client is AdvancedWebClient)
                         ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                    
+
                     if (!Directory.Exists(item.Location))
                         Directory.CreateDirectory(item.Location);
                     client.DownloadFileAsync(item.Url, item.FilePath);

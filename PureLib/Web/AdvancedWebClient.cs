@@ -7,7 +7,7 @@ using PureLib.Common;
 
 namespace PureLib.Web {
     public class AdvancedWebClient : WebClient, IAsyncWebClient {
-        public const string BasicAuthenticationHeaderName = "Authorization";
+        public const string AuthorizationHeaderName = "Authorization";
 
         private string _referer;
         private string _userName;
@@ -47,7 +47,7 @@ namespace PureLib.Web {
             request.Referer = _referer;
             if (!_userName.IsNullOrEmpty() || !_password.IsNullOrEmpty()) {
                 request.Credentials = new NetworkCredential(_userName, _password);
-                request.Headers.Set(BasicAuthenticationHeaderName, GetBasicAuthenticationHeader(_userName, _password));
+                request.Headers.Set(AuthorizationHeaderName, GetBasicAuthenticationHeader(_userName, _password));
             }
             request.CookieContainer = Cookies;
             return request;
