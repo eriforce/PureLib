@@ -27,7 +27,7 @@ namespace PureLib.WPF.BusyControl {
         }
 
         public void BusyWith(string content, Action action) {
-            BusyWith(content, () => { action(); return 0; });
+            BusyWith(content, () => { action(); return true; });
         }
 
         public T BusyWith<T>(string content, Func<T> func) {
@@ -41,6 +41,21 @@ namespace PureLib.WPF.BusyControl {
                 });
                 Dispatcher.PushFrame(frame);
                 return task.Result;
+            }
+            finally {
+                IsBusy = false;
+            }
+        }
+
+        public Task BusyWithAsync(string content, Action action) {
+            return BusyWithAsync(content, () => { action(); return true; });
+        }
+
+        public async Task<T> BusyWithAsync<T>(string content, Func<T> func) {
+            BusyContent = content;
+            IsBusy = true;
+            try {
+                return await Task.Run(func);
             }
             finally {
                 IsBusy = false;
