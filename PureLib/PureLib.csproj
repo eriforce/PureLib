@@ -36,13 +36,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JpnKanaConvHelper, Version=1.0.1.0, Culture=neutral, PublicKeyToken=f107c6e5af142f74, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\JpnKanaConvHelper.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -61,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\ExceptionHandling.cs" />
-    <Compile Include="Common\LanguageHelper.cs" />
     <Compile Include="Common\Templating.cs" />
     <Compile Include="Common\Type\Arguments.cs" />
     <Compile Include="Common\Type\DateTimeUnit.cs" />
@@ -114,10 +107,6 @@
     <Compile Include="WPF\TextBoxFilters.cs" />
     <Compile Include="WPF\ViewModelBase.cs" />
     <Compile Include="WPF\WpfExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lib\JpnKanaConversion.dll" />
-    <None Include="Lib\JpnKanaConvHelper.dll" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.zh-CN.resx">

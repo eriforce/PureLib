@@ -8,7 +8,7 @@ using System.Text;
 using Microsoft.International.Converters;
 using Microsoft.VisualBasic;
 
-namespace PureLib.Common {
+namespace PureLib.Languages {
     public static class LanguageHelper {
         private static ChineseConverter _converter;
         private static ChineseConverter _loadedConverter {
@@ -63,7 +63,7 @@ namespace PureLib.Common {
 
             public ChineseConverter() {
                 string pairString = ConfigurationManager.AppSettings[AdditionalTcScPairName];
-                if (!pairString.IsNullOrEmpty()) {
+                if (!string.IsNullOrEmpty(pairString)) {
                     string[] scTcPairs = pairString.Split(pairsSeparator);
                     foreach (string scTcPair in scTcPairs) {
                         string[] parts = scTcPair.Split(pairSeparator);

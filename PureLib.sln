@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib", "PureLib\PureLib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.EntityFramework", "PureLib.EntityFramework\PureLib.EntityFramework.csproj", "{6FD94C01-A989-4034-B0D5-1583D1A27AEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.Languages", "PureLib.Languages\PureLib.Languages.csproj", "{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
