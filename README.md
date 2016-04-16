@@ -9,13 +9,14 @@ A lightweight C# utility library.
 
 ## Download
 
-The library is available on nuget.org via package name `PureLib`.
+The library is available on nuget.org via package name `PureLib` and `PureLib.EntityFramework`.
 
 To install PureLib, run the following command in the Package Manager Console
 ```
 PM> Install-Package PureLib
+PM> Install-Package PureLib.EntityFramework
 ```
-More information about NuGet package avaliable at https://nuget.org/packages/PureLib
+More information about NuGet package avaliable at https://nuget.org/packages/PureLib and https://www.nuget.org/packages/PureLib.EntityFramework
 
 
 ## Features
@@ -27,8 +28,6 @@ More information about NuGet package avaliable at https://nuget.org/packages/Pur
   - [SingleInstanceApp](#single-instance-app)
   - [Converters](#converters)
 - Web
-  - [AdvancedWebClient](#advanced-web-client)
-  - [ResumableWebClient](#resumable-web-client)
   - [WebRequester](#web-requester)
   - [WebDownloader](#web-downloader)
 - [Utility](#utility)
@@ -91,22 +90,6 @@ public partial class App : SingleInstanceApp {
 PureLib provides commonly used converters for UI bindings.
 - `BooleanToVisibilityConverter`
 - `InverseBooleanConverter`
-
-### Advanced Web Client
-
-`AdvancedWebClient` inherits `WebClient`, which supports Basic Authentication and cookies.
-```csharp
-using (AdvancedWebClient client = new AdvancedWebClient(referer, userName, password, cookies)) {
-}
-```
-
-### Resumable Web Client
-
-`ResumableWebClient` uses `AdvancedWebClient` internally. It could be used to resume imcompleted downloads.
-```csharp
-using (ResumableWebClient client = new ResumableWebClient(referer, userName, password, cookies)) {
-}
-```
 
 ### Web Requester
 
