@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/eriforce/PureLib</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>Utility WPF Web CJK</tags>
+    <tags>Utility WPF Web</tags>
   </metadata>
 </package>
