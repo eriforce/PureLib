@@ -53,12 +53,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\EventArgs.cs" />
+    <Compile Include="Common\Type\EventArgs.cs" />
     <Compile Include="Common\ExceptionHandling.cs" />
     <Compile Include="Common\Templating.cs" />
-    <Compile Include="Common\Type\Arguments.cs" />
+    <Compile Include="Common\Arguments.cs" />
     <Compile Include="Common\Type\DateTimeUnit.cs" />
-    <Compile Include="Common\Type\JsonFormatter.cs" />
+    <Compile Include="Common\JsonFormatter.cs" />
     <Compile Include="Common\Type\SizeUnit.cs" />
     <Compile Include="Common\UnitDisplay.cs" />
     <Compile Include="Common\Utility.cs" />
