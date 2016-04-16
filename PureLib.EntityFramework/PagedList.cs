@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
 
-namespace PureLib.Common {
+namespace PureLib.EntityFramework {
     public class PagedList<T> : List<T> {
         public int PageSize { get; private set; }
         public int Page { get; private set; }
@@ -27,25 +28,31 @@ namespace PureLib.Common {
             TotalCount = totalCount;
         }
 
-        public PagedList(IQueryable<T> query, int page, int pageSize)
-            : base(query.Skip((page - 1) * pageSize).Take(pageSize)) {
-            Page = page;
-            PageSize = pageSize;
-            TotalCount = query.Count();
-        }
-
         public PagedList<TResult> Cast<TResult>() where TResult : class {
             return new PagedList<TResult>(this.Select(p => p as TResult), Page, PageSize, TotalCount);
         }
     }
 
     public static class PagedListExtension {
-        public static PagedList<T> Page<T>(this IQueryable<T> query, int page, int pageSize) {
-            return new PagedList<T>(query, page, pageSize);
+        public static PagedList<T> AttachPagination<T>(this IEnumerable<T> data, int page, int pageSize, int totalCount) {
+            return new PagedList<T>(data, page, pageSize, totalCount);
         }
 
-        public static PagedList<T> Page<T>(this IEnumerable<T> data, int page, int pageSize, int totalCount) {
-            return new PagedList<T>(data, page, pageSize, totalCount);
+        public static PagedList<T> Paginate<T>(this IQueryable<T> query, int page, int pageSize) {
+            int count = query.Count();
+            return query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .AttachPagination(page, pageSize, count);
+        }
+
+        public static async Task<PagedList<T>> PaginateAsync<T>(this IQueryable<T> query, int page, int pageSize) {
+            int count = await query.CountAsync();
+            List<T> list = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            return list.AttachPagination(page, pageSize, count);
         }
     }
 }

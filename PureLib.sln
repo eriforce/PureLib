@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib", "PureLib\PureLib.csproj", "{2E188C01-D71A-48C6-BAC7-34956007885F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.EntityFramework", "PureLib.EntityFramework\PureLib.EntityFramework.csproj", "{6FD94C01-A989-4034-B0D5-1583D1A27AEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,10 @@ Global
 		{2E188C01-D71A-48C6-BAC7-34956007885F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

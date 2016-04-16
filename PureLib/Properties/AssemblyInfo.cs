@@ -7,7 +7,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PureLib")]
-[assembly: AssemblyDescription("A lightweight utility library")]
+[assembly: AssemblyDescription("A lightweight utility library.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Erich Yu")]
 [assembly: AssemblyProduct("PureLib")]
