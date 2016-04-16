@@ -91,8 +91,9 @@
     <Compile Include="Web\DownloadItem.cs" />
     <Compile Include="Web\DownloadItemState.cs" />
     <Compile Include="Web\EmailSender.cs" />
-    <Compile Include="Web\IAsyncWebClient.cs" />
-    <Compile Include="Web\ResumableWebClient.cs" />
+    <Compile Include="Web\ResumableWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Web\WebDownloader.cs" />
     <Compile Include="Web\WebRequester.cs" />
     <Compile Include="WPF\BusyControl\BusyIndicator.cs" />

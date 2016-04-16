@@ -1,27 +1,26 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using PureLib.Common;
 
 namespace PureLib.Web {
     public class WebDownloader {
-        private object _clientItemMapsLock;
-        private Dictionary<IAsyncWebClient, DownloadItem> _clientItemMaps;
-        private List<DownloadItem> _items;
+        private object _clientsLock = new object();
+        private List<DownloadItem> _items = new List<DownloadItem>();
+        private Dictionary<DownloadItem, CancellationTokenSource> _downloadingItems = new Dictionary<DownloadItem, CancellationTokenSource>();
 
         public CookieContainer Cookies { get; private set; }
         public bool UseResumableClient { get; private set; }
         public int ThreadCount { get; private set; }
         public bool IsStopped {
-            get {
-                lock (_clientItemMapsLock) {
-                    return _clientItemMaps.Count == 0;
-                }
-            }
+            get { return _downloadingItems.Count == 0; }
         }
 
         public event DownloadCompletingEventHandler DownloadCompleting;
@@ -31,25 +30,17 @@ namespace PureLib.Web {
         }
 
         public WebDownloader(int threadCount, CookieContainer cookies, bool useResumableClient) {
-            CheckThreadCount(threadCount);
-
+            SetThreadCount(threadCount);
             Cookies = cookies ?? new CookieContainer();
             UseResumableClient = useResumableClient;
-            _clientItemMapsLock = new object();
-            _clientItemMaps = new Dictionary<IAsyncWebClient, DownloadItem>();
-            _items = new List<DownloadItem>();
-            SetThreadCount(threadCount);
         }
 
         public void SetThreadCount(int threadCount) {
-            CheckThreadCount(threadCount);
+            if (threadCount <= 0)
+                throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
 
             ThreadCount = threadCount;
             StartDownloading();
-        }
-
-        public void AddItem(DownloadItem item) {
-            AddItems(new List<DownloadItem>() { item });
         }
 
         public void AddItems(List<DownloadItem> items) {
@@ -64,10 +55,6 @@ namespace PureLib.Web {
                 StartDownloading();
         }
 
-        public void RemoveItem(DownloadItem item) {
-            RemoveItems(new List<DownloadItem>() { item });
-        }
-
         public void RemoveItems(List<DownloadItem> items) {
             if ((items == null) || items.Any(i => i == null))
                 throw new ArgumentNullException("Download items are null.");
@@ -80,25 +67,30 @@ namespace PureLib.Web {
         }
 
         public void StopAllItems() {
-            foreach (DownloadItem i in _items.Where(i => i.IsReady)) {
-                i.Stop();
+            foreach (DownloadItem i in _items) {
+                if (i.IsReady)
+                    i.Stop();
             }
         }
 
         public void ResumeAllItems() {
-            foreach (DownloadItem i in _items.Where(i => i.IsStopped)) {
-                i.Start();
+            foreach (DownloadItem i in _items) {
+                if (i.IsStopped)
+                    i.Start();
             }
             StartDownloading();
         }
 
         private void StartDownloading() {
-            lock (_clientItemMapsLock) {
-                if (_clientItemMaps.Count < ThreadCount) {
-                    int needToStart = Math.Min(ThreadCount - _clientItemMaps.Count,
-                        _items.Count(i => i.IsReady));
-                    for (int i = 0; i < needToStart; i++)
-                        Download();
+            lock (_clientsLock) {
+                if (_downloadingItems.Count < ThreadCount) {
+                    foreach (DownloadItem item in _items.Where(i => i.IsReady).Take(ThreadCount - _downloadingItems.Count)) {
+                        _downloadingItems.Add(item, null);
+                        Task.Run(() => DownloadAsync(item).ContinueWith(t => {
+                            _downloadingItems.Remove(item);
+                            StartDownloading();
+                        }));
+                    }
                 }
             }
         }
@@ -106,79 +98,58 @@ namespace PureLib.Web {
         private void ItemStateChanged(object sender, DownloadItemStateChangedEventArgs e) {
             switch (e.NewState) {
                 case DownloadItemState.Queued:
-                    lock (_clientItemMapsLock) {
-                        Download();
-                    }
+                    StartDownloading();
                     break;
                 case DownloadItemState.Stopped:
-                    foreach (var p in _clientItemMaps) {
-                        if (p.Value == e.DownloadItem) {
-                            p.Key.CancelAsync();
-                            break;
-                        }
-                    }
+                    _downloadingItems[e.DownloadItem].Cancel();
                     break;
             }
         }
 
-        private void Download() {
-            if (_clientItemMaps.Count < ThreadCount) {
-                DownloadItem item = _items.FirstOrDefault(i => i.IsReady);
-                if (item != null) {
+        private async Task DownloadAsync(DownloadItem item) {
+            try {
+                if (!Directory.Exists(item.Location))
+                    Directory.CreateDirectory(item.Location);
+
+                AdvancedWebClient client = UseResumableClient ? new ResumableWebClient() : new AdvancedWebClient();
+                using (client) {
+                    client.DownloadProgressChanged += (s, e) => {
+                        item.TotalBytes = e.TotalBytesToReceive;
+                        item.ReceivedBytes = e.BytesReceived;
+                        item.Percentage = e.ProgressPercentage;
+                    };
+                    client.SetRequest += (s, e) => {
+                        HttpWebRequest request = e.Data;
+                        request.Referer = item.Referer;
+                        request.CookieContainer = Cookies;
+                        if (!item.UserName.IsNullOrEmpty() || !item.Password.IsNullOrEmpty()) {
+                            request.Headers.Set(AdvancedWebClient.AuthorizationHeaderName,
+                                AdvancedWebClient.GetBasicAuthenticationHeader(item.UserName, item.Password));
+                        }
+                    };
+
                     item.Download();
-                    object[] parameters = new object[] { item.Referer, item.UserName, item.Password, Cookies };
-                    IAsyncWebClient client = UseResumableClient ?
-                        (IAsyncWebClient)Utility.GetInstance<ResumableWebClient>(parameters) :
-                        Utility.GetInstance<AdvancedWebClient>(parameters);
-                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
-                    if (client is AdvancedWebClient)
-                        ((AdvancedWebClient)client).DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+                    CancellationTokenSource source = new CancellationTokenSource();
+                    _downloadingItems[item] = source;
+                    await client.DownloadFileAsync(item.Url, item.FilePath, source.Token).ConfigureAwait(false);
+                }
 
-                    if (!Directory.Exists(item.Location))
-                        Directory.CreateDirectory(item.Location);
-                    client.DownloadFileAsync(item.Url, item.FilePath);
-                    _clientItemMaps.Add(client, item);
+                if (IsDownloadedFileCorrupted(item))
+                    item.Start();
+                else
+                    item.Complete();
+            }
+            catch (OperationCanceledException) {
+                FileInfo file = new FileInfo(item.FilePath);
+                if (file.Exists) {
+                    item.ReceivedBytes = file.Length;
+                    if (item.TotalBytes > 0)
+                        item.Percentage = (int)((item.ReceivedBytes * 100) / item.TotalBytes);
                 }
             }
-        }
-
-        private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
-            DownloadItem item = _clientItemMaps[(IAsyncWebClient)sender];
-            item.TotalBytes = e.TotalBytesToReceive;
-            item.ReceivedBytes = e.BytesReceived;
-            item.Percentage = e.ProgressPercentage;
-        }
-
-        private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
-            lock (_clientItemMapsLock) {
-                dynamic client = sender;
-                DownloadItem item = _clientItemMaps[client];
-                _clientItemMaps.Remove(client);
-                client.Dispose();
-                if (e.Cancelled) {
-                    item.Stop();
-                    FileInfo file = new FileInfo(item.FilePath);
-                    if (file.Exists) {
-                        item.ReceivedBytes = file.Length;
-                        if (item.TotalBytes > 0)
-                            item.Percentage = (int)((item.ReceivedBytes * 100) / item.TotalBytes);
-                    }
-                }
-                else {
-                    if (e.Error != null)
-                        item.Error();
-                    else if (IsDownloadedFileCorrupted(item))
-                        item.Start();
-                    else
-                        item.Complete();
-                    Download();
-                }
+            catch (Exception) {
+                item.Error();
             }
-        }
-
-        private void CheckThreadCount(int threadCount) {
-            if (threadCount <= 0)
-                throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
         }
 
         private bool IsDownloadedFileCorrupted(DownloadItem item) {

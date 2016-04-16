@@ -15,8 +15,8 @@ namespace PureLib.Common {
 
         public static async Task WriteBinaryAsync(this string path, byte[] bytes, FileMode fileMode = FileMode.Create) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
-                await stream.WriteAsync(bytes, 0, bytes.Length);
-                await stream.FlushAsync();
+                await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                await stream.FlushAsync().ConfigureAwait(false);
             }
         }
 
@@ -31,7 +31,7 @@ namespace PureLib.Common {
         public static async Task<byte[]> ReadBinaryAsync(this string path, FileMode fileMode = FileMode.Open) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
                 byte[] bytes = new byte[stream.Length];
-                await stream.ReadAsync(bytes, 0, bytes.Length);
+                await stream.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
                 return bytes;
             }
         }
@@ -47,8 +47,8 @@ namespace PureLib.Common {
         public static async Task WriteTextAsync(this string path, string text, Encoding enc, FileMode fileMode = FileMode.Create) {
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
                 StreamWriter writer = new StreamWriter(stream, enc);
-                await writer.WriteAsync(text);
-                await writer.FlushAsync();
+                await writer.WriteAsync(text).ConfigureAwait(false);
+                await writer.FlushAsync().ConfigureAwait(false);
             }
         }
 
@@ -68,7 +68,7 @@ namespace PureLib.Common {
 
             using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
                 StreamReader reader = new StreamReader(stream, enc, true);
-                return await reader.ReadToEndAsync();
+                return await reader.ReadToEndAsync().ConfigureAwait(false);
             }
         }
     }

@@ -3,54 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using PureLib.Common;
 
 namespace PureLib.Web {
-    public class AdvancedWebClient : WebClient, IAsyncWebClient {
+    public class AdvancedWebClient : WebClient {
         public const string AuthorizationHeaderName = "Authorization";
 
-        private string _referer;
-        private string _userName;
-        private string _password;
+        public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
 
-        public CookieContainer Cookies { get; private set; }
-
-        public AdvancedWebClient()
-            : this(null, null, null, null) {
-        }
-
-        public AdvancedWebClient(string referer)
-            : this(referer, null, null, null) {
-        }
-
-        public AdvancedWebClient(string userName, string password)
-            : this(null, userName, password, null) {
-        }
-
-        public AdvancedWebClient(CookieContainer cookies)
-            : this(null, null, null, cookies) {
-        }
-
-        public AdvancedWebClient(string referer, string userName, string password, CookieContainer cookies) {
-            _referer = referer;
-            _userName = userName;
-            _password = password;
-            Cookies = cookies;
-        }
-
-        public static string GetBasicAuthenticationHeader(string username, string password) {
-            return "Basic {0}".FormatWith(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)).ToBase64String());
+        public virtual async Task DownloadFileAsync(Uri address, string fileName, CancellationToken cancellationToken) {
+            cancellationToken.ThrowIfCancellationRequested();
+            using (cancellationToken.Register(CancelAsync)) {
+                await DownloadFileTaskAsync(address, fileName).ConfigureAwait(false);
+            }
         }
 
         protected override WebRequest GetWebRequest(Uri address) {
             HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
-            request.Referer = _referer;
-            if (!_userName.IsNullOrEmpty() || !_password.IsNullOrEmpty()) {
-                request.Credentials = new NetworkCredential(_userName, _password);
-                request.Headers.Set(AuthorizationHeaderName, GetBasicAuthenticationHeader(_userName, _password));
-            }
-            request.CookieContainer = Cookies;
+            if (SetRequest != null)
+                SetRequest(this, new EventArgs<HttpWebRequest>(request));
             return request;
+        }
+
+        public static string GetBasicAuthenticationHeader(string username, string password) {
+            return "Basic {0}".FormatWith(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)).ToBase64String());
         }
     }
 }

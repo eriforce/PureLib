@@ -165,7 +165,7 @@ namespace PureLib.Web {
             _state = state;
             if (!IsReady && !IsStopped)
                 throw new ApplicationException("{0} cannot be the inital state for download item.".FormatWith(state));
-            
+
             if (!Uri.TryCreate(url, UriKind.Absolute, out _url))
                 throw new ArgumentException("Invalid url: {0}".FormatWith(url));
             Referer = referer;
@@ -182,7 +182,7 @@ namespace PureLib.Web {
                 State = DownloadItemState.Stopped;
         }
 
-        public void Error() {
+        internal void Error() {
             if (State != DownloadItemState.Downloading)
                 throw new ApplicationException("Cannot set {0} to error with {1} state.".FormatWith(FileName, State));
             State = DownloadItemState.Error;
@@ -191,7 +191,7 @@ namespace PureLib.Web {
         internal void Download() {
             if (State != DownloadItemState.Queued)
                 throw new ApplicationException("Cannot download {0} with {1} state.".FormatWith(FileName, State));
-     
+
             State = DownloadItemState.Downloading;
         }
 

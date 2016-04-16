@@ -6,8 +6,6 @@ using System.Text;
 
 namespace PureLib.Common {
     public static class CryptographyHelper {
-        private static readonly Encoding _defaultEncoding = Encoding.UTF8;
-
         public static int GetRandom(int maxValue = int.MaxValue) {
             if (maxValue <= 1)
                 throw new ArgumentException("The max value doesn't make sense.");
@@ -37,7 +35,7 @@ namespace PureLib.Common {
         }
 
         public static byte[] CreateHash<T>(this string plaintext) where T : HashAlgorithm {
-            return CreateHash<T>(_defaultEncoding.GetBytes(plaintext));
+            return CreateHash<T>(Encoding.UTF8.GetBytes(plaintext));
         }
 
         public static byte[] CreateHash<T>(this byte[] bytes) where T : HashAlgorithm {
@@ -48,7 +46,7 @@ namespace PureLib.Common {
 
         public static byte[] CreateHMAC<T>(this string plaintext, byte[] key) where T : HMAC {
             using (HMAC hmac = Utility.GetInstance<T>(key)) {
-                return CreateHash(_defaultEncoding.GetBytes(plaintext), hmac);
+                return CreateHash(Encoding.UTF8.GetBytes(plaintext), hmac);
             }
         }
 
