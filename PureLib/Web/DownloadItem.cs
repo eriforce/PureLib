@@ -19,7 +19,6 @@ namespace PureLib.Web {
         private string _fileName;
         private long _totalBytes;
         private long _receiveBytes;
-        private int _percentage;
 
         [DataMember]
         public DownloadItemState State {
@@ -118,6 +117,7 @@ namespace PureLib.Web {
             set {
                 _totalBytes = value;
                 RaiseChange(() => TotalBytes);
+                RaiseChange(() => Percentage);
             }
         }
         [DataMember]
@@ -128,32 +128,21 @@ namespace PureLib.Web {
             set {
                 _receiveBytes = value;
                 RaiseChange(() => ReceivedBytes);
-            }
-        }
-        [DataMember]
-        public int Percentage {
-            get {
-                return _percentage;
-            }
-            set {
-                _percentage = value;
                 RaiseChange(() => Percentage);
             }
         }
+        public int Percentage {
+            get { return TotalBytes == 0 ? 0 : (int)(100 * ReceivedBytes / TotalBytes); }
+
+        }
         public bool IsReady {
-            get {
-                return State == DownloadItemState.Queued;
-            }
+            get { return State == DownloadItemState.Queued; }
         }
         public bool IsStopped {
-            get {
-                return State == DownloadItemState.Stopped;
-            }
+            get { return State == DownloadItemState.Stopped; }
         }
         public bool IsDownloading {
-            get {
-                return State == DownloadItemState.Downloading;
-            }
+            get { return State == DownloadItemState.Downloading; }
         }
 
         public event DownloadItemStateChangedEventHandler StateChanged;
@@ -203,7 +192,6 @@ namespace PureLib.Web {
             if (TotalBytes == 0)
                 TotalBytes = new FileInfo(FilePath).Length;
             ReceivedBytes = TotalBytes;
-            Percentage = 100;
         }
 
         protected virtual void OnStateChanged(DownloadItem item, DownloadItemState oldState, DownloadItemState newState) {

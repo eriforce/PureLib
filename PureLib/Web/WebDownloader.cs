@@ -43,7 +43,7 @@ namespace PureLib.Web {
             StartDownloading();
         }
 
-        public void AddItems(List<DownloadItem> items) {
+        public void AddItems(IEnumerable<DownloadItem> items) {
             if ((items == null) || items.Any(i => i == null))
                 throw new ArgumentNullException("Download items are null.");
 
@@ -55,7 +55,7 @@ namespace PureLib.Web {
                 StartDownloading();
         }
 
-        public void RemoveItems(List<DownloadItem> items) {
+        public void RemoveItems(IEnumerable<DownloadItem> items) {
             if ((items == null) || items.Any(i => i == null))
                 throw new ArgumentNullException("Download items are null.");
 
@@ -86,10 +86,10 @@ namespace PureLib.Web {
                 if (_downloadingItems.Count < ThreadCount) {
                     foreach (DownloadItem item in _items.Where(i => i.IsReady).Take(ThreadCount - _downloadingItems.Count)) {
                         _downloadingItems.Add(item, null);
-                        Task.Run(() => DownloadAsync(item).ContinueWith(t => {
+                        DownloadAsync(item).ContinueWith(t => {
                             _downloadingItems.Remove(item);
                             StartDownloading();
-                        }));
+                        });
                     }
                 }
             }
@@ -116,7 +116,6 @@ namespace PureLib.Web {
                     client.DownloadProgressChanged += (s, e) => {
                         item.TotalBytes = e.TotalBytesToReceive;
                         item.ReceivedBytes = e.BytesReceived;
-                        item.Percentage = e.ProgressPercentage;
                     };
                     client.SetRequest += (s, e) => {
                         HttpWebRequest request = e.Data;
@@ -141,11 +140,8 @@ namespace PureLib.Web {
             }
             catch (OperationCanceledException) {
                 FileInfo file = new FileInfo(item.FilePath);
-                if (file.Exists) {
+                if (file.Exists)
                     item.ReceivedBytes = file.Length;
-                    if (item.TotalBytes > 0)
-                        item.Percentage = (int)((item.ReceivedBytes * 100) / item.TotalBytes);
-                }
             }
             catch (Exception) {
                 item.Error();
@@ -156,6 +152,9 @@ namespace PureLib.Web {
             DownloadCompletingEventArgs e = new DownloadCompletingEventArgs(item);
             if (DownloadCompleting != null)
                 DownloadCompleting(this, e);
+
+            if (e.IsCorrupted)
+                item.Error();
             return e.IsCorrupted;
         }
     }
