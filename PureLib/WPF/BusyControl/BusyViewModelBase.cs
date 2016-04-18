@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using PureLib.WPF;
 
 namespace PureLib.WPF.BusyControl {
     public abstract class BusyViewModelBase : ViewModelBase {
@@ -26,16 +25,12 @@ namespace PureLib.WPF.BusyControl {
             }
         }
 
-        public void BusyWith(string content, Action action) {
-            BusyWith(content, () => { action(); return true; });
-        }
-
-        public T BusyWith<T>(string content, Func<T> func) {
+        public T BusyWith<T>(string content, Task<T> task) {
             BusyContent = content;
             IsBusy = true;
             try {
                 DispatcherFrame frame = new DispatcherFrame();
-                Task<T> task = Task.Run(func).ContinueWith(t => {
+                task = task.ContinueWith(t => {
                     frame.Continue = false;
                     return t.Result;
                 });
@@ -47,15 +42,11 @@ namespace PureLib.WPF.BusyControl {
             }
         }
 
-        public Task BusyWithAsync(string content, Action action) {
-            return BusyWithAsync(content, () => { action(); return true; });
-        }
-
-        public async Task<T> BusyWithAsync<T>(string content, Func<T> func) {
+        public async Task<T> BusyWithAsync<T>(string content, Task<T> task) {
             BusyContent = content;
             IsBusy = true;
             try {
-                return await Task.Run(func);
+                return await task;
             }
             finally {
                 IsBusy = false;
