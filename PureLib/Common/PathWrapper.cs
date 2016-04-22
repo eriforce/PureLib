@@ -8,7 +8,13 @@ using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
     public static class PathWrapper {
-        public static string FilterInvalidChar(this string path, string replacement = "_", string additionalInvalid = "*?") {
+        public static string FilterFileName(this string fileName, string replacement = "_") {
+            string pattern = "[{0}]".FormatWith(string.Join(string.Empty,
+                Path.GetInvalidFileNameChars().Select(c => Regex.Escape(c.ToString()))));
+            return Regex.Replace(fileName, pattern, replacement);
+        }
+
+        public static string FilterPath(this string path, string replacement = "_", string additionalInvalid = "*?") {
             string pattern = "[{0}]".FormatWith(string.Join(string.Empty,
                 Path.GetInvalidPathChars().Concat(additionalInvalid).Distinct().Select(c => Regex.Escape(c.ToString()))));
             return Regex.Replace(path, pattern, replacement);
