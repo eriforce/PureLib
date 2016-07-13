@@ -16,6 +16,7 @@ namespace PureLib.Web {
         private List<DownloadItem> _items = new List<DownloadItem>();
         private Dictionary<DownloadItem, CancellationTokenSource> _downloadingItems = new Dictionary<DownloadItem, CancellationTokenSource>();
 
+        public IWebProxy Proxy { get; private set; }
         public CookieContainer Cookies { get; private set; }
         public bool UseResumableClient { get; private set; }
         public int ThreadCount { get; private set; }
@@ -26,11 +27,12 @@ namespace PureLib.Web {
         public event DownloadCompletingEventHandler DownloadCompleting;
 
         public WebDownloader(bool useResumableClient = false)
-            : this(1, null, useResumableClient) {
+            : this(1, null, null, useResumableClient) {
         }
 
-        public WebDownloader(int threadCount, CookieContainer cookies, bool useResumableClient) {
+        public WebDownloader(int threadCount, IWebProxy proxy, CookieContainer cookies, bool useResumableClient) {
             SetThreadCount(threadCount);
+            Proxy = proxy;
             Cookies = cookies ?? new CookieContainer();
             UseResumableClient = useResumableClient;
         }
@@ -113,6 +115,8 @@ namespace PureLib.Web {
 
                 AdvancedWebClient client = UseResumableClient ? new ResumableWebClient() : new AdvancedWebClient();
                 using (client) {
+                    if (Proxy != null)
+                        client.Proxy = Proxy;
                     client.DownloadProgressChanged += (s, e) => {
                         item.TotalBytes = e.TotalBytesToReceive;
                         item.ReceivedBytes = e.BytesReceived;
