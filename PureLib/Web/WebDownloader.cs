@@ -110,8 +110,8 @@ namespace PureLib.Web {
 
         private async Task DownloadAsync(DownloadItem item) {
             try {
-                if (!Directory.Exists(item.Location))
-                    Directory.CreateDirectory(item.Location);
+                if (!Directory.Exists(item.Directory))
+                    Directory.CreateDirectory(item.Directory);
 
                 AdvancedWebClient client = UseResumableClient ? new ResumableWebClient() : new AdvancedWebClient();
                 using (client) {
@@ -134,7 +134,7 @@ namespace PureLib.Web {
                     item.Download();
                     CancellationTokenSource source = new CancellationTokenSource();
                     _downloadingItems[item] = source;
-                    await client.DownloadFileAsync(item.Url, item.FilePath, source.Token).ConfigureAwait(false);
+                    await client.DownloadFileAsync(item.Uri, item.FilePath, source.Token).ConfigureAwait(false);
                 }
 
                 if (IsDownloadedFileCorrupted(item))

@@ -11,7 +11,7 @@ namespace PureLib.Web {
     [DataContract]
     public class DownloadItem : NotifyObject {
         private DownloadItemState _state;
-        private Uri _url;
+        private Uri _uri;
         private string _referer;
         private string _userName;
         private string _password;
@@ -35,13 +35,13 @@ namespace PureLib.Web {
             }
         }
         [DataMember]
-        public Uri Url {
+        public Uri Uri {
             get {
-                return _url;
+                return _uri;
             }
             set {
-                _url = value;
-                RaiseChange(() => Url);
+                _uri = value;
+                RaiseChange(() => Uri);
             }
         }
         [DataMember]
@@ -75,13 +75,13 @@ namespace PureLib.Web {
             }
         }
         [DataMember]
-        public string Location {
+        public string Directory {
             get {
                 return _location;
             }
             set {
                 _location = value;
-                RaiseChange(() => Location);
+                RaiseChange(() => Directory);
                 RaiseChange(() => FilePath);
             }
         }
@@ -99,12 +99,12 @@ namespace PureLib.Web {
         [DataMember]
         public string FilePath {
             get {
-                return Path.Combine(Location, FileName);
+                return Path.Combine(Directory, FileName);
             }
             set {
                 _location = Path.GetDirectoryName(value);
                 _fileName = Path.GetFileName(value);
-                RaiseChange(() => Location);
+                RaiseChange(() => Directory);
                 RaiseChange(() => FileName);
                 RaiseChange(() => FilePath);
             }
@@ -150,15 +150,21 @@ namespace PureLib.Web {
         public DownloadItem() {
         }
 
-        public DownloadItem(string url, string referer, string path, DownloadItemState state = DownloadItemState.Queued) {
+        public DownloadItem(string url, string referer, string path,
+            DownloadItemState state = DownloadItemState.Queued) : this(url, state, referer) {
+
+            FilePath = path;
+        }
+
+        private DownloadItem(string url, DownloadItemState state, string referer) {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out _uri))
+                throw new ArgumentException("Invalid url: {0}".FormatWith(url));
+
             _state = state;
             if (!IsReady && !IsStopped)
                 throw new ApplicationException("{0} cannot be the inital state for download item.".FormatWith(state));
 
-            if (!Uri.TryCreate(url, UriKind.Absolute, out _url))
-                throw new ArgumentException("Invalid url: {0}".FormatWith(url));
-            Referer = referer;
-            FilePath = path;
+            _referer = referer;
         }
 
         public void Start() {
