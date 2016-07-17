@@ -8,14 +8,8 @@ using System.Text;
 
 namespace PureLib.Native {
     public class TaskbarManager {
-        private Lazy<IntPtr> _ownerHandle = new Lazy<IntPtr>(() => {
-            Process currentProcess = Process.GetCurrentProcess();
-            if ((currentProcess == null) || (currentProcess.MainWindowHandle == IntPtr.Zero)) {
-                throw new InvalidOperationException("A valid active Window is needed to update the Taskbar.");
-            }
-            return currentProcess.MainWindowHandle;
-        });
-        private bool _hasOwnerHandle => (_ownerHandle.Value != IntPtr.Zero);
+        private IntPtr _ownerHandle;
+        private bool _hasOwnerHandle => (_ownerHandle != IntPtr.Zero);
 
         private Lazy<ITaskbarList4> _taskbarList = new Lazy<ITaskbarList4>(() => {
             ITaskbarList4 taskbarList = (ITaskbarList4)new CTaskbarList();
@@ -23,19 +17,25 @@ namespace PureLib.Native {
             return taskbarList;
         });
 
+        public TaskbarManager() {
+            Process currentProcess = Process.GetCurrentProcess();
+            if ((currentProcess != null) && (currentProcess.MainWindowHandle != IntPtr.Zero))
+                _ownerHandle = currentProcess.MainWindowHandle;
+        }
+
         public void SetOverlayIcon(Icon icon, string accessibilityText) {
             if (_hasOwnerHandle)
-                _taskbarList.Value.SetOverlayIcon(_ownerHandle.Value, (icon != null) ? icon.Handle : IntPtr.Zero, accessibilityText);
+                _taskbarList.Value.SetOverlayIcon(_ownerHandle, (icon != null) ? icon.Handle : IntPtr.Zero, accessibilityText);
         }
 
         public void SetProgressValue(int currentValue, int maximumValue) {
             if (_hasOwnerHandle)
-                _taskbarList.Value.SetProgressValue(_ownerHandle.Value, Convert.ToUInt32(currentValue), Convert.ToUInt32(maximumValue));
+                _taskbarList.Value.SetProgressValue(_ownerHandle, Convert.ToUInt32(currentValue), Convert.ToUInt32(maximumValue));
         }
 
         public void SetProgressState(TaskbarProgressBarStatus status) {
             if (_hasOwnerHandle)
-                _taskbarList.Value.SetProgressState(_ownerHandle.Value, status);
+                _taskbarList.Value.SetProgressState(_ownerHandle, status);
         }
     }
 
