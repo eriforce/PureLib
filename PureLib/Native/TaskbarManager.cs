@@ -8,45 +8,34 @@ using System.Text;
 
 namespace PureLib.Native {
     public class TaskbarManager {
-        private IntPtr _ownerHandleInternal;
-        private IntPtr _ownerHandle {
-            get {
-                if (_ownerHandleInternal == IntPtr.Zero) {
-                    Process currentProcess = Process.GetCurrentProcess();
-                    if ((currentProcess == null) || (currentProcess.MainWindowHandle == IntPtr.Zero)) {
-                        throw new InvalidOperationException("A valid active Window is needed to update the Taskbar.");
-                    }
-                    _ownerHandleInternal = currentProcess.MainWindowHandle;
-                }
-                return _ownerHandleInternal;
-            }
-        }
+        private IntPtr _ownerHandle;
+        private bool _hasOwnerHandle => (_ownerHandle != IntPtr.Zero);
 
-        private ITaskbarList4 _taskbarListInternal;
-        private ITaskbarList4 _taskbarList {
-            get {
-                if (_taskbarListInternal == null) {
-                    lock (this) {
-                        if (_taskbarListInternal == null) {
-                            _taskbarListInternal = (ITaskbarList4)new CTaskbarList();
-                            _taskbarListInternal.HrInit();
-                        }
-                    }
-                }
-                return _taskbarListInternal;
-            }
+        private Lazy<ITaskbarList4> _taskbarList = new Lazy<ITaskbarList4>(() => {
+            ITaskbarList4 taskbarList = (ITaskbarList4)new CTaskbarList();
+            taskbarList.HrInit();
+            return taskbarList;
+        });
+
+        public TaskbarManager() {
+            Process currentProcess = Process.GetCurrentProcess();
+            if ((currentProcess != null) && (currentProcess.MainWindowHandle != IntPtr.Zero))
+                _ownerHandle = currentProcess.MainWindowHandle;
         }
 
         public void SetOverlayIcon(Icon icon, string accessibilityText) {
-            _taskbarList.SetOverlayIcon(_ownerHandle, (icon != null) ? icon.Handle : IntPtr.Zero, accessibilityText);
+            if (_hasOwnerHandle)
+                _taskbarList.Value.SetOverlayIcon(_ownerHandle, (icon != null) ? icon.Handle : IntPtr.Zero, accessibilityText);
         }
 
         public void SetProgressValue(int currentValue, int maximumValue) {
-            _taskbarList.SetProgressValue(_ownerHandle, Convert.ToUInt32(currentValue), Convert.ToUInt32(maximumValue));
+            if (_hasOwnerHandle)
+                _taskbarList.Value.SetProgressValue(_ownerHandle, Convert.ToUInt32(currentValue), Convert.ToUInt32(maximumValue));
         }
 
         public void SetProgressState(TaskbarProgressBarStatus status) {
-            _taskbarList.SetProgressState(_ownerHandle, status);
+            if (_hasOwnerHandle)
+                _taskbarList.Value.SetProgressState(_ownerHandle, status);
         }
     }
 
