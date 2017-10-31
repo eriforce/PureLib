@@ -22,8 +22,7 @@ namespace PureLib.Web {
 
         protected override WebRequest GetWebRequest(Uri address) {
             HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
-            if (SetRequest != null)
-                SetRequest(this, new EventArgs<HttpWebRequest>(request));
+            SetRequest?.Invoke(this, new EventArgs<HttpWebRequest>(request));
             return request;
         }
 

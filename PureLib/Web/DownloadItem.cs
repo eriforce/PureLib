@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using PureLib.Common;
-using PureLib.WPF;
 
 namespace PureLib.Web {
     [DataContract]
@@ -201,8 +200,7 @@ namespace PureLib.Web {
         }
 
         protected virtual void OnStateChanged(DownloadItem item, DownloadItemState oldState, DownloadItemState newState) {
-            if (StateChanged != null)
-                StateChanged(this, new DownloadItemStateChangedEventArgs(item, oldState, newState));
+            StateChanged?.Invoke(this, new DownloadItemStateChangedEventArgs(item, oldState, newState));
         }
     }
 

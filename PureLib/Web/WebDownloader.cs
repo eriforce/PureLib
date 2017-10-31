@@ -154,8 +154,7 @@ namespace PureLib.Web {
 
         private bool IsDownloadedFileCorrupted(DownloadItem item) {
             DownloadCompletingEventArgs e = new DownloadCompletingEventArgs(item);
-            if (DownloadCompleting != null)
-                DownloadCompleting(this, e);
+            DownloadCompleting?.Invoke(this, e);
 
             if (e.IsCorrupted)
                 item.Error();

@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib", "PureLib\PureLib.csproj", "{2E188C01-D71A-48C6-BAC7-34956007885F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.Languages", "PureLib.Languages\PureLib.Languages.csproj", "{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.Legacy", "PureLib.Legacy\PureLib.Legacy.csproj", "{2E188C01-D71A-48C6-BAC7-34956007885F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PureLib", "PureLib\PureLib.csproj", "{D7F1F42C-C763-4AAF-A9A9-61BA9C12015E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.EntityFramework", "PureLib.EntityFramework\PureLib.EntityFramework.csproj", "{6FD94C01-A989-4034-B0D5-1583D1A27AEC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.Languages", "PureLib.Languages\PureLib.Languages.csproj", "{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,24 +17,27 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2E188C01-D71A-48C6-BAC7-34956007885F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E188C01-D71A-48C6-BAC7-34956007885F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E188C01-D71A-48C6-BAC7-34956007885F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E188C01-D71A-48C6-BAC7-34956007885F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E188C01-D71A-48C6-BAC7-34956007885F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F1F42C-C763-4AAF-A9A9-61BA9C12015E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F1F42C-C763-4AAF-A9A9-61BA9C12015E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F1F42C-C763-4AAF-A9A9-61BA9C12015E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F1F42C-C763-4AAF-A9A9-61BA9C12015E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13B4B93A-A34E-4A1C-9D9B-91952CCE0B85}
 	EndGlobalSection
 EndGlobal

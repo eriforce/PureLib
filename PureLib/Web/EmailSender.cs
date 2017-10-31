@@ -48,8 +48,7 @@ namespace PureLib.Web {
         }
 
         private void ClientSendCompleted(object sender, AsyncCompletedEventArgs e) {
-            if (SendCompleted != null)
-                SendCompleted(sender, e);
+            SendCompleted?.Invoke(sender, e);
             Dispose();
         }
 

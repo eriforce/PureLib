@@ -96,8 +96,7 @@ namespace PureLib.Web {
             req.Referer = Referer;
             req.Method = method;
             req.ContentType = contentType;
-            if (SetRequest != null)
-                SetRequest(this, new EventArgs<HttpWebRequest>(req));
+            SetRequest?.Invoke(this, new EventArgs<HttpWebRequest>(req));
 
             if ((data != null) && data.Any() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
                 req.ContentLength = data.Length;
@@ -107,8 +106,7 @@ namespace PureLib.Web {
             }
 
             HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            if (GotResponse != null)
-                GotResponse(this, new EventArgs<HttpWebResponse>(res));
+            GotResponse?.Invoke(this, new EventArgs<HttpWebResponse>(res));
             using (StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding)) {
                 return sr.ReadToEnd();
             }
