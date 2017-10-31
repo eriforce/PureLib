@@ -14,8 +14,10 @@ namespace PureLib.Web {
     public sealed class ResumableWebClient : AdvancedWebClient {
         private string _fileName;
 
-        // TODO: DownloadFileAsync is not implemented correctly, the file exists will be overwritten
+        // TODO: DownloadFileAsync is not implemented correctly, the file exists will be overwritten with partial content
         public override Task DownloadFileAsync(Uri address, string fileName, CancellationToken cancellationToken) {
+            throw new NotImplementedException();
+
             _fileName = fileName;
             return base.DownloadFileAsync(address, fileName, cancellationToken);
         }

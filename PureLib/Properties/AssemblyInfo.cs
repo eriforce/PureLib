@@ -11,7 +11,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Erich Yu")]
 [assembly: AssemblyProduct("PureLib")]
-[assembly: AssemblyCopyright("Copyright © eriForce 2016")]
+[assembly: AssemblyCopyright("Copyright © eriForce 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,7 +32,7 @@ using System.Windows;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("2.1.*")]
+[assembly: AssemblyVersion("3.0.*")]
 //[assembly: AssemblyFileVersion("2.0.0.0")]
 
 [assembly: ThemeInfo(

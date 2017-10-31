@@ -32,7 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
@@ -61,7 +61,8 @@
     <Compile Include="Common\Type\DateTimeUnit.cs" />
     <Compile Include="Common\JsonFormatter.cs" />
     <Compile Include="Common\Type\SizeUnit.cs" />
-    <Compile Include="Common\UnitDisplay.cs" />
+    <Compile Include="Common\UnitDisplay\SizeUnitDisplay.cs" />
+    <Compile Include="Common\UnitDisplay\TimeUnitDisplay.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Common\DiskHelper.cs" />
     <Compile Include="Common\Serializer.cs" />

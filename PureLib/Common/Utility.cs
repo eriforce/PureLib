@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,12 @@ using System.Text.RegularExpressions;
 namespace PureLib.Common {
     public static class Utility {
         public static TimeSpan GetExecutingDuration(Action action) {
-            DateTime start = DateTime.UtcNow;
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             action();
-            return DateTime.UtcNow - start;
+            stopwatch.Stop();
+
+            return stopwatch.Elapsed;
         }
 
         public static int GetWeekdayCount(DateTime start, DateTime end) {
@@ -69,10 +73,6 @@ namespace PureLib.Common {
                 bytes[i] = byte.Parse(hex.Substring(i * 2, 2), NumberStyles.HexNumber);
             }
             return bytes;
-        }
-
-        public static T GetInstance<T>() {
-            return Activator.CreateInstance<T>();
         }
 
         public static T GetInstance<T>(params object[] args) {
