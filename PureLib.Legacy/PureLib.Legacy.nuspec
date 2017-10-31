@@ -12,6 +12,6 @@
     <description>$description$</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
-    <tags>Utility EntityFramework</tags>
+    <tags>Utility WPF</tags>
   </metadata>
 </package>

@@ -9,14 +9,15 @@ A lightweight C# utility library.
 
 ## Download
 
-The library is available on nuget.org via package name `PureLib` and `PureLib.EntityFramework`.
+The library is available on nuget.org via package name `PureLib`, `PureLib.Legacy` and `PureLib.EntityFramework`.
 
 To install PureLib, run the following command in the Package Manager Console
 ```
 PM> Install-Package PureLib
+PM> Install-Package PureLib.Legacy
 PM> Install-Package PureLib.EntityFramework
 ```
-More information about NuGet package avaliable at https://nuget.org/packages/PureLib and https://www.nuget.org/packages/PureLib.EntityFramework
+More information about NuGet package avaliable at https://nuget.org/packages/PureLib
 
 
 ## Features

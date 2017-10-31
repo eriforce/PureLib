@@ -11,7 +11,7 @@
     <PackageId>PureLib</PackageId>
     <PackageLicenseUrl>https://github.com/eriforce/PureLib</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/eriforce/PureLib</PackageProjectUrl>
-    <PackageTags>Utility WPF Web</PackageTags>
+    <PackageTags>Utility Web</PackageTags>
     <Description>A lightweight utility library.</Description>
   </PropertyGroup>
 
