@@ -32,7 +32,7 @@ namespace PureLib.Common {
         }
     }
 
-    public static class PagedListExtension {
+    public static class PagedListExtensions {
         public static PagedList<T> AttachPagination<T>(this IEnumerable<T> data, int page, int pageSize, int totalCount) {
             return new PagedList<T>(data, page, pageSize, totalCount);
         }
