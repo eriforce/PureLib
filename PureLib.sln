@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PureLib", "PureLib\PureLib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.EntityFramework", "PureLib.EntityFramework\PureLib.EntityFramework.csproj", "{6FD94C01-A989-4034-B0D5-1583D1A27AEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.MediaInfo", "PureLib.MediaInfo\PureLib.MediaInfo.csproj", "{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD94C01-A989-4034-B0D5-1583D1A27AEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

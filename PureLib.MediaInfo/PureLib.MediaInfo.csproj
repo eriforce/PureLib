@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.2</TargetFramework>
+    <Authors>eriForce</Authors>
+    <Company>eriForce</Company>
+    <Product>PureLib</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>C# wrapper for MediaInfo</Description>
+  </PropertyGroup>
+
+</Project>
