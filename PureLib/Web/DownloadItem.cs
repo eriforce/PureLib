@@ -9,6 +9,8 @@ using PureLib.Common;
 namespace PureLib.Web {
     [DataContract]
     public class DownloadItem : NotifyObject {
+        private Exception _exception;
+
         private DownloadItemState _state;
         private Uri _uri;
         private string _referer;
@@ -176,9 +178,8 @@ namespace PureLib.Web {
                 State = DownloadItemState.Stopped;
         }
 
-        internal void Error() {
-            if (State != DownloadItemState.Downloading)
-                throw new ApplicationException("Cannot set {0} to error with {1} state.".FormatWith(FileName, State));
+        internal void Error(Exception ex = null) {
+            _exception = ex;
             State = DownloadItemState.Error;
         }
 
@@ -200,7 +201,7 @@ namespace PureLib.Web {
         }
 
         protected virtual void OnStateChanged(DownloadItem item, DownloadItemState oldState, DownloadItemState newState) {
-            StateChanged?.Invoke(this, new DownloadItemStateChangedEventArgs(item, oldState, newState));
+            StateChanged?.Invoke(this, new DownloadItemStateChangedEventArgs(item, oldState, newState, _exception));
         }
     }
 
@@ -208,11 +209,13 @@ namespace PureLib.Web {
         public DownloadItem DownloadItem { get; private set; }
         public DownloadItemState OldState { get; private set; }
         public DownloadItemState NewState { get; private set; }
+        public Exception Exception { get; private set; }
 
-        public DownloadItemStateChangedEventArgs(DownloadItem item, DownloadItemState oldState, DownloadItemState newState) {
+        public DownloadItemStateChangedEventArgs(DownloadItem item, DownloadItemState oldState, DownloadItemState newState, Exception ex) {
             DownloadItem = item;
             OldState = oldState;
             NewState = newState;
+            Exception = ex;
         }
     }
     public delegate void DownloadItemStateChangedEventHandler(object sender, DownloadItemStateChangedEventArgs e);

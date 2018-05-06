@@ -147,8 +147,8 @@ namespace PureLib.Web {
                 if (file.Exists)
                     item.ReceivedBytes = file.Length;
             }
-            catch (Exception) {
-                item.Error();
+            catch (Exception ex) {
+                item.Error(ex);
             }
         }
 
