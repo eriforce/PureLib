@@ -125,10 +125,8 @@ namespace PureLib.Web {
                         HttpWebRequest request = e.Data;
                         request.Referer = item.Referer;
                         request.CookieContainer = Cookies;
-                        if (!item.UserName.IsNullOrEmpty() || !item.Password.IsNullOrEmpty()) {
-                            request.Headers.Set(AdvancedWebClient.AuthorizationHeaderName,
-                                AdvancedWebClient.GetBasicAuthenticationHeader(item.UserName, item.Password));
-                        }
+                        if (!item.UserName.IsNullOrEmpty() || !item.Password.IsNullOrEmpty())
+                            request.SetBasicAuthentication(item.UserName, item.Password);
                     };
 
                     item.Download();
