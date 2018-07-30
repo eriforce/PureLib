@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -11,10 +12,18 @@ namespace PureLib.Web {
     public class AdvancedWebClient : WebClient {
         public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
 
-        public virtual async Task DownloadFileAsync(Uri address, string fileName, CancellationToken cancellationToken) {
+        public Task DownloadFileAsync(Uri address, string path, FileMode fileMode) {
+            return DownloadFileAsync(address, path, fileMode, CancellationToken.None);
+        }
+
+        public async Task DownloadFileAsync(Uri address, string path, FileMode fileMode, CancellationToken cancellationToken) {
             cancellationToken.ThrowIfCancellationRequested();
-            using (cancellationToken.Register(CancelAsync)) {
-                await DownloadFileTaskAsync(address, fileName).ConfigureAwait(false);
+
+            using (cancellationToken.Register(CancelAsync))
+            using (FileStream fileStream = new FileStream(path, fileMode))
+            using (Stream responseStream = await OpenReadTaskAsync(address).ConfigureAwait(false)) {
+                await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
+                await fileStream.FlushAsync().ConfigureAwait(false);
             }
         }
 

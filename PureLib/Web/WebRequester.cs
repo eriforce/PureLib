@@ -72,15 +72,15 @@ namespace PureLib.Web {
             int retry = 0;
             while (retry <= RetryLimit) {
                 try {
-                    return await RequestInternalAsync(uri, method, data, contentType);
+                    return await RequestInternalAsync(uri, method, data, contentType).ConfigureAwait(false);
                 }
                 catch (WebException) {
                     retry++;
-                    await Task.Delay(RetryInterval);
+                    await Task.Delay(RetryInterval).ConfigureAwait(false);
                 }
                 catch (IOException) {
                     retry++;
-                    await Task.Delay(RetryInterval);
+                    await Task.Delay(RetryInterval).ConfigureAwait(false);
                 }
             }
             Exception ex = new WebException("Request failed after retried {0} times.".FormatWith(RetryLimit));
@@ -101,7 +101,7 @@ namespace PureLib.Web {
             if ((data != null) && data.Any() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
                 req.ContentLength = data.Length;
                 using (Stream stream = req.GetRequestStream()) {
-                    await stream.WriteAsync(data, 0, data.Length);
+                    await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
                 }
             }
 
@@ -109,7 +109,7 @@ namespace PureLib.Web {
             GotResponse?.Invoke(this, new EventArgs<HttpWebResponse>(res));
             Stream responseStream = res.GetResponseStream();
             using (StreamReader sr = new StreamReader(responseStream, Encoding)) {
-                return await sr.ReadToEndAsync();
+                return await sr.ReadToEndAsync().ConfigureAwait(false);
             }
         }
 
