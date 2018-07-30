@@ -83,7 +83,7 @@ namespace PureLib.Web {
                     await Task.Delay(RetryInterval);
                 }
             }
-            Exception ex = new WebException("Request failed after {0} times retried.".FormatWith(RetryLimit));
+            Exception ex = new WebException("Request failed after retried {0} times.".FormatWith(RetryLimit));
             ex.Data.Add("Url", uri);
             throw ex;
         }
