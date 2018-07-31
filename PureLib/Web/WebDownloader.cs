@@ -130,7 +130,7 @@ namespace PureLib.Web {
                     item.Download();
                     CancellationTokenSource source = new CancellationTokenSource();
                     _downloadingItems[item] = source;
-                    await client.DownloadFileAsync(item.Uri, item.FilePath, source.Token).ConfigureAwait(false);
+                    await client.DownloadAsync(item.Uri, item.FilePath, source.Token).ConfigureAwait(false);
                 }
 
                 if (IsDownloadedFileCorrupted(item))

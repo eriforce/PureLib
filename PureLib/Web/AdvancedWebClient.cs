@@ -17,7 +17,11 @@ namespace PureLib.Web {
         public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
         public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
 
-        public async Task DownloadFileAsync(Uri address, string path, CancellationToken cancellationToken) {
+        public Task DownloadAsync(string address, string path) {
+            return DownloadAsync(new Uri(address), path, CancellationToken.None);
+        }
+
+        public async Task DownloadAsync(Uri address, string path, CancellationToken cancellationToken) {
             cancellationToken.ThrowIfCancellationRequested();
 
             FileInfo file = new FileInfo(path);
@@ -56,8 +60,8 @@ namespace PureLib.Web {
             return request;
         }
 
-        protected override WebResponse GetWebResponse(WebRequest request) {
-            HttpWebResponse response = (HttpWebResponse)base.GetWebResponse(request);
+        protected override WebResponse GetWebResponse(WebRequest request, IAsyncResult result) {
+            HttpWebResponse response = (HttpWebResponse)base.GetWebResponse(request, result);
             GotResponse?.Invoke(this, new EventArgs<HttpWebResponse>(response));
 
             _uriContexts[request.RequestUri].Response = response;
