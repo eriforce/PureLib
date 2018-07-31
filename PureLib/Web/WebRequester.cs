@@ -100,12 +100,12 @@ namespace PureLib.Web {
 
             if ((data != null) && data.Any() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
                 req.ContentLength = data.Length;
-                using (Stream stream = req.GetRequestStream()) {
+                using (Stream stream = await req.GetRequestStreamAsync().ConfigureAwait(false)) {
                     await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
                 }
             }
 
-            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+            HttpWebResponse res = (HttpWebResponse)(await req.GetResponseAsync().ConfigureAwait(false));
             GotResponse?.Invoke(this, new EventArgs<HttpWebResponse>(res));
             Stream responseStream = res.GetResponseStream();
             using (StreamReader sr = new StreamReader(responseStream, Encoding)) {
