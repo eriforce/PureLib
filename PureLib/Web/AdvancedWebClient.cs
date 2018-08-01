@@ -16,29 +16,41 @@ namespace PureLib.Web {
 
         public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
         public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
+        public event EventHandler<EventArgs<RedirectContext>> Redirected;
 
         public Task DownloadAsync(string address, string path) {
             return DownloadAsync(new Uri(address), path, CancellationToken.None);
         }
 
-        public async Task DownloadAsync(Uri address, string path, CancellationToken cancellationToken) {
+        public async Task DownloadAsync(Uri address, string fullPath, CancellationToken cancellationToken) {
             cancellationToken.ThrowIfCancellationRequested();
 
-            FileInfo file = new FileInfo(path);
+            FileInfo file = new FileInfo(fullPath);
             long fileLength = !file.Exists ? 0 : file.Length;
             if (!_uriContexts.TryAdd(address, new DownloadContext { FileLength = fileLength }))
                 throw new ApplicationException("The url is downloading.");
 
             try {
                 using (cancellationToken.Register(CancelAsync))
-                using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate))
                 using (Stream responseStream = await OpenReadTaskAsync(address).ConfigureAwait(false)) {
-                    bool isRangeSupported = _uriContexts[address].Response.IsRangeSupported();
-                    if (isRangeSupported)
-                        fileStream.Seek(fileLength, SeekOrigin.Begin);
+                    DownloadContext downloadContext = _uriContexts[address];
+                    if (downloadContext.Request.RequestUri != downloadContext.Response.ResponseUri
+                        && Redirected != null) {
+                        RedirectContext redirectContext = new RedirectContext(downloadContext.Response.ResponseUri) {
+                            FullPath = fullPath,
+                        };
+                        Redirected(this, new EventArgs<RedirectContext>(redirectContext));
+                        fullPath = redirectContext.FullPath;
+                    }
 
-                    await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
-                    await fileStream.FlushAsync().ConfigureAwait(false);
+                    using (FileStream fileStream = new FileStream(fullPath, FileMode.OpenOrCreate)) {
+                        bool isRangeSupported = downloadContext.Response.IsRangeSupported();
+                        if (isRangeSupported)
+                            fileStream.Seek(fileLength, SeekOrigin.Begin);
+
+                        await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
+                        await fileStream.FlushAsync().ConfigureAwait(false);
+                    }
                 }
             }
             finally {
@@ -67,6 +79,16 @@ namespace PureLib.Web {
             _uriContexts[request.RequestUri].Response = response;
 
             return response;
+        }
+
+        public class RedirectContext {
+            public Uri Uri { get; private set; }
+
+            public string FullPath { get; set; }
+
+            public RedirectContext(Uri uri) {
+                Uri = uri;
+            }
         }
 
         private class DownloadContext {
