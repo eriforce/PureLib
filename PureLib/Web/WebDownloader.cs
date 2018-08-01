@@ -18,7 +18,6 @@ namespace PureLib.Web {
 
         public IWebProxy Proxy { get; private set; }
         public CookieContainer Cookies { get; private set; }
-        public bool UseResumableClient { get; private set; }
         public int ThreadCount { get; private set; }
         public bool IsStopped {
             get { return _downloadingItems.Count == 0; }
@@ -26,15 +25,14 @@ namespace PureLib.Web {
 
         public event DownloadCompletingEventHandler DownloadCompleting;
 
-        public WebDownloader(bool useResumableClient = false)
-            : this(1, null, null, useResumableClient) {
+        public WebDownloader()
+            : this(1, null, null) {
         }
 
-        public WebDownloader(int threadCount, IWebProxy proxy, CookieContainer cookies, bool useResumableClient) {
+        public WebDownloader(int threadCount, IWebProxy proxy, CookieContainer cookies) {
             SetThreadCount(threadCount);
             Proxy = proxy;
             Cookies = cookies ?? new CookieContainer();
-            UseResumableClient = useResumableClient;
         }
 
         public void SetThreadCount(int threadCount) {
@@ -113,7 +111,7 @@ namespace PureLib.Web {
                 if (!Directory.Exists(item.Directory))
                     Directory.CreateDirectory(item.Directory);
 
-                AdvancedWebClient client = UseResumableClient ? new ResumableWebClient() : new AdvancedWebClient();
+                AdvancedWebClient client = new AdvancedWebClient();
                 using (client) {
                     if (Proxy != null)
                         client.Proxy = Proxy;
@@ -125,16 +123,14 @@ namespace PureLib.Web {
                         HttpWebRequest request = e.Data;
                         request.Referer = item.Referer;
                         request.CookieContainer = Cookies;
-                        if (!item.UserName.IsNullOrEmpty() || !item.Password.IsNullOrEmpty()) {
-                            request.Headers.Set(AdvancedWebClient.AuthorizationHeaderName,
-                                AdvancedWebClient.GetBasicAuthenticationHeader(item.UserName, item.Password));
-                        }
+                        if (!item.UserName.IsNullOrEmpty() || !item.Password.IsNullOrEmpty())
+                            request.SetBasicAuthentication(item.UserName, item.Password);
                     };
 
                     item.Download();
                     CancellationTokenSource source = new CancellationTokenSource();
                     _downloadingItems[item] = source;
-                    await client.DownloadFileAsync(item.Uri, item.FilePath, source.Token).ConfigureAwait(false);
+                    await client.DownloadAsync(item.Uri, item.FilePath, source.Token).ConfigureAwait(false);
                 }
 
                 if (IsDownloadedFileCorrupted(item))
