@@ -111,8 +111,7 @@ namespace PureLib.Web {
                 if (!Directory.Exists(item.Directory))
                     Directory.CreateDirectory(item.Directory);
 
-                AdvancedWebClient client = new AdvancedWebClient();
-                using (client) {
+                using (AdvancedWebClient client = new AdvancedWebClient()) {
                     if (Proxy != null)
                         client.Proxy = Proxy;
                     client.DownloadProgressChanged += (s, e) => {
@@ -127,9 +126,9 @@ namespace PureLib.Web {
                             request.SetBasicAuthentication(item.UserName, item.Password);
                     };
 
-                    item.Download();
                     CancellationTokenSource source = new CancellationTokenSource();
                     _downloadingItems[item] = source;
+                    item.Download();
                     await client.DownloadAsync(item.Uri, item.FilePath, source.Token).ConfigureAwait(false);
                 }
 

@@ -18,8 +18,8 @@ namespace PureLib.Web {
         public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
         public event EventHandler<EventArgs<RedirectContext>> Redirected;
 
-        public Task DownloadAsync(string address, string path) {
-            return DownloadAsync(new Uri(address), path, CancellationToken.None);
+        public Task DownloadAsync(string address, string fullPath) {
+            return DownloadAsync(new Uri(address), fullPath, CancellationToken.None);
         }
 
         public async Task DownloadAsync(Uri address, string fullPath, CancellationToken cancellationToken) {
