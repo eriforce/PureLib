@@ -37,8 +37,7 @@ namespace PureLib.Common {
         }
 
         public static long ParseSize(this string sizeString) {
-            long size;
-            if (long.TryParse(sizeString, out size))
+            if (long.TryParse(sizeString, out long size))
                 return size;
 
             Match m = _sizeRegex.Match(sizeString);
@@ -65,8 +64,7 @@ namespace PureLib.Common {
         }
 
         private static string ToDisplayName(this SizeUnit unit, Dictionary<SizeUnit, string> unitNames = null) {
-            string displayName;
-            if (unitNames == null || !unitNames.TryGetValue(unit, out displayName))
+            if (unitNames == null || !unitNames.TryGetValue(unit, out string displayName))
                 displayName = _defaultSizeUnitNames[unit];
             return displayName;
         }

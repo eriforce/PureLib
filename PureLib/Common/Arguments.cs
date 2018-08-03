@@ -18,8 +18,7 @@ namespace PureLib.Common {
             string currentName = null;
             foreach (string arg in args) {
                 Match m = _argumentRegex.Match(arg);
-                decimal argValue;
-                if (m.Success && !decimal.TryParse(arg, out argValue)) {
+                if (m.Success && !decimal.TryParse(arg, out decimal argValue)) {
                     currentName = m.Groups[ARGUMENT_NAME].Value;
                     Add(currentName, new List<string>());
                 }

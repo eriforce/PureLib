@@ -11,8 +11,7 @@ namespace PureLib.Common {
             string[] parts = template.Split(new string[] { templateToken }, StringSplitOptions.RemoveEmptyEntries);
             StringBuilder sb = new StringBuilder();
             foreach (string part in parts) {
-                string value;
-                if (tokens.TryGetValue(part, out value))
+                if (tokens.TryGetValue(part, out string value))
                     sb.Append(value);
                 else
                     sb.Append(part);
