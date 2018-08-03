@@ -17,8 +17,8 @@ namespace PureLib.Web {
 
         public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
         public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
-        public event EventHandler<EventArgs<DownloadPathChange>> Redirected;
-        public event EventHandler<EventArgs<DownloadPathChange>> FileExists;
+        public event EventHandler<EventArgs<RedirectContext>> Redirected;
+        public event EventHandler<EventArgs<FileExistsContext>> FileExists;
 
         public AdvancedWebClient(FileExistsHandling fileExistsHandling = FileExistsHandling.Rename) {
             _fileExistsHandling = fileExistsHandling;
@@ -35,22 +35,48 @@ namespace PureLib.Web {
             if (!_uriContexts.TryAdd(address, downloadContext))
                 throw new ApplicationException("The url is downloading.");
 
-            HttpWebResponse response = (HttpWebResponse)(await HeadAsync(address).ConfigureAwait(false));
-            if (address != response.ResponseUri && Redirected != null) {
-                DownloadPathChange redirectContext = new DownloadPathChange(response.ResponseUri) {
-                    FullPath = fullPath,
-                };
-                Redirected(this, new EventArgs<DownloadPathChange>(redirectContext));
-                fullPath = redirectContext.FullPath;
-            }
-
-            FileInfo file = new FileInfo(fullPath);
-            downloadContext.CurrentFileLength = !file.Exists ? 0 : file.Length;
-
             try {
+                HttpWebResponse response = (HttpWebResponse)(await HeadAsync(address).ConfigureAwait(false));
+                if (address != response.ResponseUri && Redirected != null) {
+                    RedirectContext redirectContext = new RedirectContext(response.ResponseUri) {
+                        FullPath = fullPath,
+                    };
+                    Redirected(this, new EventArgs<RedirectContext>(redirectContext));
+                    fullPath = redirectContext.FullPath;
+                }
+
+                FileMode fileMode = FileMode.Create;
+                FileInfo file = new FileInfo(fullPath);
+                if (file.Exists) {
+                    FileExistsContext fileExistsContext = new FileExistsContext(response.ResponseUri, fullPath) {
+                        FileExistsHandling = _fileExistsHandling,
+                    };
+                    FileExists?.Invoke(this, new EventArgs<FileExistsContext>(fileExistsContext));
+
+                    switch (fileExistsContext.FileExistsHandling) {
+                        case FileExistsHandling.Ignore:
+                            return;
+                        case FileExistsHandling.Resume:
+                            if (file.Length >= response.ContentLength)
+                                return;
+
+                            fileMode = FileMode.OpenOrCreate;
+                            downloadContext.CurrentFileLength = file.Length;
+                            break;
+                        case FileExistsHandling.Rename:
+                            do {
+                                string newFileName = "{0} - New{1}".FormatWith(
+                                    Path.GetFileNameWithoutExtension(fullPath), Path.GetExtension(fullPath));
+                                fullPath = Path.Combine(Path.GetDirectoryName(fullPath), newFileName);
+                                file = new FileInfo(fullPath);
+                            } while (file.Exists);
+                            break;
+                    }
+                }
+
                 using (cancellationToken.Register(CancelAsync))
                 using (Stream responseStream = await OpenReadTaskAsync(address).ConfigureAwait(false))
-                using (FileStream fileStream = new FileStream(fullPath, FileMode.OpenOrCreate)) {
+                using (FileStream fileStream = new FileStream(fullPath, fileMode)) {
                     if (downloadContext.CurrentFileLength > 0 && downloadContext.Response.IsRangeSupported())
                         fileStream.Seek(downloadContext.CurrentFileLength, SeekOrigin.Begin);
 
@@ -91,20 +117,25 @@ namespace PureLib.Web {
             return request.GetResponseAsync();
         }
 
-        public enum FileExistsHandling {
-            Overwrite,
-            Resume,
-            Ignore,
-            Rename,
-        }
-
-        public class DownloadPathChange {
+        public class RedirectContext {
             public Uri Uri { get; private set; }
 
             public string FullPath { get; set; }
 
-            public DownloadPathChange(Uri uri) {
+            public RedirectContext(Uri uri) {
                 Uri = uri;
+            }
+        }
+
+        public class FileExistsContext {
+            public Uri Uri { get; private set; }
+            public string FullPath { get; private set; }
+
+            public FileExistsHandling FileExistsHandling { get; set; }
+
+            public FileExistsContext(Uri uri, string fullPath) {
+                Uri = uri;
+                FullPath = fullPath;
             }
         }
 
