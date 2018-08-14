@@ -17,18 +17,17 @@ namespace PureLib.Web {
 
         public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
         public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
-        public event EventHandler<EventArgs<RedirectContext>> Redirected;
         public event EventHandler<EventArgs<FileExistsContext>> FileExists;
 
         public AdvancedWebClient(FileExistsHandling fileExistsHandling = FileExistsHandling.Rename) {
             _fileExistsHandling = fileExistsHandling;
         }
 
-        public Task DownloadAsync(string address, string fullPath) {
-            return DownloadAsync(new Uri(address), fullPath, CancellationToken.None);
+        public Task DownloadAsync(string address, string directory, string fileName = null) {
+            return DownloadAsync(new Uri(address), directory, fileName, CancellationToken.None);
         }
 
-        public async Task DownloadAsync(Uri address, string fullPath, CancellationToken cancellationToken) {
+        public async Task DownloadAsync(Uri address, string directory, string fileName, CancellationToken cancellationToken) {
             cancellationToken.ThrowIfCancellationRequested();
 
             DownloadContext downloadContext = new DownloadContext();
@@ -36,52 +35,54 @@ namespace PureLib.Web {
                 throw new ApplicationException("The url is downloading.");
 
             try {
-                HttpWebResponse response = (HttpWebResponse)(await HeadAsync(address).ConfigureAwait(false));
-                if (address != response.ResponseUri && Redirected != null) {
-                    RedirectContext redirectContext = new RedirectContext(response.ResponseUri) {
-                        FullPath = fullPath,
-                    };
-                    Redirected(this, new EventArgs<RedirectContext>(redirectContext));
-                    fullPath = redirectContext.FullPath;
-                }
-
-                FileMode fileMode = FileMode.Create;
-                FileInfo file = new FileInfo(fullPath);
-                if (file.Exists) {
-                    FileExistsContext fileExistsContext = new FileExistsContext(response.ResponseUri, fullPath) {
-                        FileExistsHandling = _fileExistsHandling,
-                    };
-                    FileExists?.Invoke(this, new EventArgs<FileExistsContext>(fileExistsContext));
-
-                    switch (fileExistsContext.FileExistsHandling) {
-                        case FileExistsHandling.Ignore:
-                            return;
-                        case FileExistsHandling.Resume:
-                            if (file.Length >= response.ContentLength)
-                                return;
-
-                            fileMode = FileMode.OpenOrCreate;
-                            downloadContext.CurrentFileLength = file.Length;
-                            break;
-                        case FileExistsHandling.Rename:
-                            do {
-                                string newFileName = "{0} - New{1}".FormatWith(
-                                    Path.GetFileNameWithoutExtension(fullPath), Path.GetExtension(fullPath));
-                                fullPath = Path.Combine(Path.GetDirectoryName(fullPath), newFileName);
-                                file = new FileInfo(fullPath);
-                            } while (file.Exists);
-                            break;
-                    }
-                }
-
                 using (cancellationToken.Register(CancelAsync))
-                using (Stream responseStream = await OpenReadTaskAsync(address).ConfigureAwait(false))
-                using (FileStream fileStream = new FileStream(fullPath, fileMode)) {
-                    if (downloadContext.CurrentFileLength > 0 && downloadContext.Response.IsRangeSupported())
-                        fileStream.Seek(downloadContext.CurrentFileLength, SeekOrigin.Begin);
+                using (Stream responseStream = await OpenReadTaskAsync(address).ConfigureAwait(false)) {
+                    HttpWebResponse response = _uriContexts[address].Response;
 
-                    await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
-                    await fileStream.FlushAsync().ConfigureAwait(false);
+                    if (fileName.IsNullOrEmpty())
+                        fileName = response.GetContentDispositionFileName();
+                    if (fileName.IsNullOrEmpty())
+                        fileName = Path.GetFileName(response.ResponseUri.AbsolutePath);
+                    if (fileName.IsNullOrEmpty())
+                        throw new ArgumentException("fileName");
+
+                    string fullPath = Path.Combine(directory, fileName);
+                    FileMode fileMode = FileMode.Create;
+                    FileInfo file = new FileInfo(fullPath);
+                    if (file.Exists) {
+                        FileExistsContext fileExistsContext = new FileExistsContext(response.ResponseUri, fullPath) {
+                            FileExistsHandling = _fileExistsHandling,
+                        };
+                        FileExists?.Invoke(this, new EventArgs<FileExistsContext>(fileExistsContext));
+
+                        switch (fileExistsContext.FileExistsHandling) {
+                            case FileExistsHandling.Ignore:
+                                return;
+                            case FileExistsHandling.Resume:
+                                if (file.Length >= response.ContentLength)
+                                    return;
+
+                                fileMode = FileMode.OpenOrCreate;
+                                downloadContext.CurrentFileLength = file.Length;
+                                break;
+                            case FileExistsHandling.Rename:
+                                do {
+                                    string newFileName = "{0} - New{1}".FormatWith(
+                                        Path.GetFileNameWithoutExtension(fullPath), Path.GetExtension(fullPath));
+                                    fullPath = Path.Combine(directory, newFileName);
+                                    file = new FileInfo(fullPath);
+                                } while (file.Exists);
+                                break;
+                        }
+                    }
+
+                    using (FileStream fileStream = new FileStream(fullPath, fileMode)) {
+                        if (downloadContext.CurrentFileLength > 0 && downloadContext.Response.IsRangeSupported())
+                            fileStream.Seek(downloadContext.CurrentFileLength, SeekOrigin.Begin);
+
+                        await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
+                        await fileStream.FlushAsync().ConfigureAwait(false);
+                    }
                 }
             }
             finally {
@@ -109,22 +110,6 @@ namespace PureLib.Web {
             _uriContexts[request.RequestUri].Response = response;
 
             return response;
-        }
-
-        private Task<WebResponse> HeadAsync(Uri address) {
-            HttpWebRequest request = (HttpWebRequest)GetWebRequest(address);
-            request.Method = WebRequestMethods.Http.Head;
-            return request.GetResponseAsync();
-        }
-
-        public class RedirectContext {
-            public Uri Uri { get; private set; }
-
-            public string FullPath { get; set; }
-
-            public RedirectContext(Uri uri) {
-                Uri = uri;
-            }
         }
 
         public class FileExistsContext {

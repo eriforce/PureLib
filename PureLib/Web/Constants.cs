@@ -18,6 +18,7 @@ namespace PureLib.Web {
         }
         public static class Response {
             public const string Range = "Accept-Ranges";
+            public const string ContentDisposition = "Content-Disposition";
         }
     }
 }
