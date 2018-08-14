@@ -36,7 +36,7 @@ namespace PureLib.Web {
             if (disposition.IsNullOrEmpty())
                 return null;
 
-            ContentDispositionHeaderValue value = new ContentDispositionHeaderValue(disposition);
+            ContentDispositionHeaderValue value = ContentDispositionHeaderValue.Parse(disposition);
             return !value.FileNameStar.IsNullOrEmpty() ? value.FileNameStar : value.FileName;
         }
     }
