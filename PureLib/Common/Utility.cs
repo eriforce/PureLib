@@ -93,6 +93,12 @@ namespace PureLib.Common {
                 .Select(s => (T)Enum.Parse(typeof(T), s)).ToArray();
         }
 
+        public static IEnumerable<List<T>> ChunkBy<T>(List<T> list, int chunkSize) {
+            for (int i = 0; i < list.Count; i += chunkSize) {
+                yield return list.GetRange(i, Math.Min(chunkSize, list.Count - i));
+            }
+        }
+
         public static void Shuffle<T>(this IList<T> list) {
             Shuffle<T>(list, list.Count);
         }
