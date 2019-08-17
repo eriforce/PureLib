@@ -23,6 +23,8 @@ namespace PureLib.Web {
             get { return _downloadingItems.Count == 0; }
         }
 
+        public Func<AdvancedWebClient> CreateWebClient { get; set; }
+
         public event DownloadCompletingEventHandler DownloadCompleting;
 
         public WebDownloader()
@@ -33,6 +35,8 @@ namespace PureLib.Web {
             SetThreadCount(threadCount);
             Proxy = proxy;
             Cookies = cookies ?? new CookieContainer();
+
+            CreateWebClient = () => new AdvancedWebClient();
         }
 
         public void SetThreadCount(int threadCount) {
@@ -111,7 +115,7 @@ namespace PureLib.Web {
                 if (!Directory.Exists(item.Directory))
                     Directory.CreateDirectory(item.Directory);
 
-                using (AdvancedWebClient client = new AdvancedWebClient()) {
+                using (AdvancedWebClient client = CreateWebClient()) {
                     if (Proxy != null)
                         client.Proxy = Proxy;
                     client.DownloadProgressChanged += (s, e) => {

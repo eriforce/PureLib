@@ -11,16 +11,16 @@ using PureLib.Common;
 
 namespace PureLib.Web {
     public class AdvancedWebClient : WebClient {
-        private ConcurrentDictionary<Uri, DownloadContext> _uriContexts =
-            new ConcurrentDictionary<Uri, DownloadContext>();
-        private FileExistsHandling _fileExistsHandling;
+        private ConcurrentDictionary<Uri, DownloadContext> _uriContexts;
+        private FileExistsHandling _defaultFileExistsHandling;
 
         public event EventHandler<EventArgs<HttpWebRequest>> SetRequest;
         public event EventHandler<EventArgs<HttpWebResponse>> GotResponse;
         public event EventHandler<EventArgs<FileExistsContext>> FileExists;
 
-        public AdvancedWebClient(FileExistsHandling fileExistsHandling = FileExistsHandling.Rename) {
-            _fileExistsHandling = fileExistsHandling;
+        public AdvancedWebClient(FileExistsHandling defaultFileExistsHandling = FileExistsHandling.Rename) {
+            _uriContexts = new ConcurrentDictionary<Uri, DownloadContext>();
+            _defaultFileExistsHandling = defaultFileExistsHandling;
         }
 
         public Task DownloadAsync(string address, string directory, string fileName = null) {
@@ -40,18 +40,16 @@ namespace PureLib.Web {
                     HttpWebResponse response = _uriContexts[address].Response;
 
                     if (fileName.IsNullOrEmpty())
-                        fileName = response.GetContentDispositionFileName();
-                    if (fileName.IsNullOrEmpty())
-                        fileName = Path.GetFileName(response.ResponseUri.AbsolutePath);
-                    if (fileName.IsNullOrEmpty())
-                        throw new ArgumentException("fileName");
+                        fileName = response.GetContentDispositionFileName() ??
+                            Path.GetFileName(response.ResponseUri.AbsolutePath) ??
+                            throw new ArgumentException("fileName");
 
                     string fullPath = Path.Combine(directory, fileName);
                     FileMode fileMode = FileMode.Create;
                     FileInfo file = new FileInfo(fullPath);
                     if (file.Exists) {
                         FileExistsContext fileExistsContext = new FileExistsContext(response.ResponseUri, fullPath) {
-                            FileExistsHandling = _fileExistsHandling,
+                            FileExistsHandling = _defaultFileExistsHandling,
                         };
                         FileExists?.Invoke(this, new EventArgs<FileExistsContext>(fileExistsContext));
 
