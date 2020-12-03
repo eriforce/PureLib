@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace PureLib.Legacy.WPF.BusyControl {
+namespace PureLib.WPF.BusyControl {
     /// <summary>
     /// A control to provide a visual indicator when an application is busy.
     /// </summary>

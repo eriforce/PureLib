@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace PureLib.Legacy.WPF.BusyControl {
+namespace PureLib.WPF.BusyControl {
     public abstract class BusyViewModelBase : ViewModelBase {
         private bool _isBusy;
         private string _busyContent;

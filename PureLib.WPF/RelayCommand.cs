@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
-namespace PureLib.Legacy.WPF {
+namespace PureLib.WPF {
     public class RelayCommand : ICommand {
         private readonly Action<object> _execute;
         private readonly Predicate<object> _canExecute;

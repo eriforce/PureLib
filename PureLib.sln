@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.Languages", "PureLib.Languages\PureLib.Languages.csproj", "{5BFD0949-D3DB-43FF-B7E8-B3F5F6EB819C}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PureLib", "PureLib\PureLib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.EntityFramework", "PureLib.EntityFramework\PureLib.EntityFramework.csproj", "{6FD94C01-A989-4034-B0D5-1583D1A27AEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.MediaInfo", "PureLib.MediaInfo\PureLib.MediaInfo.csproj", "{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PureLib.MediaInfo", "PureLib.MediaInfo\PureLib.MediaInfo.csproj", "{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PureLib.WPF", "PureLib.WPF\PureLib.WPF.csproj", "{4FA5A389-7695-4364-9D12-F66C17D05341}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C000FEF2-20A9-4B2E-B25C-F3804ACC826D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA5A389-7695-4364-9D12-F66C17D05341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA5A389-7695-4364-9D12-F66C17D05341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA5A389-7695-4364-9D12-F66C17D05341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA5A389-7695-4364-9D12-F66C17D05341}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

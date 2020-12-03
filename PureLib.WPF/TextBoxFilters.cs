@@ -7,28 +7,28 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PureLib.Legacy.WPF {
+namespace PureLib.WPF {
     public static class TextBoxFilters {
         // List of allowed keys. Put them here if you want to allow that key to pressed
         private static readonly List<Key> _controlKeys = new List<Key>
-                                                            {
-                                                                Key.Back,
-                                                                Key.CapsLock,
-                                                                Key.Down,
-                                                                Key.End,
-                                                                Key.Enter,
-                                                                Key.Escape,
-                                                                Key.Home,
-                                                                Key.Insert,
-                                                                Key.Left,
-                                                                Key.PageDown,
-                                                                Key.PageUp,
-                                                                Key.Right,
-                                                                Key.LeftShift,
-                                                                Key.RightShift,
-                                                                Key.Tab,
-                                                                Key.Up
-                                                            };
+        {
+            Key.Back,
+            Key.CapsLock,
+            Key.Down,
+            Key.End,
+            Key.Enter,
+            Key.Escape,
+            Key.Home,
+            Key.Insert,
+            Key.Left,
+            Key.PageDown,
+            Key.PageUp,
+            Key.Right,
+            Key.LeftShift,
+            Key.RightShift,
+            Key.Tab,
+            Key.Up
+        };
 
         #region Alpha Numeric Filter
 

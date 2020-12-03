@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace PureLib.Legacy.WPF {
+namespace PureLib.WPF {
     public static class WpfExtensions {
         public static void AddRange<T>(this ObservableCollection<T> list, IEnumerable<T> items) {
             if (list == null)

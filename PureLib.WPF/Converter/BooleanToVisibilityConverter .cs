@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,14 +6,14 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace PureLib.Legacy.WPF {
-    public class InverseBooleanConverter : IValueConverter {
+namespace PureLib.WPF {
+    public class BooleanToVisibilityConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            return !(bool)value;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            return !(bool)value;
+            throw new NotImplementedException();
         }
     }
 }

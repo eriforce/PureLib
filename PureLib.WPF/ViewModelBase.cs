@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using PureLib.Common;
 
-namespace PureLib.Legacy.WPF {
+namespace PureLib.WPF {
     public abstract class ViewModelBase : NotifyObject {
         private ICommand _closeCommand;
 

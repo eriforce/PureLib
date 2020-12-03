@@ -1,4 +1,4 @@
-﻿namespace PureLib.Legacy.WPF.BusyControl {
+﻿namespace PureLib.WPF.BusyControl {
     /// <summary>
     /// Names and helpers for visual states in the controls.
     /// </summary>
