@@ -9,7 +9,7 @@ using System.Windows;
 using PureLib.Common;
 using PureLib.Native;
 
-namespace PureLib.Legacy.WPF {
+namespace PureLib.WPF {
     public class SingleInstanceApp : Application, IDisposable {
         private Mutex _singleInstanceMutex;
 

@@ -59,8 +59,6 @@
     <Compile Include="Configuration\CryptoConfiguration.cs" />
     <Compile Include="Configuration\MailConfiguration.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Native\Messaging.cs" />
-    <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\TaskbarManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPF\MessageWindow.cs" />

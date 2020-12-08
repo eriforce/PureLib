@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Interop;
 using PureLib.Native;
 
-namespace PureLib.Legacy.WPF {
+namespace PureLib.WPF {
     public abstract class MessageWindow : Window {
         protected abstract void ReceiveMessage(string message);
 

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace PureLib.Legacy.Native {
-    internal class NativeMethods {
+namespace PureLib.Native {
+    public class NativeMethods {
         private const string user32Dll = "user32.dll";
 
         [DllImport(user32Dll, CharSet = CharSet.Unicode)]

@@ -11,8 +11,12 @@
     <PackageProjectUrl>https://github.com/eriforce/PureLib</PackageProjectUrl>
     <PackageTags>WPF</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PureLib\PureLib.csproj" />

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace PureLib.Legacy.Native {
+namespace PureLib.Native {
     public class Messaging {
-        internal const int WM_COPYDATA = 0x004A;
+        public const int WM_COPYDATA = 0x004A;
 
         public static void SendMessage(string message, Process targetProcess, bool sendAsync = false) {
             int length = Encoding.Default.GetBytes(message).Length;
@@ -25,7 +25,7 @@ namespace PureLib.Legacy.Native {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct CopyDataStruct {
+    public struct CopyDataStruct {
         /// <summary>
         /// User defined data
         /// </summary>
