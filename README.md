@@ -1,7 +1,6 @@
 # PureLib
 
 [![Build status](https://ci.appveyor.com/api/projects/status/aogji08cvj7g1rq6?svg=true)](https://ci.appveyor.com/project/eriforce/purelib)
-[![NuGet Version](https://img.shields.io/nuget/v/PureLib.svg?style=flat-square)](https://www.nuget.org/packages/PureLib/)
 ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 A lightweight C# utility library.
@@ -9,15 +8,25 @@ A lightweight C# utility library.
 
 ## Download
 
-The library is available on nuget.org via package name `PureLib`, `PureLib.Legacy` and `PureLib.EntityFramework`.
+The library is available on nuget.org.
 
 To install PureLib, run the following command in the Package Manager Console
 ```
 PM> Install-Package PureLib
-PM> Install-Package PureLib.Legacy
+PM> Install-Package PureLib.WPF
+PM> Install-Package PureLib.MediaInfo
 PM> Install-Package PureLib.EntityFramework
+PM> Install-Package PureLib.Legacy
 ```
-More information about NuGet package avaliable at https://nuget.org/packages/PureLib
+More information about NuGet package avaliable at:
+
+|Package|Version|
+|-------|-------|
+|PureLib|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.svg?style=flat-square)](https://www.nuget.org/packages/PureLib/)|
+|PureLib.WPF|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.WPF.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.WPF/)|
+|PureLib.MediaInfo|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.MediaInfo.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.MediaInfo/)|
+|PureLib.EntityFramework|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.EntityFramework.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.EntityFramework/)|
+|PureLib.Legacy|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.Legacy.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.Legacy/)|
 
 
 ## Features
