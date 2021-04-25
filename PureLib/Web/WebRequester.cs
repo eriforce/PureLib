@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using PureLib.Common;
 
 namespace PureLib.Web {
@@ -40,35 +36,35 @@ namespace PureLib.Web {
             RetryLimit = int.MaxValue;
         }
 
-        public Task<string> GetAsync(string url) {
-            return RequestAsync(url, WebRequestMethods.Http.Get);
+        public Task<(bool, string)> GetAsync(string url) {
+            return RequestAsync(url, HttpMethod.Get);
         }
 
-        public Task<string> PostAsync(string url, string param, string contentType = ContentType.Form) {
-            return RequestAsync(url, WebRequestMethods.Http.Post, param, contentType);
+        public Task<(bool, string)> PostAsync(string url, string param, string contentType = ContentTypes.Form) {
+            return RequestAsync(url, HttpMethod.Post, param, contentType);
         }
 
-        public Task<string> PutAsync(string url, string param, string contentType = ContentType.Form) {
-            return RequestAsync(url, WebRequestMethods.Http.Put, param, contentType);
+        public Task<(bool, string)> PutAsync(string url, string param, string contentType = ContentTypes.Form) {
+            return RequestAsync(url, HttpMethod.Put, param, contentType);
         }
 
-        public Task<string> DeleteAsync(string url) {
-            return RequestAsync(url, "DELETE");
+        public Task<(bool, string)> DeleteAsync(string url) {
+            return RequestAsync(url, HttpMethod.Delete);
         }
 
-        public Task<string> RequestAsync(string url, string method, string param = null, string contentType = ContentType.Form) {
+        public Task<(bool, string)> RequestAsync(string url, HttpMethod method, string param = null, string contentType = ContentTypes.Form) {
             return RequestAsync(new Uri(url), method, param, contentType);
         }
 
-        public Task<string> RequestAsync(Uri uri, string method, string param = null, string contentType = ContentType.Form) {
+        public Task<(bool, string)> RequestAsync(Uri uri, HttpMethod method, string param = null, string contentType = ContentTypes.Form) {
             return RequestAsync(uri, method, (param == null) ? null : Encoding.GetBytes(param), contentType);
         }
 
-        public Task<string> RequestAsync(string url, string method, byte[] data, string contentType = ContentType.Stream) {
+        public Task<(bool, string)> RequestAsync(string url, HttpMethod method, byte[] data, string contentType = ContentTypes.Stream) {
             return RequestAsync(new Uri(url), method, data, contentType);
         }
 
-        public async Task<string> RequestAsync(Uri uri, string method, byte[] data, string contentType = ContentType.Stream) {
+        public async Task<(bool, string)> RequestAsync(Uri uri, HttpMethod method, byte[] data, string contentType = ContentTypes.Stream) {
             int retry = 0;
             while (retry <= RetryLimit) {
                 try {
@@ -88,17 +84,17 @@ namespace PureLib.Web {
             throw ex;
         }
 
-        private async Task<string> RequestInternalAsync(Uri uri, string method, byte[] data, string contentType) {
+        private async Task<(bool, string)> RequestInternalAsync(Uri uri, HttpMethod httpMethod, byte[] data, string contentType) {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
             req.CookieContainer = Cookies;
             req.UserAgent = UserAgent;
             req.AllowAutoRedirect = AllowAutoRedirect;
             req.Referer = Referer;
-            req.Method = method;
+            req.Method = httpMethod.Method;
             req.ContentType = contentType;
             SetRequest?.Invoke(this, new EventArgs<HttpWebRequest>(req));
 
-            if ((data != null) && data.Any() && (method != WebRequestMethods.Http.Get) && (method != WebRequestMethods.Http.Head)) {
+            if (data != null && data.Any() && (httpMethod != HttpMethod.Get) && (httpMethod != HttpMethod.Head)) {
                 req.ContentLength = data.Length;
                 using (Stream stream = await req.GetRequestStreamAsync().ConfigureAwait(false)) {
                     await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
@@ -109,8 +105,13 @@ namespace PureLib.Web {
             GotResponse?.Invoke(this, new EventArgs<HttpWebResponse>(res));
             Stream responseStream = res.GetResponseStream();
             using (StreamReader sr = new StreamReader(responseStream, Encoding)) {
-                return await sr.ReadToEndAsync().ConfigureAwait(false);
+                string response = await sr.ReadToEndAsync().ConfigureAwait(false);
+                return (IsSuccessStatusCode((int)res.StatusCode), response);
             }
+        }
+
+        private bool IsSuccessStatusCode(int statusCode) {
+            return (statusCode >= 200) && (statusCode <= 299);
         }
 
         private string GetUserAgent() {

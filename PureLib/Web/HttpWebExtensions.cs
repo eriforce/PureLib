@@ -10,7 +10,7 @@ namespace PureLib.Web {
     public static class HttpWebExtensions {
         public static void SetBasicAuthentication(this HttpWebRequest request, string username, string password) {
             var headerValue = "Basic {0}".FormatWith(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)).ToBase64String());
-            request.Headers.Set(HttpHeader.Request.Authorization, headerValue);
+            request.Headers.Set(HttpHeaders.Request.Authorization, headerValue);
         }
 
         public static async Task<bool> IsRangeSupported(this HttpWebRequest request) {
@@ -27,12 +27,12 @@ namespace PureLib.Web {
         }
 
         public static bool IsRangeSupported(this HttpWebResponse response) {
-            string rangeValue = response.GetResponseHeader(HttpHeader.Response.Range);
+            string rangeValue = response.GetResponseHeader(HttpHeaders.Response.Range);
             return !rangeValue.IsNullOrEmpty() && !"none".Equals(rangeValue, StringComparison.OrdinalIgnoreCase);
         }
 
         public static string GetContentDispositionFileName(this HttpWebResponse response) {
-            string disposition = response.GetResponseHeader(HttpHeader.Response.ContentDisposition);
+            string disposition = response.GetResponseHeader(HttpHeaders.Response.ContentDisposition);
             if (disposition.IsNullOrEmpty())
                 return null;
 

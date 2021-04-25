@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PureLib.Web {
-    public static class ContentType {
+    public static class ContentTypes {
         public const string Form = "application/x-www-form-urlencoded";
         public const string Stream = "application/octet-stream";
         public const string Xml = "application/xml";
         public const string Json = "application/json";
     }
 
-    public static class HttpHeader {
+    public static class HttpHeaders {
         public static class Request {
             public const string Authorization = "Authorization";
         }

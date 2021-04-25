@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace PureLib.WPF.BusyControl {
@@ -36,6 +32,17 @@ namespace PureLib.WPF.BusyControl {
                 });
                 Dispatcher.PushFrame(frame);
                 return task.Result;
+            }
+            finally {
+                IsBusy = false;
+            }
+        }
+
+        public async Task BusyWithAsync(string content, Task task) {
+            BusyContent = content;
+            IsBusy = true;
+            try {
+                await task;
             }
             finally {
                 IsBusy = false;

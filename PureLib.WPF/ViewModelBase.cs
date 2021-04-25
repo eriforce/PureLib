@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PureLib.Common;
+using PureLib.WPF.Command;
 
 namespace PureLib.WPF {
     public abstract class ViewModelBase : NotifyObject {
         private ICommand _closeCommand;
 
-        protected Dispatcher UIDispatcher { get; private set; }
+        protected Dispatcher UiDispatcher { get; private set; }
 
         public Window View { get; set; }
         public ICommand CloseCommand {
@@ -29,21 +25,18 @@ namespace PureLib.WPF {
         }
 
         public ViewModelBase(Dispatcher uiDispatcher) {
-            UIDispatcher = uiDispatcher;
+            UiDispatcher = uiDispatcher;
         }
 
         public void RunOnUIThread(Action action, DispatcherPriority priority = DispatcherPriority.Normal) {
-            if (UIDispatcher == null)
+            if (UiDispatcher == null)
                 action();
             else
-                UIDispatcher.BeginInvoke(action, priority);
+                UiDispatcher.BeginInvoke(action, priority);
         }
 
         protected virtual RelayCommand GetCloseCommand() {
-            return new RelayCommand(p => {
-                if (View != null)
-                    View.Close();
-            });
+            return new RelayCommand(p => View?.Close());
         }
     }
 }
