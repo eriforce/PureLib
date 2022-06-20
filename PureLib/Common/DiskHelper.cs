@@ -37,16 +37,16 @@ namespace PureLib.Common {
         }
 
         public static void WriteText(this string path, string text, Encoding enc, FileMode fileMode = FileMode.Create) {
-            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
-                StreamWriter writer = new StreamWriter(stream, enc);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None))
+            using (StreamWriter writer = new StreamWriter(stream, enc)) {
                 writer.Write(text);
                 writer.Flush();
             }
         }
 
         public static async Task WriteTextAsync(this string path, string text, Encoding enc, FileMode fileMode = FileMode.Create) {
-            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None)) {
-                StreamWriter writer = new StreamWriter(stream, enc);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Write, FileShare.None))
+            using (StreamWriter writer = new StreamWriter(stream, enc)) {
                 await writer.WriteAsync(text).ConfigureAwait(false);
                 await writer.FlushAsync().ConfigureAwait(false);
             }
@@ -56,8 +56,8 @@ namespace PureLib.Common {
             if (enc == null)
                 enc = Encoding.Default;
 
-            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
-                StreamReader reader = new StreamReader(stream, enc, true);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read))
+            using (StreamReader reader = new StreamReader(stream, enc, true)) {
                 return reader.ReadToEnd();
             }
         }
@@ -66,8 +66,8 @@ namespace PureLib.Common {
             if (enc == null)
                 enc = Encoding.Default;
 
-            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read)) {
-                StreamReader reader = new StreamReader(stream, enc, true);
+            using (FileStream stream = new FileStream(path, fileMode, FileAccess.Read, FileShare.Read))
+            using (StreamReader reader = new StreamReader(stream, enc, true)) {
                 return await reader.ReadToEndAsync().ConfigureAwait(false);
             }
         }
