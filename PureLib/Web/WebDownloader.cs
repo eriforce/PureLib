@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using PureLib.Common;
 
 namespace PureLib.Web {
-    public class WebDownloader {
+    public sealed class WebDownloader {
         private object _clientsLock = new object();
         private List<DownloadItem> _items = new List<DownloadItem>();
         private Dictionary<DownloadItem, CancellationTokenSource> _downloadingItems = new Dictionary<DownloadItem, CancellationTokenSource>();
@@ -41,7 +38,7 @@ namespace PureLib.Web {
 
         public void SetThreadCount(int threadCount) {
             if (threadCount <= 0)
-                throw new ArgumentOutOfRangeException("Thread count must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(threadCount), "Thread count must be greater than zero.");
 
             ThreadCount = threadCount;
             StartDownloading();
@@ -49,7 +46,7 @@ namespace PureLib.Web {
 
         public void AddItems(IEnumerable<DownloadItem> items) {
             if ((items == null) || items.Any(i => i == null))
-                throw new ArgumentNullException("Download items are null.");
+                throw new ArgumentNullException(nameof(items), "Download items are null.");
 
             foreach (DownloadItem item in items) {
                 item.StateChanged += ItemStateChanged;
@@ -61,7 +58,7 @@ namespace PureLib.Web {
 
         public void RemoveItems(IEnumerable<DownloadItem> items) {
             if ((items == null) || items.Any(i => i == null))
-                throw new ArgumentNullException("Download items are null.");
+                throw new ArgumentNullException(nameof(items), "Download items are null.");
 
             foreach (DownloadItem item in items) {
                 item.Stop();

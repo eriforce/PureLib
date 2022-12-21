@@ -9,15 +9,15 @@ using System.Windows;
 using PureLib.Common;
 using PureLib.Native;
 
-namespace PureLib.Legacy.WPF {
-    public class SingleInstanceApp : Application, IDisposable {
-        private Mutex _singleInstanceMutex;
+namespace PureLib.WPF {
+    public class SingletonApp : Application, IDisposable {
+        private readonly Mutex _singleInstanceMutex;
 
-        public SingleInstanceApp()
-            : this(Process.GetCurrentProcess().MainModule.FileName.CreateHash<MD5CryptoServiceProvider>().ToHexString()) {
+        public SingletonApp()
+            : this(GetSingletonAppKey()) {
         }
 
-        public SingleInstanceApp(string mutexName) {
+        public SingletonApp(string mutexName) {
             _singleInstanceMutex = new Mutex(true, mutexName);
         }
 
@@ -54,6 +54,10 @@ namespace PureLib.Legacy.WPF {
         protected virtual void Dispose(bool disposing) {
             if (disposing)
                 _singleInstanceMutex.Close();
+        }
+
+        private static string GetSingletonAppKey() {
+            return Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(Process.GetCurrentProcess().MainModule.FileName)));
         }
     }
 }

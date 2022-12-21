@@ -42,7 +42,7 @@ namespace PureLib.Common {
 
             Match m = _sizeRegex.Match(sizeString);
             if (!m.Success)
-                throw new ArgumentException("Size string cannot be parsed.");
+                throw new ArgumentException("Size string cannot be parsed.", nameof(sizeString));
 
             double result = double.Parse(m.Groups[REGEX_NAME_NUMBER].Value);
             string unit = m.Groups[REGEX_NAME_UNIT].Value.ToLower();

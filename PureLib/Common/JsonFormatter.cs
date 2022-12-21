@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace PureLib.Common {
-    public class JsonFormatter {
+    public sealed class JsonFormatter {
         private const int defaultIndent = 0;
         private const char space = ' ';
         private readonly string _indent;

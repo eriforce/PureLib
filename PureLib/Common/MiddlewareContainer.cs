@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PureLib.Common {
     public class MiddlewareContainer<T> where T : class {
         public delegate Task NextDelegate(T context);
 
-        private IList<Func<NextDelegate, NextDelegate>> _middlewares;
-
-        public MiddlewareContainer() {
-            _middlewares = new List<Func<NextDelegate, NextDelegate>>();
-        }
+        private readonly IList<Func<NextDelegate, NextDelegate>> _middlewares =
+            new List<Func<NextDelegate, NextDelegate>>();
 
         public NextDelegate Compose() {
             NextDelegate next = context => Task.CompletedTask;

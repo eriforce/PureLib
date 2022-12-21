@@ -9,8 +9,8 @@ using PureLib.Common;
 namespace PureLib.Web {
     public static class HttpWebExtensions {
         public static void SetBasicAuthentication(this HttpWebRequest request, string username, string password) {
-            var headerValue = "Basic {0}".FormatWith(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)).ToBase64String());
-            request.Headers.Set(HttpHeaders.Request.Authorization, headerValue);
+            var credential = Convert.ToBase64String(Encoding.UTF8.GetBytes("{0}:{1}".FormatWith(username, password)));
+            request.Headers.Set(HttpHeaders.Request.Authorization, $"Basic {credential}");
         }
 
         public static async Task<bool> IsRangeSupported(this HttpWebRequest request) {

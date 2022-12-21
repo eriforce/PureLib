@@ -42,7 +42,7 @@ namespace PureLib.Web {
                     if (fileName.IsNullOrEmpty())
                         fileName = response.GetContentDispositionFileName() ??
                             Path.GetFileName(response.ResponseUri.AbsolutePath) ??
-                            throw new ArgumentException("fileName");
+                            throw new ArgumentException(null, nameof(fileName));
 
                     string fullPath = Path.Combine(directory, fileName);
                     FileMode fileMode = FileMode.Create;

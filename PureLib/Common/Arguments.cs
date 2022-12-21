@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
-    public class Arguments : Dictionary<string, List<string>> {
+    public sealed class Arguments : Dictionary<string, List<string>> {
         private const string ARGUMENT_NAME = "name";
-        private static readonly string _argumentPattern = @"^(/|\-{{1,2}})(?<{0}>\w+)$".FormatWith(ARGUMENT_NAME);
-        private static readonly Regex _argumentRegex = new Regex(_argumentPattern, RegexOptions.Compiled);
+        private const string _argumentPattern = $$"""^(/|\-{1,2})(?<{{ARGUMENT_NAME}}>\w+)$""";
+        private static readonly Regex _argumentRegex = new(_argumentPattern, RegexOptions.Compiled | RegexOptions.NonBacktracking);
 
         public Arguments(string[] args) : base(StringComparer.OrdinalIgnoreCase) {
             if ((args == null) || (args.Length == 0))
