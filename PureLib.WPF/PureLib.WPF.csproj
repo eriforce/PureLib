@@ -11,7 +11,7 @@
 		<PackageProjectUrl>https://github.com/eriforce/PureLib</PackageProjectUrl>
 		<PackageTags>WPF</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>3.0.0</Version>
+		<Version>3.0.1</Version>
 		<AssemblyVersion>3.0.0.0</AssemblyVersion>
 	</PropertyGroup>
 
