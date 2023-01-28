@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
@@ -51,10 +49,7 @@ namespace PureLib.Common {
         }
 
         public bool TryGetValues(string key, out ReadOnlyCollection<string> values) {
-            ref ReadOnlyCollection<string> list = ref CollectionsMarshal.GetValueRefOrNullRef(_internal, key);
-            bool exists = !Unsafe.IsNullRef(ref list);
-            values = exists ? list : null;
-            return exists;
+            return _internal.TryGetValue(key, out values);
         }
     }
 }
