@@ -38,6 +38,13 @@ namespace PureLib.Common {
             return exists;
         }
 
+        public string GetValue(string key) {
+            string value = GetValueOrDefault(key, out bool exists);
+            if (!exists)
+                throw new KeyNotFoundException("The key cannot be found in arguments.");
+            return value;
+        }
+
         public string GetValueOrDefault(string key, out bool exists, string defaultValue = default) {
             exists = TryGetValues(key, out ReadOnlyCollection<string> values);
             return exists ? values.FirstOrDefault() : defaultValue;

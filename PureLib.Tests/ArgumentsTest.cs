@@ -31,6 +31,18 @@ namespace PureLib.Tests {
         [InlineData("f", "format", true)]
         [InlineData("d", "100.0", true)]
         [InlineData("delay", "-1000", true)]
+        [InlineData("format", null, false)]
+        public void Arguments_GetValue_ShouldGetValue(string key, string expectedValue, bool expectedExists) {
+            if (expectedExists)
+                _arguments.GetValue(key).ShouldBe(expectedValue);
+            else
+                Should.Throw<KeyNotFoundException>(() => { _arguments.GetValue(key); });
+        }
+
+        [Theory]
+        [InlineData("f", "format", true)]
+        [InlineData("d", "100.0", true)]
+        [InlineData("delay", "-1000", true)]
         [InlineData("format", "test", false)]
         public void Arguments_GetValueOrDefault_ShouldGetValue(string key, string expectedValue, bool expectedExists) {
             bool exists;
