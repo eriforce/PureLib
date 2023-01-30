@@ -2,16 +2,19 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
     public static class Utility {
+        [SkipLocalsInit]
         public static void RentCharSpace(int size, ActionForSpan<char> action) {
             char[] bufferToReturn = null;
             Span<char> buffer = size <= Constants.StackAllocThresholdOfChars
-                ? stackalloc char[size]
+                ? stackalloc char[Constants.StackAllocThresholdOfChars]
                 : bufferToReturn = ArrayPool<char>.Shared.Rent(size);
+            // Use constant size for stackalloc to get better performance. https://github.com/dotnet/docs/issues/28823
 
             action(buffer);
 

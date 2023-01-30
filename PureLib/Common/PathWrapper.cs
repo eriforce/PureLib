@@ -14,7 +14,7 @@ namespace PureLib.Common {
                     char c = fileName[i];
                     buffer[i] = !_invalidFileNameChars.Contains(c) ? c : replacement;
                 }
-                result = new string(buffer);
+                result = new string(buffer[..fileName.Length]);
             });
             return result;
         }
@@ -22,14 +22,14 @@ namespace PureLib.Common {
         public static string EscapePath(this string path, char replacement = '_') {
             string result = null;
             Utility.RentCharSpace(path.Length, buffer => {
-                for (int i = 0; i < buffer.Length; i++) {
+                for (int i = 0; i < path.Length; i++) {
                     char c = path[i];
                     buffer[i] =
                         c == Path.DirectorySeparatorChar ||
                         c == Path.VolumeSeparatorChar ||
                         !_invalidFileNameChars.Contains(c) ? c : replacement;
                 }
-                result = new string(buffer);
+                result = new string(buffer[..path.Length]);
             });
             return result;
         }

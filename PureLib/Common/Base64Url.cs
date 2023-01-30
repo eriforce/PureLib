@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Buffers;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace PureLib.Common {
     public static class Base64Url {
+        [SkipLocalsInit]
         public static string Encode(ReadOnlySpan<byte> input) {
             if (input.IsEmpty)
                 return string.Empty;
 
             int bufferSize = GetBase64StringSize(input.Length);
-
             char[] bufferToReturn = null;
             Span<char> buffer = bufferSize <= Constants.StackAllocThresholdOfChars
-                ? stackalloc char[bufferSize]
+                ? stackalloc char[Constants.StackAllocThresholdOfChars]
                 : bufferToReturn = ArrayPool<char>.Shared.Rent(bufferSize);
 
             int actualSize = Encode(input, buffer);
@@ -24,6 +25,7 @@ namespace PureLib.Common {
             return base64Url;
         }
 
+        [SkipLocalsInit]
         public static byte[] Decode(string input) {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -35,7 +37,7 @@ namespace PureLib.Common {
             int bufferSize = GetBase64StringSize(input.Length, padSize);
             char[] bufferToReturn = null;
             Span<char> buffer = bufferSize <= Constants.StackAllocThresholdOfChars
-                ? stackalloc char[bufferSize]
+                ? stackalloc char[Constants.StackAllocThresholdOfChars]
                 : bufferToReturn = ArrayPool<char>.Shared.Rent(bufferSize);
 
             // Fix up '-' -> '+' and '_' -> '/'.
@@ -53,7 +55,7 @@ namespace PureLib.Common {
                 buffer[i] = '=';
             }
 
-            int resultLength = ComputeDecodeResultLength(buffer);
+            int resultLength = ComputeDecodeResultLength(buffer, bufferSize);
             byte[] result = new byte[resultLength];
             Convert.TryFromBase64Chars(buffer, result, out _);
 
@@ -105,10 +107,10 @@ namespace PureLib.Common {
             };
         }
 
-        private static int ComputeDecodeResultLength(Span<char> chars) {
-            int num = chars.Length;
+        private static int ComputeDecodeResultLength(Span<char> chars, int size) {
+            int num = size;
             int num2 = 0;
-            for (int i = 0; i < chars.Length; i++) {
+            for (int i = 0; i < size; i++) {
                 switch ((int)chars[i]) {
                     case 0:
                     case 1:

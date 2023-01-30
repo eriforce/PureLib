@@ -13,6 +13,7 @@
 		<PackageTags>Utility Web</PackageTags>
 		<Description>A lightweight utility library.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
