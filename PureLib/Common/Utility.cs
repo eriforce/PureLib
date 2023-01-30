@@ -7,6 +7,18 @@ using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
     public static class Utility {
+        public static void RentCharSpace(int size, ActionForSpan<char> action) {
+            char[] bufferToReturn = null;
+            Span<char> buffer = size <= Constants.StackAllocThresholdOfChars
+                ? stackalloc char[size]
+                : bufferToReturn = ArrayPool<char>.Shared.Rent(size);
+
+            action(buffer);
+
+            if (bufferToReturn != null)
+                ArrayPool<char>.Shared.Return(bufferToReturn);
+        }
+
         public static int GetWeekdayCount(DateOnly start, DateOnly end) {
             int dayCount = 0;
             int daysRemain = 0;

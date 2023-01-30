@@ -12,13 +12,15 @@ namespace PureLib.Common {
 
         private readonly Dictionary<string, ReadOnlyCollection<string>> _internal;
 
+        public int Count => _internal.Count;
+
         public Arguments(string[] args, StringComparer stringComparer = null) {
             _internal = new Dictionary<string, ReadOnlyCollection<string>>(stringComparer);
 
             List<string> currentArgument = null;
             foreach (string arg in args) {
                 Match m = _argumentRegex.Match(arg);
-                if (m.Success && !decimal.TryParse(arg, out decimal argValue)) {
+                if (m.Success && !decimal.TryParse(arg, out _)) {
                     string currentName = m.Groups[ARGUMENT_NAME].Value;
                     currentArgument = new List<string>();
                     _internal.Add(currentName, currentArgument.AsReadOnly());

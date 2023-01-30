@@ -5,23 +5,21 @@ using System.Diagnostics;
 namespace PureLib.Common {
     public static class Base64Url {
         public static string Encode(ReadOnlySpan<byte> input) {
-            const int StackAllocThreshold = 128;
-
             if (input.IsEmpty)
                 return string.Empty;
 
-            int bufferSize = GetArraySizeRequiredToEncode(input.Length);
+            int bufferSize = GetBase64StringSize(input.Length);
 
-            char[] bufferToReturnToPool = null;
-            Span<char> buffer = bufferSize <= StackAllocThreshold
-                ? stackalloc char[StackAllocThreshold]
-                : bufferToReturnToPool = ArrayPool<char>.Shared.Rent(bufferSize);
+            char[] bufferToReturn = null;
+            Span<char> buffer = bufferSize <= Constants.StackAllocThresholdOfChars
+                ? stackalloc char[bufferSize]
+                : bufferToReturn = ArrayPool<char>.Shared.Rent(bufferSize);
 
-            int numBase64Chars = Encode(input, buffer);
-            string base64Url = new(buffer[..numBase64Chars]);
+            int actualSize = Encode(input, buffer);
+            string base64Url = new(buffer[..actualSize]);
 
-            if (bufferToReturnToPool != null)
-                ArrayPool<char>.Shared.Return(bufferToReturnToPool);
+            if (bufferToReturn != null)
+                ArrayPool<char>.Shared.Return(bufferToReturn);
 
             return base64Url;
         }
@@ -33,9 +31,14 @@ namespace PureLib.Common {
             if (input.Length == 0)
                 return Array.Empty<byte>();
 
-            // Copy input into buffer, fixing up '-' -> '+' and '_' -> '/'.
             int padSize = GetPadSize(input.Length);
-            char[] buffer = new char[GetArraySizeRequiredToDecode(input.Length, padSize)];
+            int bufferSize = GetBase64StringSize(input.Length, padSize);
+            char[] bufferToReturn = null;
+            Span<char> buffer = bufferSize <= Constants.StackAllocThresholdOfChars
+                ? stackalloc char[bufferSize]
+                : bufferToReturn = ArrayPool<char>.Shared.Rent(bufferSize);
+
+            // Fix up '-' -> '+' and '_' -> '/'.
             int i = 0;
             for (int j = 0; i < input.Length; i++, j++) {
                 char ch = input[j];
@@ -46,16 +49,22 @@ namespace PureLib.Common {
                 else
                     buffer[i] = ch;
             }
-
             for (; padSize > 0; i++, padSize--) {
                 buffer[i] = '=';
             }
 
-            return Convert.FromBase64CharArray(buffer, 0, buffer.Length);
+            int resultLength = ComputeDecodeResultLength(buffer);
+            byte[] result = new byte[resultLength];
+            Convert.TryFromBase64Chars(buffer, result, out _);
+
+            if (bufferToReturn != null)
+                ArrayPool<char>.Shared.Return(bufferToReturn);
+
+            return result;
         }
 
         private static int Encode(ReadOnlySpan<byte> input, Span<char> output) {
-            Debug.Assert(output.Length >= GetArraySizeRequiredToEncode(input.Length));
+            Debug.Assert(output.Length >= GetBase64StringSize(input.Length));
 
             if (input.IsEmpty)
                 return 0;
@@ -76,24 +85,85 @@ namespace PureLib.Common {
             return charsWritten;
         }
 
-        private static int GetArraySizeRequiredToEncode(int count) {
-            int numWholeOrPartialInputBlocks = checked(count + 2) / 3;
+        private static int GetBase64StringSize(int byteCount) {
+            int numWholeOrPartialInputBlocks = checked(byteCount + 2) / 3;
             return checked(numWholeOrPartialInputBlocks * 4);
         }
 
-        private static int GetArraySizeRequiredToDecode(int count, int padSize) {
-            if (count == 0)
+        private static int GetBase64StringSize(int base64UrlLength, int padSize) {
+            if (base64UrlLength == 0)
                 return 0;
-            return checked(count + padSize);
+            return checked(base64UrlLength + padSize);
         }
 
-        private static int GetPadSize(int count) {
-            return (count % 4) switch {
+        private static int GetPadSize(int base64UrlLength) {
+            return (base64UrlLength % 4) switch {
                 2 => 2,
                 3 => 1,
                 0 => 0,
-                _ => throw new ArgumentException("Invalid string to decode.", nameof(count)),
+                _ => throw new FormatException("Base64Url string is invalid."),
             };
+        }
+
+        private static int ComputeDecodeResultLength(Span<char> chars) {
+            int num = chars.Length;
+            int num2 = 0;
+            for (int i = 0; i < chars.Length; i++) {
+                switch ((int)chars[i]) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                        num--;
+                        break;
+                    case 61:
+                        num--;
+                        num2++;
+                        break;
+                }
+            }
+            switch (num2) {
+                case 1:
+                    num2 = 2;
+                    break;
+                case 2:
+                    num2 = 1;
+                    break;
+                case 0:
+                    break;
+                default:
+                    throw new FormatException("Base64 string is invalid.");
+            }
+            return num / 4 * 3 + num2;
         }
     }
 }

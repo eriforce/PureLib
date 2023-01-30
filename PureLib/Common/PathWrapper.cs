@@ -1,21 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
     public static class PathWrapper {
-        public static string FilterFileName(this string fileName, string replacement = "_") {
-            string pattern = "[{0}]".FormatWith(string.Join(string.Empty,
-                Path.GetInvalidFileNameChars().Select(c => Regex.Escape(c.ToString()))));
-            return Regex.Replace(fileName, pattern, replacement);
+        private static readonly SortedSet<char> _invalidFileNameChars = new(Path.GetInvalidFileNameChars());
+
+        public static string EscapeFileName(this string fileName, char replacement = '_') {
+            string result = null;
+            Utility.RentCharSpace(fileName.Length, buffer => {
+                for (int i = 0; i < fileName.Length; i++) {
+                    char c = fileName[i];
+                    buffer[i] = !_invalidFileNameChars.Contains(c) ? c : replacement;
+                }
+                result = new string(buffer);
+            });
+            return result;
         }
 
-        public static string FilterPath(this string path, string replacement = "_", string additionalInvalid = "*?") {
-            string pattern = "[{0}]".FormatWith(string.Join(string.Empty,
-                Path.GetInvalidPathChars().Concat(additionalInvalid).Distinct().Select(c => Regex.Escape(c.ToString()))));
-            return Regex.Replace(path, pattern, replacement);
+        public static string EscapePath(this string path, char replacement = '_') {
+            string result = null;
+            Utility.RentCharSpace(path.Length, buffer => {
+                for (int i = 0; i < buffer.Length; i++) {
+                    char c = path[i];
+                    buffer[i] =
+                        c == Path.DirectorySeparatorChar ||
+                        c == Path.VolumeSeparatorChar ||
+                        !_invalidFileNameChars.Contains(c) ? c : replacement;
+                }
+                result = new string(buffer);
+            });
+            return result;
         }
 
         public static string MakeFullPath(this string path) {
