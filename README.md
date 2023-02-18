@@ -15,6 +15,7 @@ To install PureLib, run the following command in the Package Manager Console
 PM> Install-Package PureLib
 PM> Install-Package PureLib.WPF
 PM> Install-Package PureLib.MediaInfo
+PM> Install-Package PureLib.Generators.DicToInstGenerator
 ```
 More information about NuGet package avaliable at:
 
@@ -23,10 +24,14 @@ More information about NuGet package avaliable at:
 |PureLib|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.svg?style=flat-square)](https://www.nuget.org/packages/PureLib/)|
 |PureLib.WPF|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.WPF.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.WPF/)|
 |PureLib.MediaInfo|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.MediaInfo.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.MediaInfo/)|
+|PureLib.Generators.DicToInstGenerator|[![NuGet Version](https://img.shields.io/nuget/v/PureLib.Generators.DicToInstGenerator.svg?style=flat-square)](https://www.nuget.org/packages/PureLib.Generators.DicToInstGenerator/)|
 
 
 ## Features
 
+- [Utility](#utility)
+- Source Generators
+  - [DictionaryToInstanceGenerator](#dictionary-to-instance-generator)
 - WPF
   - [NotifyObject](#notify-object)
   - [ViewModelBase](#view-model-base)
@@ -35,7 +40,52 @@ More information about NuGet package avaliable at:
   - [Converters](#converters)
 - Web
   - [WebDownloader](#web-downloader)
-- [Utility](#utility)
+
+
+### Utility
+
+Convert a wildcard to a regular expression:
+```csharp
+string regex = "*.txt".WildcardToRegex();
+```
+
+Convert a string of enum list to an enum array:
+```csharp
+DayOfWeek[] days = "Sunday,Saturday".ToEnum<DayOfWeek>();
+```
+
+Conversions between binary data and base64url string:
+```csharp
+byte[] data = Encoding.UTF8.GetBytes("test");
+string result = Base64Url.Encode(data);
+byte[] bin = Base64Url.Decode(result);
+```
+
+### Dictionary to Instance Generator
+
+```csharp
+[FromDictionary]
+public class Payload {
+    public int Id { get; set; }
+    public string Name { get; init; }
+    [Ignore]
+    public string Value { get; set; }
+}
+```
+will generate
+```csharp
+public static class DictionaryToPayloadExtensions {
+    public static Payload ToPayload(this Dictionary<string, object> dic) {
+        ref var refOfId = ref CollectionsMarshal.GetValueRefOrNullRef(dic, "Id");
+        ref var refOfName = ref CollectionsMarshal.GetValueRefOrNullRef(dic, "Name");
+
+        return new Payload {
+            Id = Unsafe.IsNullRef(ref refOfId) ? default : (Int32)refOfId,
+            Name = Unsafe.IsNullRef(ref refOfName) ? default : (String)refOfName,
+        };
+    }
+}
+```
 
 ### Notify Object
 
@@ -103,18 +153,6 @@ PureLib provides commonly used converters for UI bindings.
 WebDownloader downloader = new WebDownloader(Global.Config.ThreadCount, null, false);
 downloader.DownloadCompleting += OnDownloadCompleting;
 downloader.AddItems(_itemPostMaps.Keys.ToList());
-```
-
-### Utility
-
-Convert a wildcard to a regular expression:
-```csharp
-string regex = "*.txt".WildcardToRegex();
-```
-
-Convert a string of enum list to an enum array:
-```csharp
-DayOfWeek[] days = "Sunday,Saturday".ToEnum<DayOfWeek>();
 ```
 
 

@@ -42,8 +42,8 @@ namespace PureLib.Common {
 
             // Fix up '-' -> '+' and '_' -> '/'.
             int i = 0;
-            for (int j = 0; i < input.Length; i++, j++) {
-                char ch = input[j];
+            for (; i < input.Length; i++) {
+                char ch = input[i];
                 if (ch == '-')
                     buffer[i] = '+';
                 else if (ch == '_')
@@ -55,9 +55,10 @@ namespace PureLib.Common {
                 buffer[i] = '=';
             }
 
-            int resultLength = ComputeDecodeResultLength(buffer, bufferSize);
+            Span<char> chars = buffer[..bufferSize];
+            int resultLength = ComputeDecodeResultLength(chars);
             byte[] result = new byte[resultLength];
-            Convert.TryFromBase64Chars(buffer, result, out _);
+            Convert.TryFromBase64Chars(chars, result, out _);
 
             if (bufferToReturn != null)
                 ArrayPool<char>.Shared.Return(bufferToReturn);
@@ -107,10 +108,10 @@ namespace PureLib.Common {
             };
         }
 
-        private static int ComputeDecodeResultLength(Span<char> chars, int size) {
-            int num = size;
+        private static int ComputeDecodeResultLength(Span<char> chars) {
+            int num = chars.Length;
             int num2 = 0;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < chars.Length; i++) {
                 switch ((int)chars[i]) {
                     case 0:
                     case 1:

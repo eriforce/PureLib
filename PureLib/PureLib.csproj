@@ -3,8 +3,8 @@
 	<PropertyGroup>
 		<TargetFrameworks>net7.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<AssemblyVersion>7.0.6.0</AssemblyVersion>
-		<Version>7.0.6</Version>
+		<AssemblyVersion>7.0.7.0</AssemblyVersion>
+		<Version>7.0.7</Version>
 		<Authors>eriForce</Authors>
 		<Company></Company>
 		<PackageId>PureLib</PackageId>

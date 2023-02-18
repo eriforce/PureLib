@@ -16,7 +16,7 @@ namespace PureLib.Common {
                 : bufferToReturn = ArrayPool<char>.Shared.Rent(size);
             // Use constant size for stackalloc to get better performance. https://github.com/dotnet/docs/issues/28823
 
-            action(buffer);
+            action(buffer[..size]);
 
             if (bufferToReturn != null)
                 ArrayPool<char>.Shared.Return(bufferToReturn);
