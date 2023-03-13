@@ -39,7 +39,7 @@ namespace PureLib.Common {
         }
 
         public static string GetAppPath(string ext) {
-            return Path.ChangeExtension(Process.GetCurrentProcess().MainModule.FileName, ext);
+            return Path.ChangeExtension(Environment.ProcessPath, ext);
         }
 
         public static string EscapePathForCmd(this string path) {
