@@ -8,15 +8,28 @@ using System.Text.RegularExpressions;
 
 namespace PureLib.Common {
     public static class Utility {
+        // Use constant size for stackalloc to get better performance. https://github.com/dotnet/docs/issues/28823
+        [SkipLocalsInit]
+        public static void RentByteSpace(int size, ActionForSpan<byte> action) {
+            byte[] bufferToReturn = null;
+            Span<byte> buffer = size <= Constants.StackAllocThresholdOfBytes
+                ? stackalloc byte[Constants.StackAllocThresholdOfBytes]
+                : bufferToReturn = ArrayPool<byte>.Shared.Rent(size);
+
+            action(buffer);
+
+            if (bufferToReturn != null)
+                ArrayPool<byte>.Shared.Return(bufferToReturn);
+        }
+
         [SkipLocalsInit]
         public static void RentCharSpace(int size, ActionForSpan<char> action) {
             char[] bufferToReturn = null;
             Span<char> buffer = size <= Constants.StackAllocThresholdOfChars
                 ? stackalloc char[Constants.StackAllocThresholdOfChars]
                 : bufferToReturn = ArrayPool<char>.Shared.Rent(size);
-            // Use constant size for stackalloc to get better performance. https://github.com/dotnet/docs/issues/28823
 
-            action(buffer[..size]);
+            action(buffer);
 
             if (bufferToReturn != null)
                 ArrayPool<char>.Shared.Return(bufferToReturn);

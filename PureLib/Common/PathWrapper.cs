@@ -14,7 +14,7 @@ namespace PureLib.Common {
                     char c = fileName[i];
                     buffer[i] = !_invalidFileNameChars.Contains(c) ? c : replacement;
                 }
-                result = new string(buffer);
+                result = new string(buffer[..fileName.Length]);
             });
             return result;
         }
@@ -29,7 +29,7 @@ namespace PureLib.Common {
                         c == Path.VolumeSeparatorChar ||
                         !_invalidFileNameChars.Contains(c) ? c : replacement;
                 }
-                result = new string(buffer);
+                result = new string(buffer[..path.Length]);
             });
             return result;
         }
