@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<Authors>eriForce</Authors>
 		<Company>eriForce</Company>
@@ -11,12 +11,13 @@
 		<PackageProjectUrl>https://github.com/eriforce/PureLib</PackageProjectUrl>
 		<PackageTags>WPF</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>3.0.1</Version>
-		<AssemblyVersion>3.0.0.0</AssemblyVersion>
+		<Version>8.0.0</Version>
+		<AssemblyVersion>8.0.0.0</AssemblyVersion>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.*" />
 	</ItemGroup>
 
 	<ItemGroup>
